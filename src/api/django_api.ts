@@ -1,7 +1,6 @@
-import {BaseApi} from "@/services/typescript-api-services/src/api/base_api";
-import {ApiResponse} from "@/services/typescript-api-services/src/types";
-import {ApiResponseHandler} from "@/services/typescript-api-services/src/api_response_handler";
-
+import {BaseApi} from "./base_api";
+import {ApiResponseHandler} from "../api_response_handler";
+import {ApiResponse} from "../types";
 
 /**
  *
@@ -37,7 +36,7 @@ export class DjangoApi extends BaseApi {
     /**
      * CONSTRUCTOR
      */
-    public constructor(name: string, urlEndpoint: string, token?: string, urlBase?: string, ) {
+    public constructor(name: string, urlEndpoint: string, urlBase: string, token?: string, ) {
         super(name, urlEndpoint, urlBase);
         if (typeof token === 'undefined') {
             token = ''

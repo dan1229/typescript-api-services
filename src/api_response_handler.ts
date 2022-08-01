@@ -1,3 +1,7 @@
+import {ApiResponse, ApiResponseError, ApiResponseSuccess} from "./types";
+import {BaseApi} from "./api/base_api";
+
+
 /**
  * API RESPONSE HANDLER
  *
@@ -6,10 +10,6 @@
  * @param {BaseApi} api - API to use for response
  * @param {Promise<any>} request - Request to fulfil
  */
-import {BaseApi} from "@/services/typescript-api-services/src/api/base_api";
-import {ApiResponse, ApiResponseError, ApiResponseSuccess} from "@/services/typescript-api-services/src/types";
-
-
 export class ApiResponseHandler {
     api: BaseApi
     request: Promise<any>
