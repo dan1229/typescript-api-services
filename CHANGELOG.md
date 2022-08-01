@@ -24,16 +24,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -------------------------------------------------------
 ### TODO
 
-CD for releasing
-- branch name
-- gh release
-
 ----
 ### 0.0.2
 
+fix import and dependency issue
+- add package.json
+- relative imports
+- make more standalone
 
 
 
+CD for releasing
+- branch name
+- gh release
 
 ### [0.0.2] - 2022-MM-DD
 #### TODO
