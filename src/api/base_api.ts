@@ -23,10 +23,10 @@ export abstract class BaseApi {
     /**
      * CONSTRUCTOR
      */
-    protected constructor(name: string, urlEndpoint: string, urlBase: string, timeout: number = 10000) {
+    protected constructor(name: string, urlBase: string, urlEndpoint: string, timeout: number = 10000) {
         this.name = name
-        this.urlEndpoint = urlEndpoint
         this.urlBase = urlBase
+        this.urlEndpoint = urlEndpoint
         this.timeout = timeout
 
         // setup axios client
