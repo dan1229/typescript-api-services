@@ -33,7 +33,6 @@ CD for releasing
   - really raises the question of how to version this, branches would be nice but is it necessary
 - gh release
 
-
 CI
 - build
 - lint
