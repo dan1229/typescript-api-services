@@ -28,6 +28,11 @@ CD for releasing
 - branch name
 - gh release
 
+
+CI
+- build
+- lint
+
 ----
 ### 0.0.2
 
