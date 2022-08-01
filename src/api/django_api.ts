@@ -36,7 +36,7 @@ export class DjangoApi extends BaseApi {
     /**
      * CONSTRUCTOR
      */
-    public constructor(name: string, urlBase: string, urlEndpoint: string, urlEndpoint: string, token?: string, ) {
+    public constructor(name: string, urlBase: string, urlEndpoint: string, token?: string, ) {
         super(name, urlBase, urlEndpoint);
         if (typeof token === 'undefined') {
             token = ''
