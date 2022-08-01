@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 CD for releasing
 - branch name
+  - really raises the question of how to version this, branches would be nice but is it necessary
 - gh release
 
 
