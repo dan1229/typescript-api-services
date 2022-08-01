@@ -6,9 +6,15 @@
 
 ### Description
 Just some HTTP services and templates for Typescript projects.
+import axios from "axios"
+import Cookies from "js-cookie"
 
 ### Requirements
-- 
+You must have these NPM packages installed
+- [Axios](https://www.npmjs.com/package/axios)
+- [JSCookie](https://www.npmjs.com/package/js-cookie)
+
+
 -------------------------------------------------------
 ##### [https://danielnazarian.com](https://danielnazarian.com)
 ##### Copyright 2022 © Daniel Nazarian.
