@@ -1,5 +1,5 @@
-import {ApiResponse, ApiResponseError, ApiResponseSuccess} from "@/services/src/types";
-import {BaseApi} from "@/services/src/api/base_api";
+import {ApiResponse, ApiResponseError, ApiResponseSuccess} from "./types";
+import {BaseApi} from "./api/base_api";
 
 
 /**

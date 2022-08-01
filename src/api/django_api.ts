@@ -1,6 +1,6 @@
-import {BaseApi} from "@/services/src/api/base_api";
-import {ApiResponseHandler} from "@/services/src/api_response_handler";
-import {ApiResponse} from "@/services/src/types";
+import {BaseApi} from "./base_api";
+import {ApiResponseHandler} from "../api_response_handler";
+import {ApiResponse} from "../types";
 
 /**
  *
