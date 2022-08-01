@@ -27,20 +27,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ----
 ### 0.0.2
 
-fix import and dependency issue
-- add package.json
-- relative imports
-- make more standalone
-
-
 
 CD for releasing
 - branch name
+  - really raises the question of how to version this, branches would be nice but is it necessary
 - gh release
 
+
+CI
+- build
+- lint
+
+
+
 ### [0.0.2] - 2022-MM-DD
+- Fixed import and dependency issues
 #### TODO
-- Initial release!
+- CI
+- CD
 
 -------------------------------------------------------
 
