@@ -1,6 +1,5 @@
 import axios from "axios"
 import Cookies from "js-cookie"
-import {environment} from "environment";
 
 /**
  *
@@ -24,10 +23,7 @@ export abstract class BaseApi {
     /**
      * CONSTRUCTOR
      */
-    protected constructor(name: string, urlEndpoint: string, urlBase?: string, timeout: number = 10000) {
-        if (typeof urlBase === 'undefined') {
-            urlBase = environment.uriBase
-        }
+    protected constructor(name: string, urlEndpoint: string, urlBase: string, timeout: number = 10000) {
         this.name = name
         this.urlEndpoint = urlEndpoint
         this.urlBase = urlBase
