@@ -6,8 +6,6 @@
 
 ### Description
 Just some HTTP services and templates for Typescript projects.
-import axios from "axios"
-import Cookies from "js-cookie"
 
 ### Requirements
 You must have these NPM packages installed
