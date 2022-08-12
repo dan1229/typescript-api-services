@@ -24,6 +24,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -------------------------------------------------------
 ### TODO
 
+
+#### ApiResponse error list
+- instead of individual error message, include a list of any
+- find some way to organize:
+  - message - main message
+  - messageList - full list
+  - some way to identify fields or something?
+    - maybe just mimic any fields django sends back?
+
+
 ----
 ### 0.0.2
 

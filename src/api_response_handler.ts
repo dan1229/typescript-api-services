@@ -58,10 +58,11 @@ export class ApiResponseHandler {
             if (!error) {
                 // results based api
                 if (this.response.data.hasOwnProperty('results') && typeof this.response.data.results !== 'undefined') {
-                    // TODO detect if data is anywhere other than 'response.data.results'
                     let res = undefined
                     if (typeof this.response.data.results != 'undefined') {  // check 'results' key
                         res = this.response.data.results
+                    } else if (typeof this.response.data != 'undefined') {
+                        res = this.response.data
                     }
                     return new ApiResponseSuccess(this.response, message, res)
                 } else {
@@ -109,7 +110,7 @@ export class ApiResponseHandler {
                     if (keys[i] == "error") {  // some django internals use 'detail', typically auth related
                         errorError = exception.response.data.error
                     }
-                    // - TODO handle 'non_field_error': []
+                    // - TODO handle 'non_field_error': [] and specific fields like 'email': ""
                 }
 
 
