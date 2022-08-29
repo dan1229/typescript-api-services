@@ -98,11 +98,8 @@ export class ApiResponseHandler {
         let errorNonField; // any non field errors
         for (let i = 0; i < keys.length; ++i) {
           let err = exception.response.data[keys[i]];
-          console.log(`parsing ${keys[i]}`);
           if (err instanceof Array) {
-            console.log('\t IS ARRAY');
             if (keys[i] == 'non_field_errors') {
-              console.log('\t\tIS NON FIELD');
               // handle non field errors
               errorNonField = err[i];
             } else {
