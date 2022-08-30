@@ -15,7 +15,7 @@ import { ApiResponse } from '../types';
  * if this doesn't make sense with your API/models.
  *
  * @param {string} name - API Name, primarily for logging.
- * @param {string} urlBase - Base URL to use - defaults to environment URL.
+ * @param {string} urlBase - Base URL to use for API requests.
  * @param {string} urlEndpoint - Endpoint of this URL. Should NOT include / or urlBase (i.e., "/api/").
  * @param {string=} token - Auth token to use.
  */
