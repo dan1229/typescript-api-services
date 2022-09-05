@@ -94,42 +94,44 @@ export class ApiResponseHandler {
         let keys = Object.keys(exception.response.data);
         let errorMessage; // if it was in the 'message' field
         let errorDetail; // if it was in the 'detail' field
-        let errorField; // any that is a [], DOES NOT support multiple yet
+        // let errorField; // any that is a [], DOES NOT support multiple yet
         let errorNonField; // any non field errors
+        let errorFields;
         for (let i = 0; i < keys.length; ++i) {
           let err = exception.response.data[keys[i]];
           if (err instanceof Array) {
             if (keys[i] == 'non_field_errors') {
               // handle non field errors
               errorNonField = err[i];
-            } else {
-              // handle field errors - {'password': ['...']}
-              errorField = `${keys[i]} - ${err[0]}`;
             }
+          }
+          if (keys[i] == 'error_fields') {
+            errorFields = exception.response.data[keys[i]];
+            // console.log(respErrorFields);
+            // for (let j = 0; j < respErrorFields.length; ++j) {
+            //   console.log(respErrorFields[j]);
+            // }
           }
           if (keys[i] == 'message') {
             // this is a 'generic' error from our django bootstrapper
             errorMessage = exception.response.data.message;
           }
           if (keys[i] == 'detail') {
-            // this is a 'generic' error from our django bootstrapper
+            // this is a 'generic' error from django - shouldn't really happen
             errorDetail = exception.response.data.detail;
           }
         }
 
         // craft response - precedence of errors below
         if (typeof errorNonField != 'undefined' && errorNonField != '') {
-          // 1. error field
-          return new ApiResponseError(this.response, errorNonField);
-        } else if (typeof errorField != 'undefined' && errorField != '') {
-          // 2. error field
-          return new ApiResponseError(this.response, errorField);
+          // 1. error none field
+          return new ApiResponseError(this.response, errorNonField, errorFields);
         } else if (typeof errorDetail != 'undefined' && errorDetail != '') {
-          // 3. error detail
-          return new ApiResponseError(this.response, errorDetail);
+          // 2. error detail
+          return new ApiResponseError(this.response, errorDetail, errorFields);
         } else {
-          // 4. error message
-          return new ApiResponseError(this.response, errorMessage);
+          // 3. error message
+          return new ApiResponseError(this.response, errorMessage, errorFields);
         }
       } else {
         // 'data' doesn't exist -> error
