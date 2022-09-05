@@ -106,11 +106,8 @@ export class ApiResponseHandler {
             }
           }
           if (keys[i] == 'error_fields') {
+            // this is when django gives an object with field specific errors
             errorFields = exception.response.data[keys[i]];
-            // console.log(respErrorFields);
-            // for (let j = 0; j < respErrorFields.length; ++j) {
-            //   console.log(respErrorFields[j]);
-            // }
           }
           if (keys[i] == 'message') {
             // this is a 'generic' error from our django bootstrapper
