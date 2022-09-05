@@ -57,6 +57,6 @@ export class ApiResponseError extends ApiResponse {
  */
 export class ApiResponseSuccess extends ApiResponse {
   constructor(response: any, message: string = 'Successful request.', obj?: any) {
-    super(response, message, false, obj);
+    super(response, message, false, undefined, obj);
   }
 }
