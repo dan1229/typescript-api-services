@@ -126,7 +126,7 @@ export class DjangoApi extends BaseApi {
   async getList(): Promise<ApiResponse> {
     const responseHandler = new ApiResponseHandler(this, this.httpGet(this.urlApi()));
     let res = await this.handlePaginatedResponse(responseHandler);
-    this.calculatePageTotal(); // this should only be called during the initial call NOT during any next/prevs
+    this.calculatePageTotal(); // this should only be called during the initial call NOT during any next/prev calls
     return res;
   }
 
