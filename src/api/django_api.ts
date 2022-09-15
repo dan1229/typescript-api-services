@@ -98,15 +98,41 @@ export class DjangoApi extends BaseApi {
    * @param {string=} id - ID of object to include
    * @return {string} URL
    */
-  urlApi(id?: string): string {
+  urlApi<TypeFilters>(id?: string, filters?: TypeFilters): string {
     if (typeof id == 'undefined' || id == '') {
-      return super.urlApi();
+      return `${super.urlApi()}?${this._createQueryString(filters)}`;
     } else {
-      return super.urlApi(id);
+      return `${super.urlApi(id)}?${this._createQueryString(filters)}`;
     }
   }
 
+  _createQueryString<TypeFilters>(filters?: TypeFilters): string {
+    /**
+     * _createQueryString
+     * Create a query string from a filter object
+     *
+     * @param {TypeFilters} filters - Object of filters to create query string from
+     */
+    if (!filters) {
+      return '';
+    }
+    let queryString = '';
+    for (const key in filters) {
+      if (filters.hasOwnProperty(key)) {
+        const value = filters[key];
+        queryString += `${key}=${value}&`;
+      }
+    }
+    return queryString;
+  }
+
   _getQueryString(key: string, url: string): number {
+    /**
+     * _getQueryString
+     * Get a query string value from a url
+     *
+     * @param {string} key - Key to get value for
+     */
     key = key.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
     let regex = new RegExp('[\\?&]' + key + '=([^&#]*)');
     let results = regex.exec(url);
@@ -165,8 +191,9 @@ export class DjangoApi extends BaseApi {
    * @param {Boolean=} paginated - Treat this API result like a paginated one (i.e., it contains 'next', 'prev', etc.)
    * @return {ApiResponse} Api response object
    */
-  async getRetrieve(id: string, paginated: Boolean = false): Promise<ApiResponse> {
-    const responseHandler = new ApiResponseHandler(this, this.httpGet(this.urlApi(id)));
+  async getRetrieve<TypeFilters>(id: string, paginated: Boolean = false, filters?: TypeFilters): Promise<ApiResponse> {
+    console.log('URL', this.urlApi(id, filters));
+    const responseHandler = new ApiResponseHandler(this, this.httpGet(this.urlApi(id, filters)));
     if (!paginated) {
       const res = await responseHandler.handleResponse();
       try {
