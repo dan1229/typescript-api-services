@@ -117,11 +117,19 @@ export class DjangoApi extends BaseApi {
       return '';
     }
     let queryString = '';
+    const len = Object.keys(filters).length;
+    let i = 0;
     for (const key in filters) {
       if (filters.hasOwnProperty(key)) {
-        const value = filters[key];
-        queryString += `${key}=${value}&`;
+        if (!!key && key != '') {
+          const value = filters[key];
+          queryString += `${key}=${value}&`;
+          if (i === len - 1) {
+            queryString = queryString.slice(0, -1); // remove last &
+          }
+        }
       }
+      i += 1;
     }
     return queryString;
   }
@@ -192,7 +200,6 @@ export class DjangoApi extends BaseApi {
    * @return {ApiResponse} Api response object
    */
   async getRetrieve<TypeFilters>(id: string, paginated: Boolean = false, filters?: TypeFilters): Promise<ApiResponse> {
-    console.log('URL', this.urlApi(id, filters));
     const responseHandler = new ApiResponseHandler(this, this.httpGet(this.urlApi(id, filters)));
     if (!paginated) {
       const res = await responseHandler.handleResponse();
