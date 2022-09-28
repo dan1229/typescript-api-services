@@ -98,7 +98,7 @@ export class DjangoApi extends BaseApi {
    * @param {string=} id - ID of object to include
    * @return {string} URL
    */
-  urlApi<TypeFilters>(id?: string, filters?: TypeFilters): string {
+  urlApi<TypeFilters extends object>(id?: string, filters?: TypeFilters): string {
     if (typeof id == 'undefined' || id == '') {
       return `${super.urlApi()}?${this._createQueryString(filters)}`;
     } else {
@@ -106,7 +106,7 @@ export class DjangoApi extends BaseApi {
     }
   }
 
-  _createQueryString<TypeFilters>(filters?: TypeFilters): string {
+  _createQueryString<TypeFilters extends object>(filters?: TypeFilters): string {
     /**
      * _createQueryString
      * Create a query string from a filter object
@@ -199,7 +199,7 @@ export class DjangoApi extends BaseApi {
    * @param {Boolean=} paginated - Treat this API result like a paginated one (i.e., it contains 'next', 'prev', etc.)
    * @return {ApiResponse} Api response object
    */
-  async getRetrieve<TypeFilters>(id: string, paginated: Boolean = false, filters?: TypeFilters): Promise<ApiResponse> {
+  async getRetrieve<TypeFilters extends object>(id: string, paginated: Boolean = false, filters?: TypeFilters): Promise<ApiResponse> {
     const responseHandler = new ApiResponseHandler(this, this.httpGet(this.urlApi(id, filters)));
     if (!paginated) {
       const res = await responseHandler.handleResponse();
