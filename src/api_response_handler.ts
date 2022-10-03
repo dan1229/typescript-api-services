@@ -1,5 +1,6 @@
 import { ApiResponse, ApiResponseError, ApiResponseSuccess } from './types';
 import { BaseApi } from './api/base_api';
+import { stringify } from 'querystring';
 
 /**
  * API RESPONSE HANDLER
@@ -94,15 +95,18 @@ export class ApiResponseHandler {
         let keys = Object.keys(exception.response.data);
         let errorMessage; // if it was in the 'message' field
         let errorDetail; // if it was in the 'detail' field
-        // let errorField; // any that is a [], DOES NOT support multiple yet
         let errorNonField; // any non field errors
-        let errorFields;
+        let errorFields = new Map<string, string>();
+
+        // loop through keys
         for (let i = 0; i < keys.length; ++i) {
           let err = exception.response.data[keys[i]];
           if (err instanceof Array) {
             if (keys[i] == 'non_field_errors') {
               // handle non field errors
               errorNonField = err[i];
+            } else {
+              errorFields = errorFields.set(keys[i], err[0]);
             }
           }
           if (keys[i] == 'error_fields') {
