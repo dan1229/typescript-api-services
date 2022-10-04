@@ -5,21 +5,21 @@
  * @param {string} message - 'Main' message for response
  * @param {boolean=} error - Whether or not response is an error
  * @param {Map<string, string>=} errorFields - Map of field specific errors and messages
- * @param {any=} obj - Actual object returned by API if applicable
+ * @param {T=} obj - Actual object returned by API if applicable
  */
-export abstract class ApiResponse {
+export abstract class ApiResponse<T> {
   response: any; // update from 'any' as well
   message: string;
   error: boolean;
   errorFields?: Map<string, string>;
-  obj: any; // update these from 'any'
+  obj?: T; // update these from 'any'
 
   protected constructor(
     response: any,
     message: string = 'API response.',
     error = true,
     errorFields?: Map<string, string>,
-    obj?: any
+    obj?: T
   ) {
     this.response = response;
     this.message = message;
@@ -37,12 +37,12 @@ export abstract class ApiResponse {
  * @param {Map<string, string>=} errorFields - Map of field specific errors and messages
  * @param {any=} obj - Actual object returned by API if applicable
  */
-export class ApiResponseError extends ApiResponse {
+export class ApiResponseError<T> extends ApiResponse<T> {
   constructor(
     response: any,
     message: string = 'Error handling request. Please try again later.',
     errorFields?: Map<string, string>,
-    obj?: any
+    obj?: T
   ) {
     super(response, message, true, errorFields, obj);
   }
@@ -55,8 +55,8 @@ export class ApiResponseError extends ApiResponse {
  * @param {string} message - 'Main' message for response
  * @param {any=} obj - Actual object returned by API if applicable
  */
-export class ApiResponseSuccess extends ApiResponse {
-  constructor(response: any, message: string = 'Successful request.', obj?: any) {
+export class ApiResponseSuccess<T> extends ApiResponse<T> {
+  constructor(response: any, message: string = 'Successful request.', obj?: T) {
     super(response, message, false, undefined, obj);
   }
 }

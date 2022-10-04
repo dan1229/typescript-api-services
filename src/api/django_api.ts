@@ -19,13 +19,13 @@ import { ApiResponse } from '../types';
  * @param {string} urlEndpoint - Endpoint of this URL. Should NOT include / or urlBase (i.e., "/api/").
  * @param {string=} token - Auth token to use.
  */
-export class DjangoApi extends BaseApi {
+export class DjangoApi<Model> extends BaseApi {
   // token
   token: string;
 
   // paginated api elements
-  list?: [];
-  details?: any;
+  list?: Model[];
+  details?: Model;
   count?: number;
   next?: string;
   prev?: string;
@@ -49,10 +49,10 @@ export class DjangoApi extends BaseApi {
    *
    * Copy API info from another `DjangoApi` class to create a new instance
    *
-   * @param {DjangoApi} api - API to copy to this current instance
-   * @return {DjangoApi} API object created/copied
+   * @param {DjangoApi<Model>} api - API to copy to this current instance
+   * @return {DjangoApi<Model>} API object created/copied
    */
-  copyFrom(api: DjangoApi): DjangoApi {
+  copyFrom(api: DjangoApi<Model>): DjangoApi<Model> {
     // base properties
     this.name = api['name'];
     this.urlEndpoint = api['urlEndpoint'];
@@ -164,7 +164,7 @@ export class DjangoApi extends BaseApi {
    *
    * @return {ApiResponse} Api response object
    */
-  async getList(): Promise<ApiResponse> {
+  async getList(): Promise<ApiResponse<Model[]>> {
     const responseHandler = new ApiResponseHandler(this, this.httpGet(this.urlApi()));
     let res = await this.handlePaginatedResponse(responseHandler);
     this.calculatePageTotal(); // this should only be called during the initial call NOT during any next/prev calls
@@ -178,7 +178,7 @@ export class DjangoApi extends BaseApi {
    *
    * @returns {Array} List of all objects paginated out
    */
-  async getListAll(): Promise<ApiResponse> {
+  async getListAll(): Promise<Model[]> {
     let res = [];
     const first = await this.getList();
     res = first.obj || [];
@@ -188,9 +188,11 @@ export class DjangoApi extends BaseApi {
       const nextPage = await this.getNext();
       if (typeof nextPage !== 'undefined') {
         let nextList = nextPage.obj;
-        nextList.map(function (i: any) {
-          return res.push(i);
-        });
+        if (!!nextList && nextList.length > 0) {
+          nextList.map(function (i: any) {
+            return res.push(i);
+          });
+        }
       }
     }
     this.pageTotal = pages;
@@ -210,7 +212,7 @@ export class DjangoApi extends BaseApi {
     id: string,
     paginated: Boolean = false,
     filters?: TypeFilters
-  ): Promise<ApiResponse> {
+  ): Promise<ApiResponse<Model | Model[]>> {
     const responseHandler = new ApiResponseHandler(this, this.httpGet(this.urlApi(id, filters)));
     if (!paginated) {
       const res = await responseHandler.handleResponse();
@@ -239,7 +241,7 @@ export class DjangoApi extends BaseApi {
   async handlePaginatedResponse(
     responseHandler: ApiResponseHandler,
     combineLists: Boolean = false
-  ): Promise<ApiResponse> {
+  ): Promise<ApiResponse<Model[]>> {
     const res = await responseHandler.handleResponse();
 
     try {
@@ -271,7 +273,7 @@ export class DjangoApi extends BaseApi {
    * @param {Boolean=} combineLists - Whether to add next page to the current list or replace it
    * @return {ApiResponse} Api response object
    */
-  async getNext(combineLists: Boolean = false): Promise<ApiResponse | undefined> {
+  async getNext(combineLists: Boolean = false): Promise<ApiResponse<Model[]> | undefined> {
     if (typeof this.next != 'undefined') {
       const responseHandler = new ApiResponseHandler(this, this.httpGet(this.next));
       return await this.handlePaginatedResponse(responseHandler, combineLists);
@@ -283,7 +285,7 @@ export class DjangoApi extends BaseApi {
    * @param {Boolean=} combineLists - Whether to add next page to the current list or replace it
    * @return {ApiResponse} Api response object
    */
-  async getPrev(combineLists: Boolean = false): Promise<ApiResponse | undefined> {
+  async getPrev(combineLists: Boolean = false): Promise<ApiResponse<Model[]> | undefined> {
     if (typeof this.prev != 'undefined') {
       const responseHandler = new ApiResponseHandler(this, this.httpGet(this.prev));
       return await this.handlePaginatedResponse(responseHandler, combineLists);
@@ -295,7 +297,7 @@ export class DjangoApi extends BaseApi {
    * @param {Number} page - Specific page number to retrieve
    * @return {ApiResponse} Api response object
    */
-  async getPage(page: number): Promise<ApiResponse> {
+  async getPage(page: number): Promise<ApiResponse<Model[]>> {
     const pageUrl = `${this.urlApi()}?page=${page}`;
     const responseHandler = new ApiResponseHandler(this, this.httpGet(pageUrl));
     return await this.handlePaginatedResponse(responseHandler);
@@ -336,7 +338,7 @@ export class DjangoApi extends BaseApi {
    * @param {Object} body - Body of request to include, probably the object data
    * @return {ApiResponse} Api response object
    */
-  async patchUpdate(id: string, body: Object): Promise<ApiResponse> {
+  async patchUpdate(id: string, body: Object): Promise<ApiResponse<Model>> {
     const responseHandler = new ApiResponseHandler(this, this.httpPatch(this.urlApi(id), body));
     const res = await responseHandler.handleResponse();
     try {
@@ -355,7 +357,7 @@ export class DjangoApi extends BaseApi {
    * @param {Object} body - Body of request to include, probably the object data
    * @return {ApiResponse} Api response object
    */
-  async postCreate(body: Object): Promise<ApiResponse> {
+  async postCreate(body: Object): Promise<ApiResponse<Model>> {
     const responseHandler = new ApiResponseHandler(this, this.httpPost(this.urlApi(), body));
     const res = await responseHandler.handleResponse();
     try {
@@ -374,7 +376,7 @@ export class DjangoApi extends BaseApi {
    * @param {string} id - ID of object to delete
    * @return {ApiResponse} Api response object
    */
-  async deleteItem(id: string): Promise<ApiResponse> {
+  async deleteItem(id: string): Promise<ApiResponse<Model>> {
     const responseHandler = new ApiResponseHandler(this, this.httpDelete(this.urlApi(id)));
     return await responseHandler.handleResponse();
   }

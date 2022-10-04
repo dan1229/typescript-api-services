@@ -26,9 +26,9 @@ export class ApiResponseHandler {
    *
    * Method to standardize, sanitize and handle API responses. Handles deserializing objects as well if given 'fromJson'.
    *
-   * @return {Promise<ApiResponse>} Api response object
+   * @return {Promise<ApiResponse<any>>} Api response object
    */
-  async handleResponse(): Promise<ApiResponse> {
+  async handleResponse(): Promise<ApiResponse<any>> {
     // await response and ensure valid
     try {
       this.response = await this.request;
@@ -87,9 +87,9 @@ export class ApiResponseHandler {
    *
    * TODO find type for 'any'
    * @param {any} exception - Exception to log/handle
-   * @return {ApiResponseError} Api response ERROR object
+   * @return {ApiResponseError<any>} Api response ERROR object
    */
-  handleError(exception: any): ApiResponseError {
+  handleError(exception: any): ApiResponseError<any> {
     // django api errors
     if (exception.hasOwnProperty('response') && typeof exception.response !== 'undefined') {
       if (exception.response.hasOwnProperty('data') && typeof exception.response.data !== 'undefined') {
