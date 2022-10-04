@@ -1,7 +1,5 @@
-import { ApiResponse, ApiResponseError, ApiResponseSuccess } from './types';
+import { ApiResponse, ApiResponseError, ApiResponseSuccess, AxiosResponse } from './types';
 import { BaseApi } from './api/base_api';
-import { stringify } from 'querystring';
-import { isInstanceOf } from '@sentry/utils';
 
 /**
  * API RESPONSE HANDLER
@@ -14,7 +12,7 @@ import { isInstanceOf } from '@sentry/utils';
 export class ApiResponseHandler {
   api: BaseApi;
   request: Promise<any>;
-  response?: any;
+  response?: AxiosResponse<any>;
 
   constructor(api: BaseApi, request: Promise<any>) {
     this.api = api;
@@ -32,7 +30,7 @@ export class ApiResponseHandler {
     // await response and ensure valid
     try {
       this.response = await this.request;
-      if (typeof this.response === 'undefined') {
+      if (typeof this.response === 'undefined' || !this.response.data) {
         throw Error('Response undefined.');
       }
     } catch (e) {
@@ -90,7 +88,7 @@ export class ApiResponseHandler {
    * @return {ApiResponseError<any>} Api response ERROR object
    */
   handleError(exception: any): ApiResponseError<any> {
-    // django api errors
+    // response obj errors - django api errors
     if (exception.hasOwnProperty('response') && typeof exception.response !== 'undefined') {
       if (exception.response.hasOwnProperty('data') && typeof exception.response.data !== 'undefined') {
         // get different types of errors out
@@ -149,13 +147,15 @@ export class ApiResponseHandler {
       }
     }
 
-    // exception is just a string/js error
-    if (typeof exception == 'string') {
+    // js exception/error
+    else if (typeof exception == 'string') {
       // replace with Object.keys(exception).length === 0?
       return new ApiResponseError(this.response, exception, new Map<string, string>());
     }
 
-    // default error
-    return new ApiResponseError(this.response, 'Error. Please try again later.', new Map<string, string>());
+    // default case error
+    else {
+      return new ApiResponseError(this.response, 'Error. Please try again later.', new Map<string, string>());
+    }
   }
 }

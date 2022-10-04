@@ -1,3 +1,5 @@
+import { AxiosRequestConfig } from 'axios';
+
 /**
  * API RESPONSE
  *
@@ -35,7 +37,7 @@ export abstract class ApiResponse<T> {
  * @param {any} response - HTTP response object
  * @param {string} message - 'Main' message for response
  * @param {Map<string, string>=} errorFields - Map of field specific errors and messages
- * @param {any=} obj - Actual object returned by API if applicable
+ * @param {T=} obj - Actual object returned by API if applicable
  */
 export class ApiResponseError<T> extends ApiResponse<T> {
   constructor(
@@ -53,10 +55,29 @@ export class ApiResponseError<T> extends ApiResponse<T> {
  *
  * @param {any} response - HTTP response object
  * @param {string} message - 'Main' message for response
- * @param {any=} obj - Actual object returned by API if applicable
+ * @param {T=} obj - Actual object returned by API if applicable
  */
 export class ApiResponseSuccess<T> extends ApiResponse<T> {
   constructor(response: any, message: string = 'Successful request.', obj?: T) {
     super(response, message, false, undefined, obj);
   }
+}
+
+/**
+ * AXIOS RESPONSE
+ *
+ * @param {T} data - Data returned by API
+ * @param {number} status - HTTP status code
+ * @param {string} statusText - HTTP status text
+ * @param {Record<string, string>} headers - HTTP headers
+ * @param {AxiosRequestConfig<T>} config - Axios request config
+ * @param {any} request - HTTP request object
+ */
+export interface AxiosResponse<T = never> {
+  data: T;
+  status: number;
+  statusText: string;
+  headers: Record<string, string>;
+  config: AxiosRequestConfig<T>;
+  request?: any;
 }
