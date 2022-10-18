@@ -92,7 +92,6 @@ export class ApiResponseHandler {
    * @return {ApiResponseError<any>} Api response ERROR object
    */
   handleError(exception: any): ApiResponseError<any> {
-    console.log('ERROR', typeof exception, exception);
     // response obj errors - django api errors
     if (exception.hasOwnProperty('response') && typeof exception.response !== 'undefined') {
       if (exception.response.hasOwnProperty('data') && typeof exception.response.data !== 'undefined') {
@@ -134,7 +133,6 @@ export class ApiResponseHandler {
             errorDetail = exception.response.data.detail;
           }
         }
-        console.log('ERROR', errorFields, errorNonField, errorMessage, errorDetail);
 
         // craft response - precedence of errors below
         if (!!errorNonField && errorNonField != '') {
