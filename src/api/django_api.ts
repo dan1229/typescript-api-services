@@ -218,6 +218,11 @@ export class DjangoApi<Model> extends BaseApi {
       const res = await responseHandler.handleResponse();
       try {
         this.details = res.obj;
+        if (res.obj instanceof Array) {
+          this.list = res.obj;
+        } else {
+          this.details = res.obj;
+        }
       } catch (e) {
         console.error(e);
       }

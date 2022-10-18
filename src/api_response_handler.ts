@@ -19,6 +19,10 @@ export class ApiResponseHandler {
     this.request = request;
   }
 
+  handleLogError = (e: any) => {
+    console.error(`${this.api.name}: ERROR\n`, e);
+  };
+
   /**
    * Response Handler
    *
@@ -34,7 +38,7 @@ export class ApiResponseHandler {
         throw Error('Response undefined.');
       }
     } catch (e) {
-      console.error(`${this.api.name}: ERROR\n`, e);
+      this.handleLogError(e);
       return this.handleError(e);
     }
 
@@ -73,7 +77,7 @@ export class ApiResponseHandler {
 
       throw Error(message); // api error/incorrectly formatted -> trigger manually
     } catch (e) {
-      console.error(`${this.api.name}: ERROR\n`, e);
+      this.handleLogError(e);
       return this.handleError(e);
     }
   }
@@ -102,6 +106,7 @@ export class ApiResponseHandler {
         for (let i = 0; i < keys.length; ++i) {
           const key = keys[i];
           let err = exception.response.data[key];
+          console.log('key', key, err);
           if (err instanceof Array) {
             if (key === 'non_field_errors') {
               // handle non field errors
@@ -115,16 +120,16 @@ export class ApiResponseHandler {
             for (let j = 0; j < errKeys.length; ++j) {
               errorFields = errorFields.set(errKeys[j], err[errKeys[j]].toString().replace('_', ' '));
             }
-          } else if (keys[i] == 'non_field_errors') {
+          } else if (key == 'non_field_errors') {
             // this is when django gives an object with field specific errors
             errorNonField = exception.response.data[key][0];
-          } else if (keys[i] == 'error_fields') {
+          } else if (key == 'error_fields') {
             // this is when django gives an object with field specific errors
             errorFields = exception.response.data[key];
-          } else if (keys[i] == 'message') {
+          } else if (key == 'message') {
             // this is a 'generic' error from our django bootstrapper and custom error handler
             errorMessage = exception.response.data.message;
-          } else if (keys[i] == 'detail') {
+          } else if (key == 'detail') {
             // this is a 'generic' error from django - shouldn't really happen
             errorDetail = exception.response.data.detail;
           }
