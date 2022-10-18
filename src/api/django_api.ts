@@ -223,7 +223,7 @@ export class DjangoApi<Model> extends BaseApi {
     body?: TypeBody,
     filters?: TypeFilters
   ): Promise<ApiResponse<Model | Model[]>> {
-    const responseHandler = new ApiResponseHandler(this, this.httpGet(this.urlApi(id, filters), body));
+    const responseHandler = new ApiResponseHandler(this, this.httpGet(this.urlApi(id, filters)));
     return this.handleDjangoGet(responseHandler, paginated);
   }
 
