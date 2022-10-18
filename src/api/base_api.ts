@@ -78,19 +78,19 @@ export abstract class BaseApi {
    * Supported methods
    * - GET, POST, PATCH, DELETE
    **/
-  async httpGet(url: string, authenticate: Boolean = false, headers = {}): Promise<any> {
-    return this.client.get(url, {}, headers);
+  async httpGet(url: string, headers = {}): Promise<any> {
+    return this.client.get(url, { headers: headers });
   }
 
-  async httpPost(url: string, body: Object, authenticate: Boolean = false, headers = {}): Promise<any> {
+  async httpPost(url: string, body: Object, headers = {}): Promise<any> {
     return this.client.post(url, body, headers);
   }
 
-  async httpPatch(url: string, body: Object, authenticate: Boolean = false, headers = {}): Promise<any> {
+  async httpPatch(url: string, body: Object, headers = {}): Promise<any> {
     return await this.client.patch(url, body, headers);
   }
 
-  async httpDelete(url: string, authenticate: Boolean = false, headers = {}): Promise<any> {
+  async httpDelete(url: string, headers = {}): Promise<any> {
     return await this.client.delete(url, { headers: headers });
   }
 }

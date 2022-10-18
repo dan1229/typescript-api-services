@@ -78,11 +78,13 @@ export class DjangoApi<Model> extends BaseApi {
    *
    * @return {AxiosRequestHeaders} Header object/map
    **/
-  getHeaders(): AxiosRequestHeaders {
-    if (typeof this.token != 'undefined' && this.token! + '') {
+  getHeaders(): any {
+    if (typeof this.token != 'undefined' && this.token != '') {
       return {
-        'Content-Type': 'application/json',
-        Authorization: `Token ${this.token}`,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Token ${this.token}`,
+        },
       };
     } else {
       return {};
@@ -161,18 +163,19 @@ export class DjangoApi<Model> extends BaseApi {
    *
    * GET Django list from this API
    *
+   *
+   * @param {Boolean=} paginated - Treat this API result like a paginated one (i.e., it contains 'next', 'prev', etc.)
    * @param {TypeBody=} body - Body to send with request
    * @param {TypeFilters=} filters - Filters to send with request
    * @return {ApiResponse} Api response object
    */
   async getList<TypeBody extends object, TypeFilters extends object>(
+    paginated: Boolean = true,
     body?: TypeBody,
     filters?: TypeFilters
   ): Promise<ApiResponse<Model[]>> {
-    const responseHandler = new ApiResponseHandler(this, this.httpGet(this.urlApi(undefined, filters), body));
-    let res = await this.handlePaginatedResponse(responseHandler);
-    this.calculatePageTotal(); // this should only be called during the initial call NOT during any next/prev calls
-    return res;
+    const responseHandler = new ApiResponseHandler(this, this.httpGet(this.urlApi(undefined, filters)));
+    return this.handleDjangoGet(responseHandler, paginated);
   }
 
   /**
@@ -220,23 +223,8 @@ export class DjangoApi<Model> extends BaseApi {
     body?: TypeBody,
     filters?: TypeFilters
   ): Promise<ApiResponse<Model | Model[]>> {
-    const responseHandler = new ApiResponseHandler(this, this.httpGet<TypeBody>(this.urlApi(id, filters), body));
-    if (!paginated) {
-      const res = await responseHandler.handleResponse();
-      try {
-        this.details = res.obj;
-        if (res.obj instanceof Array) {
-          this.list = res.obj;
-        } else {
-          this.details = res.obj;
-        }
-      } catch (e) {
-        console.error(e);
-      }
-      return res;
-    } else {
-      return await this.handlePaginatedResponse(responseHandler);
-    }
+    const responseHandler = new ApiResponseHandler(this, this.httpGet(this.urlApi(id, filters), body));
+    return this.handleDjangoGet(responseHandler, paginated);
   }
 
   /**
@@ -278,6 +266,27 @@ export class DjangoApi<Model> extends BaseApi {
       console.error(e);
     }
     return res;
+  }
+
+  async handleDjangoGet<Model>(responseHandler: ApiResponseHandler, paginated: Boolean) {
+    // helper function to clean up get and retrieve methods
+    if (!paginated) {
+      const res = await responseHandler.handleResponse();
+      try {
+        this.details = res.obj;
+        if (res.obj instanceof Array) {
+          this.list = res.obj;
+        } else {
+          this.details = res.obj;
+        }
+      } catch (e) {
+        console.error(e);
+      }
+      return res;
+    } else {
+      this.calculatePageTotal(); // this should only be called during the initial call NOT during any next/prev calls
+      return await this.handlePaginatedResponse(responseHandler);
+    }
   }
 
   /**
@@ -396,15 +405,16 @@ export class DjangoApi<Model> extends BaseApi {
   /**
    * HTTP METHODS
    *
-   * Standard HTTP wrapper functions to handle basic
-   * functionality, formatting, auth, sanitizing etc.
+   * HTTP wrapper functions to standard methods
+   * Help with functionality, formatting, auth,
+   * sanitizing etc.
    *
    * Supported methods
    * - GET, POST, PATCH, DELETE
    */
-  async httpGet<TypeBody extends object>(url: string, body?: TypeBody): Promise<any> {
+  async httpGet(url: string): Promise<any> {
     const headers = this.getHeaders();
-    return this.client.get(url, { headers: headers, params: body });
+    return this.client.get(url, headers);
   }
 
   async httpPost<TypeBody extends object>(url: string, body: TypeBody): Promise<any> {
