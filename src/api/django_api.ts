@@ -1,6 +1,7 @@
 import { BaseApi } from './base_api';
 import { ApiResponseHandler } from '../api_response_handler';
 import { ApiResponse } from '../types';
+import { AxiosRequestHeaders } from 'axios';
 
 /**
  *
@@ -75,15 +76,13 @@ export class DjangoApi<Model> extends BaseApi {
    *
    * Get headers for API request - authenticated or otherwise.
    *
-   * @return {Object} Header object/map
+   * @return {AxiosRequestHeaders} Header object/map
    **/
-  getHeaders(): Object {
+  getHeaders(): AxiosRequestHeaders {
     if (typeof this.token != 'undefined' && this.token! + '') {
       return {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Token ${this.token}`,
-        },
+        'Content-Type': 'application/json',
+        Authorization: `Token ${this.token}`,
       };
     } else {
       return {};
@@ -405,7 +404,7 @@ export class DjangoApi<Model> extends BaseApi {
    */
   async httpGet<TypeBody extends object>(url: string, body?: TypeBody): Promise<any> {
     const headers = this.getHeaders();
-    return this.client.get(url, headers, body);
+    return this.client.get(url, { headers: headers, params: body });
   }
 
   async httpPost<TypeBody extends object>(url: string, body: TypeBody): Promise<any> {
