@@ -162,10 +162,15 @@ export class DjangoApi<Model> extends BaseApi {
    *
    * GET Django list from this API
    *
+   * @param {TypeBody=} body - Body to send with request
+   * @param {TypeFilters=} filters - Filters to send with request
    * @return {ApiResponse} Api response object
    */
-  async getList(): Promise<ApiResponse<Model[]>> {
-    const responseHandler = new ApiResponseHandler(this, this.httpGet(this.urlApi()));
+  async getList<TypeBody extends object, TypeFilters extends object>(
+    body?: TypeBody,
+    filters?: TypeFilters
+  ): Promise<ApiResponse<Model[]>> {
+    const responseHandler = new ApiResponseHandler(this, this.httpGet(this.urlApi(undefined, filters), body));
     let res = await this.handlePaginatedResponse(responseHandler);
     this.calculatePageTotal(); // this should only be called during the initial call NOT during any next/prev calls
     return res;
@@ -206,14 +211,17 @@ export class DjangoApi<Model> extends BaseApi {
    *
    * @param {string=} id - ID of object to retrieve
    * @param {Boolean=} paginated - Treat this API result like a paginated one (i.e., it contains 'next', 'prev', etc.)
+   * @param {TypeBody=} body - Body to send with request
+   * @param {TypeFilters=} filters - Filters to send with request
    * @return {ApiResponse} Api response object
    */
-  async getRetrieve<TypeFilters extends object>(
+  async getRetrieve<TypeBody extends object, TypeFilters extends object>(
     id: string,
     paginated: Boolean = false,
+    body?: TypeBody,
     filters?: TypeFilters
   ): Promise<ApiResponse<Model | Model[]>> {
-    const responseHandler = new ApiResponseHandler(this, this.httpGet(this.urlApi(id, filters)));
+    const responseHandler = new ApiResponseHandler(this, this.httpGet<TypeBody>(this.urlApi(id, filters), body));
     if (!paginated) {
       const res = await responseHandler.handleResponse();
       try {
@@ -395,17 +403,17 @@ export class DjangoApi<Model> extends BaseApi {
    * Supported methods
    * - GET, POST, PATCH, DELETE
    */
-  async httpGet(url: string): Promise<any> {
+  async httpGet<TypeBody extends object>(url: string, body?: TypeBody): Promise<any> {
     const headers = this.getHeaders();
-    return this.client.get(url, headers);
+    return this.client.get(url, headers, body);
   }
 
-  async httpPost(url: string, body: Object): Promise<any> {
+  async httpPost<TypeBody extends object>(url: string, body: TypeBody): Promise<any> {
     const headers = this.getHeaders();
     return this.client.post(url, body, headers);
   }
 
-  async httpPatch(url: string, body: Object): Promise<any> {
+  async httpPatch<TypeBody extends object>(url: string, body: TypeBody): Promise<any> {
     const headers = this.getHeaders();
     return this.client.patch(url, body, headers);
   }

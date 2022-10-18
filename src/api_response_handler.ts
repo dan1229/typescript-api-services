@@ -92,6 +92,7 @@ export class ApiResponseHandler {
    * @return {ApiResponseError<any>} Api response ERROR object
    */
   handleError(exception: any): ApiResponseError<any> {
+    console.log('ERROR', typeof exception, exception);
     // response obj errors - django api errors
     if (exception.hasOwnProperty('response') && typeof exception.response !== 'undefined') {
       if (exception.response.hasOwnProperty('data') && typeof exception.response.data !== 'undefined') {
@@ -106,7 +107,6 @@ export class ApiResponseHandler {
         for (let i = 0; i < keys.length; ++i) {
           const key = keys[i];
           let err = exception.response.data[key];
-          console.log('key', key, err);
           if (err instanceof Array) {
             if (key === 'non_field_errors') {
               // handle non field errors
@@ -134,6 +134,7 @@ export class ApiResponseHandler {
             errorDetail = exception.response.data.detail;
           }
         }
+        console.log('ERROR', errorFields, errorNonField, errorMessage, errorDetail);
 
         // craft response - precedence of errors below
         if (!!errorNonField && errorNonField != '') {
@@ -142,9 +143,12 @@ export class ApiResponseHandler {
         } else if (!!errorDetail && errorDetail != '') {
           // 2. error detail - default django error field, shouldn't really happen but just in case
           return new ApiResponseError(this.response, errorDetail, errorFields);
-        } else {
+        } else if (!!errorMessage && errorMessage != '') {
           // 3. error message - these are the most generic from our bootstrapper
           return new ApiResponseError(this.response, errorMessage, errorFields);
+        } else {
+          // 4. default error
+          return new ApiResponseError(this.response);
         }
       } else {
         // 'data' doesn't exist -> error
@@ -160,7 +164,7 @@ export class ApiResponseHandler {
 
     // default case error
     else {
-      return new ApiResponseError(this.response, 'Error. Please try again later.', new Map<string, string>());
+      return new ApiResponseError(this.response);
     }
   }
 }
