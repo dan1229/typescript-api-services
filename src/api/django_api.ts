@@ -171,7 +171,6 @@ export class DjangoApi<Model> extends BaseApi {
    */
   async getList<TypeBody extends object, TypeFilters extends object>(
     paginated: Boolean = true,
-    body?: TypeBody,
     filters?: TypeFilters
   ): Promise<ApiResponse<Model[]>> {
     const responseHandler = new ApiResponseHandler(this, this.httpGet(this.urlApi(undefined, filters)));
@@ -220,7 +219,6 @@ export class DjangoApi<Model> extends BaseApi {
   async getRetrieve<TypeBody extends object, TypeFilters extends object>(
     id: string,
     paginated: Boolean = false,
-    body?: TypeBody,
     filters?: TypeFilters
   ): Promise<ApiResponse<Model | Model[]>> {
     const responseHandler = new ApiResponseHandler(this, this.httpGet(this.urlApi(id, filters)));
