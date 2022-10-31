@@ -119,7 +119,7 @@ export class DjangoApi<Model> extends BaseApi {
      * _createQueryString
      * Create a query string from a filter object
      *
-     * @param {TypeFilters} filters - Object of filters to create query string from
+     * @param {TypeFilters} filters - Type object of filters to create query string from
      */
     if (!filters) {
       return '';
@@ -165,11 +165,10 @@ export class DjangoApi<Model> extends BaseApi {
    *
    *
    * @param {Boolean=} paginated - Treat this API result like a paginated one (i.e., it contains 'next', 'prev', etc.)
-   * @param {TypeBody=} body - Body to send with request
    * @param {TypeFilters=} filters - Filters to send with request
    * @return {ApiResponse} Api response object
    */
-  async getList<TypeBody extends object, TypeFilters extends object>(
+  async getList<TypeFilters extends object>(
     paginated: Boolean = true,
     filters?: TypeFilters
   ): Promise<ApiResponse<Model[]>> {
@@ -212,11 +211,10 @@ export class DjangoApi<Model> extends BaseApi {
    *
    * @param {string=} id - ID of object to retrieve
    * @param {Boolean=} paginated - Treat this API result like a paginated one (i.e., it contains 'next', 'prev', etc.)
-   * @param {TypeBody=} body - Body to send with request
    * @param {TypeFilters=} filters - Filters to send with request
    * @return {ApiResponse} Api response object
    */
-  async getRetrieve<TypeBody extends object, TypeFilters extends object>(
+  async getRetrieve<TypeFilters extends object>(
     id: string,
     paginated: Boolean = false,
     filters?: TypeFilters
@@ -354,10 +352,10 @@ export class DjangoApi<Model> extends BaseApi {
    * PATCH request to Django to update an object.
    *
    * @param {string} id - ID of object to update
-   * @param {Object} body - Body of request to include, probably the object data
+   * @param {TypeBody} body - Body of request to include, probably the object data
    * @return {ApiResponse} Api response object
    */
-  async patchUpdate(id: string, body: Object): Promise<ApiResponse<Model>> {
+  async patchUpdate<TypeBody extends object>(id: string, body: TypeBody): Promise<ApiResponse<Model>> {
     const responseHandler = new ApiResponseHandler(this, this.httpPatch(this.urlApi(id), body));
     const res = await responseHandler.handleResponse();
     try {
@@ -373,10 +371,10 @@ export class DjangoApi<Model> extends BaseApi {
    *
    * POST request to Django to create an object.
    *
-   * @param {Object} body - Body of request to include, probably the object data
+   * @param {TypeBody} body - Body of request to include, probably the object data
    * @return {ApiResponse} Api response object
    */
-  async postCreate(body: Object): Promise<ApiResponse<Model>> {
+  async postCreate<TypeBody extends object>(body: TypeBody): Promise<ApiResponse<Model>> {
     const responseHandler = new ApiResponseHandler(this, this.httpPost(this.urlApi(), body));
     const res = await responseHandler.handleResponse();
     try {

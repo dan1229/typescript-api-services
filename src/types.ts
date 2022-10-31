@@ -7,21 +7,21 @@ import { AxiosRequestConfig } from 'axios';
  * @param {string} message - 'Main' message for response
  * @param {boolean=} error - Whether or not response is an error
  * @param {Map<string, string>=} errorFields - Map of field specific errors and messages
- * @param {T=} obj - Actual object returned by API if applicable
+ * @param {Model=} obj - Actual object returned by API if applicable
  */
-export abstract class ApiResponse<T> {
+export abstract class ApiResponse<Model> {
   response: any; // update from 'any' as well
   message: string;
   error: boolean;
   errorFields?: Map<string, string>;
-  obj?: T; // update these from 'any'
+  obj?: Model; // update these from 'any'
 
   protected constructor(
     response: any,
     message: string = 'API response.',
     error = true,
     errorFields?: Map<string, string>,
-    obj?: T
+    obj?: Model
   ) {
     this.response = response;
     this.message = message;
@@ -37,14 +37,14 @@ export abstract class ApiResponse<T> {
  * @param {any} response - HTTP response object
  * @param {string} message - 'Main' message for response
  * @param {Map<string, string>=} errorFields - Map of field specific errors and messages
- * @param {T=} obj - Actual object returned by API if applicable
+ * @param {Model=} obj - Actual object returned by API if applicable
  */
-export class ApiResponseError<T> extends ApiResponse<T> {
+export class ApiResponseError<Model> extends ApiResponse<Model> {
   constructor(
     response: any,
     message: string = 'Error handling request. Please try again later.',
     errorFields?: Map<string, string>,
-    obj?: T
+    obj?: Model
   ) {
     super(response, message, true, errorFields, obj);
   }
@@ -55,10 +55,10 @@ export class ApiResponseError<T> extends ApiResponse<T> {
  *
  * @param {any} response - HTTP response object
  * @param {string} message - 'Main' message for response
- * @param {T=} obj - Actual object returned by API if applicable
+ * @param {Model=} obj - Actual object returned by API if applicable
  */
-export class ApiResponseSuccess<T> extends ApiResponse<T> {
-  constructor(response: any, message: string = 'Successful request.', obj?: T) {
+export class ApiResponseSuccess<Model> extends ApiResponse<Model> {
+  constructor(response: any, message: string = 'Successful request.', obj?: Model) {
     super(response, message, false, undefined, obj);
   }
 }
