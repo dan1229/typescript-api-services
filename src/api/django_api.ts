@@ -239,7 +239,6 @@ export class DjangoApi<Model> extends BaseApi {
     combineLists: Boolean = false
   ): Promise<ApiResponse<Model[]>> {
     const res = await responseHandler.handleResponse();
-
     try {
       this.count = res.response.data.count;
       this.next = res.response.data.next;
@@ -264,7 +263,7 @@ export class DjangoApi<Model> extends BaseApi {
     return res;
   }
 
-  async handleDjangoGet<Model>(responseHandler: ApiResponseHandler, paginated: Boolean) {
+  async handleDjangoGet(responseHandler: ApiResponseHandler, paginated: Boolean) {
     // helper function to clean up get and retrieve methods
     if (!paginated) {
       const res = await responseHandler.handleResponse();
