@@ -247,14 +247,11 @@ export class DjangoApi<Model> extends BaseApi {
       if (!combineLists) {
         this.list = res.obj;
       } else {
-        let tmp = <any>[];
-        for (let i = 0; i < this.list?.length!; i++) {
-          tmp.push(this.list![i]);
+        if (!!this.list && this.list.length > 0) {
+          this.list = [...this.list, ...res.obj];
+        } else {
+          this.list = res.obj;
         }
-        for (let i = 0; i < res.obj?.length!; i++) {
-          tmp.push(res.obj![i]);
-        }
-        this.list = tmp;
       }
       this.calculatePageCurrent();
     } catch (e) {
