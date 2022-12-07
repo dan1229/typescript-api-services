@@ -1,7 +1,6 @@
 import { BaseApi } from './base_api';
 import { ApiResponseHandler } from '../api_response_handler';
 import { ApiResponse } from '../types';
-import { AxiosRequestHeaders } from 'axios';
 
 /**
  *
