@@ -276,9 +276,13 @@ export class DjangoApi<Model> extends BaseApi {
       return res;
     } else {
       const res = await this.handlePaginatedResponse(responseHandler);
-      this.count = res.response.data.count;
-      this.list = res.obj;
-      this.calculatePageTotal(); // this should only be called during the initial call NOT during any next/prev calls
+      try {
+        this.count = res.response.data.count;
+        this.list = res.obj;
+        this.calculatePageTotal(); // this should only be called during the initial call NOT during any next/prev calls
+      } catch (e) {
+        console.error(e);
+      }
       return res;
     }
   }
