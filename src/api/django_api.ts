@@ -44,33 +44,6 @@ export default class DjangoApi<Model> extends BaseApi {
   }
 
   /**
-   * COPY FROM
-   *
-   * Copy API info from another `DjangoApi` class to create a new instance
-   *
-   * @param {DjangoApi<Model>} api - API to copy to this current instance
-   * @return {DjangoApi<Model>} API object created/copied
-   */
-  copyFrom(api: DjangoApi<Model>): DjangoApi<Model> {
-    // TODO replace with spread? is this even being used?
-    // base properties
-    this.name = api['name'];
-    this.urlEndpoint = api['urlEndpoint'];
-    this.urlBase = api['urlBase'];
-    this.timeout = api['timeout'];
-    // django properties
-    this.token = api['token'];
-    this.list = api['list'];
-    this.details = api['details'];
-    this.count = api['count'];
-    this.next = api['next'];
-    this.prev = api['prev'];
-    this.pageCurrent = api['pageCurrent'];
-    this.pageTotal = api['pageTotal'];
-    return this;
-  }
-
-  /**
    * HEADERS
    *
    * Get headers for API request - authenticated or otherwise.
