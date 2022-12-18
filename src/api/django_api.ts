@@ -1,6 +1,6 @@
-import { BaseApi } from './base_api';
 import { ApiResponseHandler } from '../api_response_handler';
 import { ApiResponse } from '../types';
+import { BaseApi } from './base_api';
 
 /**
  *
@@ -19,12 +19,9 @@ import { ApiResponse } from '../types';
  * @param {string} urlEndpoint - Endpoint of this URL. Should NOT include / or urlBase (i.e., "/api/").
  * @param {string=} token - Auth token to use.
  */
-export class DjangoApi<Model> extends BaseApi {
-  // token
+export default class DjangoApi<Model> extends BaseApi {
   token: string;
-
-  // paginated api elements
-  list?: Model[];
+  list: Model[] = [];
   details?: Model;
   count?: number;
   next?: string;
@@ -37,37 +34,10 @@ export class DjangoApi<Model> extends BaseApi {
    */
   public constructor(name: string, urlBase: string, urlEndpoint: string, token?: string) {
     super(name, urlBase, urlEndpoint);
-    if (typeof token === 'undefined') {
+    if (!token) {
       token = '';
     }
     this.token = token;
-    this.list = [];
-  }
-
-  /**
-   * COPY FROM
-   *
-   * Copy API info from another `DjangoApi` class to create a new instance
-   *
-   * @param {DjangoApi<Model>} api - API to copy to this current instance
-   * @return {DjangoApi<Model>} API object created/copied
-   */
-  copyFrom(api: DjangoApi<Model>): DjangoApi<Model> {
-    // base properties
-    this.name = api['name'];
-    this.urlEndpoint = api['urlEndpoint'];
-    this.urlBase = api['urlBase'];
-    this.timeout = api['timeout'];
-    // django properties
-    this.token = api['token'];
-    this.list = api['list'];
-    this.details = api['details'];
-    this.count = api['count'];
-    this.next = api['next'];
-    this.prev = api['prev'];
-    this.pageCurrent = api['pageCurrent'];
-    this.pageTotal = api['pageTotal'];
-    return this;
   }
 
   /**
@@ -171,7 +141,7 @@ export class DjangoApi<Model> extends BaseApi {
     paginated: Boolean = true,
     filters?: TypeFilters
   ): Promise<ApiResponse<Model[]>> {
-    const responseHandler = new ApiResponseHandler(this, this.httpGet(this.urlApi(undefined, filters)));
+    const responseHandler = new ApiResponseHandler<Model>(this, this.httpGet(this.urlApi(undefined, filters)));
     return this.handleDjangoGet(responseHandler, paginated);
   }
 
@@ -218,7 +188,7 @@ export class DjangoApi<Model> extends BaseApi {
     paginated: Boolean = false,
     filters?: TypeFilters
   ): Promise<ApiResponse<Model | Model[]>> {
-    const responseHandler = new ApiResponseHandler(this, this.httpGet(this.urlApi(id, filters)));
+    const responseHandler = new ApiResponseHandler<Model | Model[]>(this, this.httpGet(this.urlApi(id, filters)));
     return this.handleDjangoGet(responseHandler, paginated);
   }
 
@@ -229,12 +199,12 @@ export class DjangoApi<Model> extends BaseApi {
    * Handles 'next', 'prev', 'count', etc. and
    * this API data
    *
-   * @param {ApiResponseHandler} responseHandler - response handler containing request to make
+   * @param {ApiResponseHandler<Model[]>} responseHandler - response handler containing request to make
    * @param {Boolean=} combineLists - Whether to add next page to the current list or replace it
    * @return {ApiResponse} Api response object
    */
   async handlePaginatedResponse(
-    responseHandler: ApiResponseHandler,
+    responseHandler: ApiResponseHandler<Model[]>,
     combineLists: Boolean = false
   ): Promise<ApiResponse<Model[]>> {
     const res = await responseHandler.handleResponse();
@@ -259,7 +229,7 @@ export class DjangoApi<Model> extends BaseApi {
     return res;
   }
 
-  async handleDjangoGet(responseHandler: ApiResponseHandler, paginated: Boolean) {
+  async handleDjangoGet(responseHandler: ApiResponseHandler<Model | Model[]>, paginated: Boolean) {
     // helper function to clean up get and retrieve methods
     if (!paginated) {
       const res = await responseHandler.handleResponse();
@@ -275,10 +245,10 @@ export class DjangoApi<Model> extends BaseApi {
       }
       return res;
     } else {
-      const res = await this.handlePaginatedResponse(responseHandler);
+      const res = await this.handlePaginatedResponse(responseHandler as ApiResponseHandler<Model[]>);
       try {
         this.count = res.response.data.count;
-        this.list = res.obj;
+        this.list = res.obj ?? [];
         this.calculatePageTotal(); // this should only be called during the initial call NOT during any next/prev calls
       } catch (e) {
         console.error(e);
@@ -294,7 +264,7 @@ export class DjangoApi<Model> extends BaseApi {
    */
   async getNext(combineLists: Boolean = false): Promise<ApiResponse<Model[]> | undefined> {
     if (typeof this.next != 'undefined') {
-      const responseHandler = new ApiResponseHandler(this, this.httpGet(this.next));
+      const responseHandler = new ApiResponseHandler<Model[]>(this, this.httpGet(this.next));
       return await this.handlePaginatedResponse(responseHandler, combineLists);
     }
   }
@@ -306,7 +276,7 @@ export class DjangoApi<Model> extends BaseApi {
    */
   async getPrev(combineLists: Boolean = false): Promise<ApiResponse<Model[]> | undefined> {
     if (typeof this.prev != 'undefined') {
-      const responseHandler = new ApiResponseHandler(this, this.httpGet(this.prev));
+      const responseHandler = new ApiResponseHandler<Model[]>(this, this.httpGet(this.prev));
       return await this.handlePaginatedResponse(responseHandler, combineLists);
     }
   }
@@ -318,7 +288,7 @@ export class DjangoApi<Model> extends BaseApi {
    */
   async getPage(page: number): Promise<ApiResponse<Model[]>> {
     const pageUrl = `${this.urlApi()}?page=${page}`;
-    const responseHandler = new ApiResponseHandler(this, this.httpGet(pageUrl));
+    const responseHandler = new ApiResponseHandler<Model[]>(this, this.httpGet(pageUrl));
     return await this.handlePaginatedResponse(responseHandler);
   }
 
@@ -358,7 +328,7 @@ export class DjangoApi<Model> extends BaseApi {
    * @return {ApiResponse} Api response object
    */
   async patchUpdate<TypeBody extends object>(id: string, body: TypeBody): Promise<ApiResponse<Model>> {
-    const responseHandler = new ApiResponseHandler(this, this.httpPatch(this.urlApi(id), body));
+    const responseHandler = new ApiResponseHandler<Model>(this, this.httpPatch(this.urlApi(id), body));
     const res = await responseHandler.handleResponse();
     try {
       this.details = res.obj;
@@ -377,7 +347,7 @@ export class DjangoApi<Model> extends BaseApi {
    * @return {ApiResponse} Api response object
    */
   async postCreate<TypeBody extends object>(body: TypeBody): Promise<ApiResponse<Model>> {
-    const responseHandler = new ApiResponseHandler(this, this.httpPost(this.urlApi(), body));
+    const responseHandler = new ApiResponseHandler<Model>(this, this.httpPost(this.urlApi(), body));
     const res = await responseHandler.handleResponse();
     try {
       this.details = res.obj;
@@ -396,7 +366,7 @@ export class DjangoApi<Model> extends BaseApi {
    * @return {ApiResponse} Api response object
    */
   async deleteItem(id: string): Promise<ApiResponse<Model>> {
-    const responseHandler = new ApiResponseHandler(this, this.httpDelete(this.urlApi(id)));
+    const responseHandler = new ApiResponseHandler<Model>(this, this.httpDelete(this.urlApi(id)));
     return await responseHandler.handleResponse();
   }
 
@@ -406,9 +376,6 @@ export class DjangoApi<Model> extends BaseApi {
    * HTTP wrapper functions to standard methods
    * Help with functionality, formatting, auth,
    * sanitizing etc.
-   *
-   * Supported methods
-   * - GET, POST, PATCH, DELETE
    */
   async httpGet(url: string): Promise<any> {
     const headers = this.getHeaders();
