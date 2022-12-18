@@ -1,6 +1,6 @@
-import { BaseApi } from './base_api';
 import { ApiResponseHandler } from '../api_response_handler';
 import { ApiResponse } from '../types';
+import { BaseApi } from './base_api';
 
 /**
  *
@@ -19,12 +19,12 @@ import { ApiResponse } from '../types';
  * @param {string} urlEndpoint - Endpoint of this URL. Should NOT include / or urlBase (i.e., "/api/").
  * @param {string=} token - Auth token to use.
  */
-export class DjangoApi<Model> extends BaseApi {
+export default class DjangoApi<Model> extends BaseApi {
   // token
   token: string;
 
   // paginated api elements
-  list?: Model[];
+  list: Model[] = [];
   details?: Model;
   count?: number;
   next?: string;
@@ -37,11 +37,10 @@ export class DjangoApi<Model> extends BaseApi {
    */
   public constructor(name: string, urlBase: string, urlEndpoint: string, token?: string) {
     super(name, urlBase, urlEndpoint);
-    if (typeof token === 'undefined') {
+    if (!token) {
       token = '';
     }
     this.token = token;
-    this.list = [];
   }
 
   /**
@@ -53,6 +52,7 @@ export class DjangoApi<Model> extends BaseApi {
    * @return {DjangoApi<Model>} API object created/copied
    */
   copyFrom(api: DjangoApi<Model>): DjangoApi<Model> {
+    // TODO replace with spread? is this even being used?
     // base properties
     this.name = api['name'];
     this.urlEndpoint = api['urlEndpoint'];
@@ -278,7 +278,7 @@ export class DjangoApi<Model> extends BaseApi {
       const res = await this.handlePaginatedResponse(responseHandler);
       try {
         this.count = res.response.data.count;
-        this.list = res.obj;
+        this.list = res.obj ?? [];
         this.calculatePageTotal(); // this should only be called during the initial call NOT during any next/prev calls
       } catch (e) {
         console.error(e);
@@ -406,9 +406,6 @@ export class DjangoApi<Model> extends BaseApi {
    * HTTP wrapper functions to standard methods
    * Help with functionality, formatting, auth,
    * sanitizing etc.
-   *
-   * Supported methods
-   * - GET, POST, PATCH, DELETE
    */
   async httpGet(url: string): Promise<any> {
     const headers = this.getHeaders();
