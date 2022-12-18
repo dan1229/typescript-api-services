@@ -5,12 +5,13 @@ import Cookies from 'js-cookie';
  *
  * BASE API
  *
- * Generic API interface - use this for any external service or REST API
- * interaction to simplify common functions. Handles Axios, basic URL management, and similar
+ * Generic API interface - use this for any external service/REST APIs to simplify
+ * interactions with common functions. Handles Axios, basic URL management, and similar
+ * functionality.
  *
  * @param {string} name - API Name, primarily for logging.
  * @param {string} urlEndpoint - Endpoint of this URL. Should NOT include / or urlBase (i.e., "/api/").
- * @param {string=} urlBase - Base URL to use - defaults to environment URL.
+ * @param {string} urlBase - Base URL to use - defaults to environment URL.
  * @param {number=} timeout - Default request timeout.
  */
 export abstract class BaseApi {
