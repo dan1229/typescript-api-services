@@ -1,4 +1,4 @@
-# CHANGELOG for {project_name_capitalcase}
+# CHANGELOG for TypeScript API Services
 #### By: [Daniel Nazarian](https://danielnazarian) 🐧👹
 ##### Contact me at <dnaz@danielnazarian.com>
 
