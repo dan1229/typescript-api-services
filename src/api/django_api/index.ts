@@ -1,6 +1,6 @@
-import { ApiResponseHandler } from '../api_response_handler';
-import { ApiResponse } from '../types';
-import { BaseApi } from './base_api';
+import { ApiResponseHandler } from '../../api_response_handler';
+import { ApiResponse } from '../../types';
+import { BaseApi } from '../base_api';
 
 /**
  *
@@ -47,7 +47,7 @@ export default class DjangoApi<Model> extends BaseApi {
    *
    * @return {AxiosRequestHeaders} Header object/map
    **/
-  getHeaders(): any {
+  protected getHeaders(): any {
     if (typeof this.token != 'undefined' && this.token != '') {
       return {
         headers: {
@@ -68,8 +68,8 @@ export default class DjangoApi<Model> extends BaseApi {
    * @param {string=} id - ID of object to include
    * @return {string} URL
    */
-  urlApi<TypeFilters extends object>(id?: string, filters?: TypeFilters): string {
-    const queryString = this._createQueryString(filters);
+  protected urlApi<TypeFilters extends object>(id?: string, filters?: TypeFilters): string {
+    const queryString = this.createQueryString(filters);
     let url = '';
     if (typeof id == 'undefined' || id == '') {
       url = `${super.urlApi()}`;
@@ -83,7 +83,7 @@ export default class DjangoApi<Model> extends BaseApi {
     return url;
   }
 
-  _createQueryString<TypeFilters extends object>(filters?: TypeFilters): string {
+  protected createQueryString<TypeFilters extends object>(filters?: TypeFilters): string {
     /**
      * _createQueryString
      * Create a query string from a filter object
@@ -111,7 +111,7 @@ export default class DjangoApi<Model> extends BaseApi {
     return queryString;
   }
 
-  _getQueryString(key: string, url: string): number {
+  protected getQueryString(key: string, url: string): number {
     /**
      * _getQueryString
      * Get a query string value from a url
@@ -137,7 +137,7 @@ export default class DjangoApi<Model> extends BaseApi {
    * @param {TypeFilters=} filters - Filters to send with request
    * @return {ApiResponse} Api response object
    */
-  async getList<TypeFilters extends object>(
+  protected async getList<TypeFilters extends object>(
     paginated: Boolean = true,
     filters?: TypeFilters
   ): Promise<ApiResponse<Model[]>> {
@@ -152,7 +152,7 @@ export default class DjangoApi<Model> extends BaseApi {
    *
    * @returns {Array} List of all objects paginated out
    */
-  async getListAll(): Promise<Model[]> {
+  protected async getListAll(): Promise<Model[]> {
     let res = [];
     const first = await this.getList();
     res = first.obj || [];
@@ -183,7 +183,7 @@ export default class DjangoApi<Model> extends BaseApi {
    * @param {TypeFilters=} filters - Filters to send with request
    * @return {ApiResponse} Api response object
    */
-  async getRetrieve<TypeFilters extends object>(
+  protected async getRetrieve<TypeFilters extends object>(
     id: string,
     paginated: Boolean = false,
     filters?: TypeFilters
@@ -229,7 +229,7 @@ export default class DjangoApi<Model> extends BaseApi {
     return res;
   }
 
-  async handleDjangoGet(responseHandler: ApiResponseHandler<Model | Model[]>, paginated: Boolean) {
+  protected async handleDjangoGet(responseHandler: ApiResponseHandler<Model | Model[]>, paginated: Boolean) {
     // helper function to clean up get and retrieve methods
     if (!paginated) {
       const res = await responseHandler.handleResponse();
@@ -262,7 +262,7 @@ export default class DjangoApi<Model> extends BaseApi {
    * @param {Boolean=} combineLists - Whether to add next page to the current list or replace it
    * @return {ApiResponse} Api response object
    */
-  async getNext(combineLists: Boolean = false): Promise<ApiResponse<Model[]> | undefined> {
+  protected async getNext(combineLists: Boolean = false): Promise<ApiResponse<Model[]> | undefined> {
     if (typeof this.next != 'undefined') {
       const responseHandler = new ApiResponseHandler<Model[]>(this, this.httpGet(this.next));
       return await this.handlePaginatedResponse(responseHandler, combineLists);
@@ -274,7 +274,7 @@ export default class DjangoApi<Model> extends BaseApi {
    * @param {Boolean=} combineLists - Whether to add next page to the current list or replace it
    * @return {ApiResponse} Api response object
    */
-  async getPrev(combineLists: Boolean = false): Promise<ApiResponse<Model[]> | undefined> {
+  protected async getPrev(combineLists: Boolean = false): Promise<ApiResponse<Model[]> | undefined> {
     if (typeof this.prev != 'undefined') {
       const responseHandler = new ApiResponseHandler<Model[]>(this, this.httpGet(this.prev));
       return await this.handlePaginatedResponse(responseHandler, combineLists);
@@ -286,7 +286,7 @@ export default class DjangoApi<Model> extends BaseApi {
    * @param {Number} page - Specific page number to retrieve
    * @return {ApiResponse} Api response object
    */
-  async getPage(page: number): Promise<ApiResponse<Model[]>> {
+  protected async getPage(page: number): Promise<ApiResponse<Model[]>> {
     const pageUrl = `${this.urlApi()}?page=${page}`;
     const responseHandler = new ApiResponseHandler<Model[]>(this, this.httpGet(pageUrl));
     return await this.handlePaginatedResponse(responseHandler);
@@ -295,17 +295,17 @@ export default class DjangoApi<Model> extends BaseApi {
   /**
    * PAGINATION HELPERS
    */
-  calculatePageCurrent() {
+  protected calculatePageCurrent() {
     if (typeof this.next != 'undefined' && this.next != null) {
-      let num = Number(this._getQueryString('page', this.next)) || 2;
+      let num = Number(this.getQueryString('page', this.next)) || 2;
       this.pageCurrent = num - 1;
     } else if (typeof this.prev != 'undefined' && this.prev != null) {
-      let num = Number(this._getQueryString('page', this.prev)) || 0;
+      let num = Number(this.getQueryString('page', this.prev)) || 0;
       this.pageCurrent = num + 1;
     }
   }
 
-  calculatePageTotal() {
+  protected calculatePageTotal() {
     if (typeof this.list != 'undefined') {
       if (this.list?.length > 0 && typeof this.count != 'undefined') {
         let pageTotal = Math.floor(this.count / this.list?.length);
@@ -327,7 +327,7 @@ export default class DjangoApi<Model> extends BaseApi {
    * @param {TypeBody} body - Body of request to include, probably the object data
    * @return {ApiResponse} Api response object
    */
-  async patchUpdate<TypeBody extends object>(id: string, body: TypeBody): Promise<ApiResponse<Model>> {
+  protected async patchUpdate<TypeBody extends object>(id: string, body: TypeBody): Promise<ApiResponse<Model>> {
     const responseHandler = new ApiResponseHandler<Model>(this, this.httpPatch(this.urlApi(id), body));
     const res = await responseHandler.handleResponse();
     try {
@@ -346,7 +346,7 @@ export default class DjangoApi<Model> extends BaseApi {
    * @param {TypeBody} body - Body of request to include, probably the object data
    * @return {ApiResponse} Api response object
    */
-  async postCreate<TypeBody extends object>(body: TypeBody): Promise<ApiResponse<Model>> {
+  protected async postCreate<TypeBody extends object>(body: TypeBody): Promise<ApiResponse<Model>> {
     const responseHandler = new ApiResponseHandler<Model>(this, this.httpPost(this.urlApi(), body));
     const res = await responseHandler.handleResponse();
     try {
@@ -365,7 +365,7 @@ export default class DjangoApi<Model> extends BaseApi {
    * @param {string} id - ID of object to delete
    * @return {ApiResponse} Api response object
    */
-  async deleteItem(id: string): Promise<ApiResponse<Model>> {
+  protected async deleteItem(id: string): Promise<ApiResponse<Model>> {
     const responseHandler = new ApiResponseHandler<Model>(this, this.httpDelete(this.urlApi(id)));
     return await responseHandler.handleResponse();
   }
@@ -377,22 +377,22 @@ export default class DjangoApi<Model> extends BaseApi {
    * Help with functionality, formatting, auth,
    * sanitizing etc.
    */
-  async httpGet(url: string): Promise<any> {
+  protected async httpGet(url: string): Promise<any> {
     const headers = this.getHeaders();
     return this.client.get(url, headers);
   }
 
-  async httpPost<TypeBody extends object>(url: string, body: TypeBody): Promise<any> {
+  protected async httpPost<TypeBody extends object>(url: string, body: TypeBody): Promise<any> {
     const headers = this.getHeaders();
     return this.client.post(url, body, headers);
   }
 
-  async httpPatch<TypeBody extends object>(url: string, body: TypeBody): Promise<any> {
+  protected async httpPatch<TypeBody extends object>(url: string, body: TypeBody): Promise<any> {
     const headers = this.getHeaders();
     return this.client.patch(url, body, headers);
   }
 
-  async httpDelete(url: string): Promise<any> {
+  protected async httpDelete(url: string): Promise<any> {
     const headers = this.getHeaders();
     return this.client.delete(url, headers);
   }
