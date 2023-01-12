@@ -15,7 +15,6 @@ import Cookies from 'js-cookie';
  * @param {number=} timeout - Default request timeout.
  */
 export abstract class BaseApi {
-  // parameters
   name: string;
   urlEndpoint: string;
   urlBase: string;
