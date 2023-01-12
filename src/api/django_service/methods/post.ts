@@ -8,11 +8,13 @@ import { ApiResponse } from '../../../types';
  *
  * Django Post - TODO
  */
-export default class DjangoPost<Model> extends DjangoApi<Model> {
+export default class DjangoPost<Model, IBody extends object> extends DjangoApi {
+  result?: Model;
+
   /**
    * HTTP call
    */
-  protected async httpPost<TypeBody extends object>(url: string, body: TypeBody): Promise<any> {
+  protected async httpPost(url: string, body: IBody): Promise<any> {
     const headers = this.getHeaders();
     return this.client.post(url, body, headers);
   }
@@ -22,10 +24,10 @@ export default class DjangoPost<Model> extends DjangoApi<Model> {
    *
    * POST request to Django to create an object.
    *
-   * @param {TypeBody} body - Body of request to include, probably the object data
+   * @param {IBody} body - Body of request to include, probably the object data
    * @return {ApiResponse} Api response object
    */
-  protected async postCreate<TypeBody extends object>(body: TypeBody): Promise<ApiResponse<Model>> {
+  protected async postCreate(body: IBody): Promise<ApiResponse<Model>> {
     const responseHandler = new ApiResponseHandler<Model>(this, this.httpPost(this.urlApi(), body));
     const res = await responseHandler.handleResponse();
     try {

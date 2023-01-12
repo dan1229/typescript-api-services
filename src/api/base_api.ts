@@ -82,11 +82,11 @@ export abstract class BaseApi {
     return this.client.get(url, { headers: headers });
   }
 
-  protected async httpPost<TypeBody extends object>(url: string, body: TypeBody, headers = {}): Promise<any> {
+  protected async httpPost(url: string, body: object, headers = {}): Promise<any> {
     return this.client.post(url, body, headers);
   }
 
-  protected async httpPatch<TypeBody extends object>(url: string, body: TypeBody, headers = {}): Promise<any> {
+  protected async httpPatch(url: string, body: object, headers = {}): Promise<any> {
     return await this.client.patch(url, body, headers);
   }
 

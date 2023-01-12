@@ -11,10 +11,8 @@ import { BaseApi } from '../base_api';
  * @param {string} urlEndpoint - Endpoint of this URL. Should NOT include / or urlBase (i.e., "/api/").
  * @param {string=} token - Auth token to use.
  */
-export default class DjangoService<Model> extends BaseApi {
+export default class DjangoService extends BaseApi {
   token: string;
-  list: Model[] = [];
-  result?: Model;
 
   public constructor(name: string, urlBase: string, urlEndpoint: string, token?: string) {
     super(name, urlBase, urlEndpoint);

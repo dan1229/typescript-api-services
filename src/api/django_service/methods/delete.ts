@@ -8,7 +8,7 @@ import { ApiResponse } from '../../../types';
  *
  * Django Delete - TODO
  */
-export default class DjangoDelete<Model> extends DjangoApi<Model> {
+export default class DjangoDelete<Model> extends DjangoApi {
   /**
    * HTTP call
    */

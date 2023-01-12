@@ -8,7 +8,9 @@ import { ApiResponse } from '../../../types';
  *
  * Django Get - TODO
  */
-export default class DjangoGet<Model> extends DjangoApi<Model> {
+export default class DjangoGet<Model> extends DjangoApi {
+  list: Model[] = [];
+  result?: Model;
   count?: number;
   next?: string;
   prev?: string;
@@ -100,11 +102,11 @@ export default class DjangoGet<Model> extends DjangoApi<Model> {
     if (!paginated) {
       const res = await responseHandler.handleResponse();
       try {
-        this.details = res.obj;
+        this.result = res.obj;
         if (res.obj instanceof Array) {
           this.list = res.obj;
         } else {
-          this.details = res.obj;
+          this.result = res.obj;
         }
       } catch (e) {
         console.error(e);

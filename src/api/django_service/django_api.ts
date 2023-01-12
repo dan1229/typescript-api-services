@@ -1,3 +1,4 @@
+import { BaseApi } from '../base_api';
 import DjangoService from './django_service';
 
 export type TDjangoApiMethod = 'get' | 'post' | 'patch' | 'delete';
@@ -19,7 +20,17 @@ export type TDjangoApiMethod = 'get' | 'post' | 'patch' | 'delete';
  * @param {string} urlEndpoint - Endpoint of this URL. Should NOT include / or urlBase (i.e., "/api/").
  * @param {string=} token - Auth token to use.
  */
-export default class DjangoApi<Model> extends DjangoService<Model> {
+export default class DjangoApi extends BaseApi {
+  token: string;
+
+  public constructor(name: string, urlBase: string, urlEndpoint: string, token?: string) {
+    super(name, urlBase, urlEndpoint);
+    if (!token) {
+      token = '';
+    }
+    this.token = token;
+  }
+
   /**
    * HEADERS
    *
