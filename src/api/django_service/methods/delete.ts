@@ -25,7 +25,7 @@ export default class DjangoDelete<Model> extends DjangoApi {
    * @param {string} id - ID of object to delete
    * @return {ApiResponse} Api response object
    */
-  protected async deleteItem(id: string): Promise<ApiResponse<Model>> {
+  public async deleteItem(id: string): Promise<ApiResponse<Model>> {
     const responseHandler = new ApiResponseHandler<Model>(this, this.httpDelete(this.urlApi(id)));
     return await responseHandler.handleResponse();
   }

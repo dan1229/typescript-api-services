@@ -8,12 +8,10 @@ export type TDjangoApiMethod = 'get' | 'post' | 'patch' | 'delete';
  * DJANGO API
  *
  * Django Api abstract base class - base any API methods off of this.
+ * You should never need to instantiate this class directly.
+ *
  * This class is meant to be extended by any API that uses Django as a backend.
  * Then you can use the methods or store them in a new class.
- *
- * The generic type Model is meant to represent the Django object
- * we are dealing with - User, Email, etc. - you can set to 'any'
- * if this doesn't make sense with your API/models.
  *
  * @param {string} name - API Name, primarily for logging.
  * @param {string} urlBase - Base URL to use for API requests.

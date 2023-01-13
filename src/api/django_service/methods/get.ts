@@ -35,7 +35,7 @@ export default class DjangoGet<Model> extends DjangoApi {
    * @param {TypeFilters=} filters - Filters to send with request
    * @return {ApiResponse} Api response object
    */
-  protected async getList<TypeFilters extends object>(
+  public async getList<TypeFilters extends object>(
     paginated: Boolean = true,
     filters?: TypeFilters
   ): Promise<ApiResponse<Model[]>> {
@@ -50,7 +50,7 @@ export default class DjangoGet<Model> extends DjangoApi {
    *
    * @returns {Array} List of all objects paginated out
    */
-  protected async getListAll(): Promise<Model[]> {
+  public async getListAll(): Promise<Model[]> {
     let res = [];
     const first = await this.getList();
     res = first.obj || [];
@@ -81,7 +81,7 @@ export default class DjangoGet<Model> extends DjangoApi {
    * @param {TypeFilters=} filters - Filters to send with request
    * @return {ApiResponse} Api response object
    */
-  protected async getRetrieve<TypeFilters extends object>(
+  public async getRetrieve<TypeFilters extends object>(
     id: string,
     paginated: Boolean = false,
     filters?: TypeFilters
@@ -136,7 +136,7 @@ export default class DjangoGet<Model> extends DjangoApi {
    * @param {Boolean=} combineLists - Whether to add next page to the current list or replace it
    * @return {ApiResponse} Api response object
    */
-  async handlePaginatedResponse(
+  protected async handlePaginatedResponse(
     responseHandler: ApiResponseHandler<Model[]>,
     combineLists: Boolean = false
   ): Promise<ApiResponse<Model[]>> {
@@ -168,7 +168,7 @@ export default class DjangoGet<Model> extends DjangoApi {
    * @param {Boolean=} combineLists - Whether to add next page to the current list or replace it
    * @return {ApiResponse} Api response object
    */
-  protected async getNext(combineLists: Boolean = false): Promise<ApiResponse<Model[]> | undefined> {
+  public async getNext(combineLists: Boolean = false): Promise<ApiResponse<Model[]> | undefined> {
     if (typeof this.next != 'undefined') {
       const responseHandler = new ApiResponseHandler<Model[]>(this, this.httpGet(this.next));
       return await this.handlePaginatedResponse(responseHandler, combineLists);
@@ -181,7 +181,7 @@ export default class DjangoGet<Model> extends DjangoApi {
    * @param {Boolean=} combineLists - Whether to add next page to the current list or replace it
    * @return {ApiResponse} Api response object
    */
-  protected async getPrev(combineLists: Boolean = false): Promise<ApiResponse<Model[]> | undefined> {
+  public async getPrev(combineLists: Boolean = false): Promise<ApiResponse<Model[]> | undefined> {
     if (typeof this.prev != 'undefined') {
       const responseHandler = new ApiResponseHandler<Model[]>(this, this.httpGet(this.prev));
       return await this.handlePaginatedResponse(responseHandler, combineLists);
@@ -194,7 +194,7 @@ export default class DjangoGet<Model> extends DjangoApi {
    * @param {Number} page - Specific page number to retrieve
    * @return {ApiResponse} Api response object
    */
-  protected async getPage(page: number): Promise<ApiResponse<Model[]>> {
+  public async getPage(page: number): Promise<ApiResponse<Model[]>> {
     const pageUrl = `${this.urlApi()}?page=${page}`;
     const responseHandler = new ApiResponseHandler<Model[]>(this, this.httpGet(pageUrl));
     return await this.handlePaginatedResponse(responseHandler);

@@ -19,6 +19,11 @@ export default class DjangoPatch<Model, IBody extends object> extends DjangoApi 
     return this.client.patch(url, body, headers);
   }
 
+  protected async httpPatchGeneric<IBodyGeneric extends object>(url: string, body: IBodyGeneric): Promise<any> {
+    const headers = this.getHeaders();
+    return this.client.patch(url, body, headers);
+  }
+
   /**
    * patchUpdate
    *
@@ -28,7 +33,7 @@ export default class DjangoPatch<Model, IBody extends object> extends DjangoApi 
    * @param {IBody} body - Body of request to include, probably the object data
    * @return {ApiResponse} Api response object
    */
-  protected async patchUpdate(id: string, body: IBody): Promise<ApiResponse<Model>> {
+  public async patchUpdate(id: string, body: IBody): Promise<ApiResponse<Model>> {
     const responseHandler = new ApiResponseHandler<Model>(this, this.httpPatch(this.urlApi(id), body));
     const res = await responseHandler.handleResponse();
     try {

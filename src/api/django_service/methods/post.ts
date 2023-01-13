@@ -19,6 +19,11 @@ export default class DjangoPost<Model, IBody extends object> extends DjangoApi {
     return this.client.post(url, body, headers);
   }
 
+  protected async httpPostGeneric<IBodyGeneric extends object>(url: string, body: IBodyGeneric): Promise<any> {
+    const headers = this.getHeaders();
+    return this.client.post(url, body, headers);
+  }
+
   /**
    * postCreate
    *
@@ -27,7 +32,7 @@ export default class DjangoPost<Model, IBody extends object> extends DjangoApi {
    * @param {IBody} body - Body of request to include, probably the object data
    * @return {ApiResponse} Api response object
    */
-  protected async postCreate(body: IBody): Promise<ApiResponse<Model>> {
+  public async postCreate(body: IBody): Promise<ApiResponse<Model>> {
     const responseHandler = new ApiResponseHandler<Model>(this, this.httpPost(this.urlApi(), body));
     const res = await responseHandler.handleResponse();
     try {
