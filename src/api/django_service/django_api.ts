@@ -1,5 +1,4 @@
 import { BaseApi } from '../base_api';
-import DjangoService from './django_service';
 
 export type TDjangoApiMethod = 'get' | 'post' | 'patch' | 'delete';
 
