@@ -7,9 +7,9 @@ export type TDjangoApiMethod = 'get' | 'post' | 'patch' | 'delete';
  *
  * DJANGO API
  *
- * Django Api base class - use this for any Django Rest APIs
- * This handles common functionality like authentication and
- * formatting specific request types.
+ * Django Api abstract base class - base any API methods off of this.
+ * This class is meant to be extended by any API that uses Django as a backend.
+ * Then you can use the methods or store them in a new class.
  *
  * The generic type Model is meant to represent the Django object
  * we are dealing with - User, Email, etc. - you can set to 'any'
@@ -20,7 +20,7 @@ export type TDjangoApiMethod = 'get' | 'post' | 'patch' | 'delete';
  * @param {string} urlEndpoint - Endpoint of this URL. Should NOT include / or urlBase (i.e., "/api/").
  * @param {string=} token - Auth token to use.
  */
-export default class DjangoApi extends BaseApi {
+export default abstract class DjangoApi extends BaseApi {
   token: string;
 
   public constructor(name: string, urlBase: string, urlEndpoint: string, token?: string) {
