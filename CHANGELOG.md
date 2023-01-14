@@ -35,21 +35,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ----
-### 0.0.2
+### 0.1.1
 
 
 CD for releasing
-- branch name
-  - really raises the question of how to version this, branches would be nice but is it necessary
-- gh release
-
+- create branch with version name
+  - `version/0.1.1`
+- gh release with same version name
 CI
-- build
-- lint
+- build?
+- lint?
 
 
-
-### [0.0.2] - 2022-MM-DD
+### [0.1.1] - 2023-MM-DD
 - Fixed import and dependency issues
 #### TODO
 - CI

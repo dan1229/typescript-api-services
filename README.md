@@ -7,6 +7,8 @@
 ### Description
 Just some HTTP services and templates for Typescript projects.
 
+Primarily focussed on using with Django REST Framework however can be used with any API.
+
 ### Requirements
 You must have these NPM packages installed
 - [Axios](https://www.npmjs.com/package/axios)
@@ -15,4 +17,4 @@ You must have these NPM packages installed
 
 -------------------------------------------------------
 ##### [https://danielnazarian.com](https://danielnazarian.com)
-##### Copyright 2022 © Daniel Nazarian.
+##### Copyright 2023 © Daniel Nazarian.
