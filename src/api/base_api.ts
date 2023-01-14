@@ -15,7 +15,6 @@ import Cookies from 'js-cookie';
  * @param {number=} timeout - Default request timeout.
  */
 export abstract class BaseApi {
-  // parameters
   name: string;
   urlEndpoint: string;
   urlBase: string;
@@ -51,7 +50,7 @@ export abstract class BaseApi {
    * @param {string=} slug - Param to add extra fields, id's, filters, etc.
    * @return {string} URL
    */
-  urlApi(slug?: string) {
+  protected urlApi(slug?: string): string {
     if (typeof slug == 'undefined' || slug == '') {
       return `${this.urlBase}/api/${this.urlEndpoint}/`;
     } else {
@@ -65,7 +64,7 @@ export abstract class BaseApi {
    **/
   _axiosInstance: AxiosInstance;
 
-  get client() {
+  protected get client() {
     return this._axiosInstance;
   }
 
@@ -79,19 +78,19 @@ export abstract class BaseApi {
    * Supported methods
    * - GET, POST, PATCH, DELETE
    **/
-  async httpGet(url: string, headers = {}): Promise<any> {
+  protected async httpGet(url: string, headers = {}): Promise<any> {
     return this.client.get(url, { headers: headers });
   }
 
-  async httpPost<TypeBody extends object>(url: string, body: TypeBody, headers = {}): Promise<any> {
+  protected async httpPost(url: string, body: object, headers = {}): Promise<any> {
     return this.client.post(url, body, headers);
   }
 
-  async httpPatch<TypeBody extends object>(url: string, body: TypeBody, headers = {}): Promise<any> {
+  protected async httpPatch(url: string, body: object, headers = {}): Promise<any> {
     return await this.client.patch(url, body, headers);
   }
 
-  async httpDelete(url: string, headers = {}): Promise<any> {
+  protected async httpDelete(url: string, headers = {}): Promise<any> {
     return await this.client.delete(url, { headers: headers });
   }
 }
