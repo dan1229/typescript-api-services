@@ -6,7 +6,12 @@ import { ApiResponse } from '../../../types';
  *
  * DJANGO PATCH
  *
- * Django Patch - TODO
+ * Django Patch - API methods for PATCH requests for a Django API
+ *
+ * Includes:
+ * - patchUpdate(id, body)
+ * - patchUpdateGeneric(id, body)
+ *  - Generic version of httpPatch that allows you to specify the body type and doesn't handle the response
  */
 export default class DjangoPatch<Model, IBody extends object> extends DjangoApi {
   result?: Model;

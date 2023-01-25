@@ -87,17 +87,15 @@ export class ApiResponseHandler<Model> {
    *
    * Method to handle responses in numerous ways depending on how to best integrate with 'higher level' UI code or similar.
    *
-   * TODO find type for 'any'
-   * @param {any} exception - Exception to log/handle
+   * @param {any | string} exception - Exception to log/handle
    * @return {ApiResponseError<Model>} Api response ERROR object
    */
   handleError(exception: any | string): ApiResponseError<Model> {
-    // js exception/errors
+    // js exception/errors -> return as is
     if (typeof exception == 'string') {
-      // replace with Object.keys(exception).length === 0?
       return new ApiResponseError<Model>(this.response, exception, new Map<string, string>());
     }
-    // response obj errors - django api errors
+    // response obj errors -> django api errors
     else if ('response' in exception && typeof exception.response !== 'undefined') {
       // 'data' in response
       if ('data' in exception.response && typeof !!exception.response.data) {

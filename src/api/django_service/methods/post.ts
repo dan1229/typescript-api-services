@@ -6,7 +6,12 @@ import { ApiResponse } from '../../../types';
  *
  * DJANGO POST
  *
- * Django Post - TODO
+ * Django POST - API methods for POST requests for a Django API
+ *
+ * Includes:
+ * - postCreate(id, body)
+ * - httpPostGeneric(id, body)
+ *  - Generic version of httpPost that allows you to specify the body type and doesn't handle the response
  */
 export default class DjangoPost<Model, IBody extends object> extends DjangoApi {
   result?: Model;

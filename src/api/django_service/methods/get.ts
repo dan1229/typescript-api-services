@@ -6,7 +6,16 @@ import { ApiResponse } from '../../../types';
  *
  * DJANGO GET
  *
- * Django Get - TODO
+ * Django Get - API methods for GET requests for a Django API
+ * Includes pagination support and filtering when appropriate.
+ *
+ * This includes:
+ * - getList()
+ * - getListAll()
+ * - getRetrieve(id)
+ * - getNext()
+ * - getPrev()
+ * - getPage(num)
  */
 export default class DjangoGet<Model> extends DjangoApi {
   list: Model[] = [];
@@ -29,7 +38,6 @@ export default class DjangoGet<Model> extends DjangoApi {
    * getList
    *
    * GET Django list from this API
-   *
    *
    * @param {Boolean=} paginated - Treat this API result like a paginated one (i.e., it contains 'next', 'prev', etc.)
    * @param {TypeFilters=} filters - Filters to send with request

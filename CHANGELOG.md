@@ -14,6 +14,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Released]
 
+### [0.1.0] - 2023-01-13
+- Architectural/structural changes to help make APIs more specific
+- Broke up Django API into method APIs
+- Major cleanup as well
+
+
 ### [0.0.1] - 2022-07-31
 - Initial release!
 
@@ -34,17 +40,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - maybe just mimic any fields django sends back?
 
 
+#### ApiResponseHandler -> DjangoApiResponseHandler?
+- move to new file?
+- keep api response handler more generic?
+
 ----
 ### 0.1.1
 
 
-CD for releasing
-- create branch with version name
-  - `version/0.1.1`
-- gh release with same version name
-CI
-- build?
-- lint?
+#### ci/cd
+- CD for releasing
+  - create branch with version name
+    - `version/0.1.1`
+  - gh release with same version name
+- CI
+  - build?
+  - lint?
 
 
 ### [0.1.1] - 2023-MM-DD
