@@ -47,6 +47,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ----
 ### 0.1.1
 
+#### base api handler
+- split up handler into django variant and a base variant
+- allow for baseapi instances to use this and get general functionality
+  - detect errors and use 'error' boolean
+  - generic message with 'message' string
+
 
 #### ci/cd
 - CD for releasing
