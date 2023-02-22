@@ -10,23 +10,21 @@ import Cookies from 'js-cookie';
  * functionality.
  *
  * @param {string} name - API Name, primarily for logging.
- * @param {string} urlEndpoint - Endpoint of this URL. Should NOT include / or urlBase (i.e., "/api/").
  * @param {string} urlBase - Base URL to use - defaults to environment URL.
  * @param {number=} timeout - Default request timeout.
  */
 export abstract class BaseApi {
   name: string;
-  urlEndpoint: string;
   urlBase: string;
   timeout: number;
 
   /**
    * CONSTRUCTOR
    */
-  protected constructor(name: string, urlBase: string, urlEndpoint: string, timeout: number = 10000) {
+  protected constructor(name: string, urlBase: string, timeout: number = 10000) {
+    console.log(urlBase);
     this.name = name;
     this.urlBase = urlBase;
-    this.urlEndpoint = urlEndpoint;
     this.timeout = timeout;
 
     // setup axios client
@@ -40,22 +38,6 @@ export abstract class BaseApi {
         'X-CSRFToken': Cookies.get('csrftoken') || '',
       },
     });
-  }
-
-  /**
-   * URLS
-   *
-   * urlApi() - full API url.
-   *
-   * @param {string=} slug - Param to add extra fields, id's, filters, etc.
-   * @return {string} URL
-   */
-  protected urlApi(slug?: string): string {
-    if (typeof slug == 'undefined' || slug == '') {
-      return `${this.urlBase}/${this.urlEndpoint}/`;
-    } else {
-      return `${this.urlBase}/${this.urlEndpoint}/${slug}/`;
-    }
   }
 
   /**

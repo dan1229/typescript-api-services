@@ -18,14 +18,16 @@ export type TDjangoApiMethod = 'get' | 'post' | 'patch' | 'delete';
  * @param {string=} token - Auth token to use.
  */
 export default abstract class DjangoApi extends BaseApi {
+  urlEndpoint: string;
   token: string;
 
   public constructor(name: string, urlBase: string, urlEndpoint: string, token?: string) {
-    super(name, urlBase, urlEndpoint);
+    super(name, urlBase);
     if (!token) {
       token = '';
     }
     this.token = token;
+    this.urlEndpoint = urlEndpoint;
   }
 
   /**
