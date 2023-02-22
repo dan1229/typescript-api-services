@@ -52,9 +52,9 @@ export abstract class BaseApi {
    */
   protected urlApi(slug?: string): string {
     if (typeof slug == 'undefined' || slug == '') {
-      return `${this.urlBase}/api/${this.urlEndpoint}/`;
+      return `${this.urlBase}/${this.urlEndpoint}/`;
     } else {
-      return `${this.urlBase}/api/${this.urlEndpoint}/${slug}/`;
+      return `${this.urlBase}/${this.urlEndpoint}/${slug}/`;
     }
   }
 

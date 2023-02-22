@@ -60,9 +60,9 @@ export default abstract class DjangoApi extends BaseApi {
     const queryString = this.createQueryString(filters);
     let url = '';
     if (typeof id == 'undefined' || id == '') {
-      url = `${super.urlApi()}`;
+      url = `${this.urlBase}/api/${this.urlEndpoint}/`;
     } else {
-      url = `${super.urlApi(id)}`;
+      url = `${this.urlBase}/api/${this.urlEndpoint}/${id}/`;
     }
 
     if (queryString) {
