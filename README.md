@@ -1,4 +1,7 @@
 # Typescript API Services
+
+[![Lint Client](https://github.com/dan1229/typescript-api-services/actions/workflows/lint-client.yml/badge.svg)](https://github.com/dan1229/typescript-api-services/actions/workflows/lint-client.yml)
+
 #### By: [Daniel Nazarian](https://danielnazarian) 🐧👹
 ##### Contact me at <dnaz@danielnazarian.com>
 

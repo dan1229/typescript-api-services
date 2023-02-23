@@ -211,7 +211,7 @@ export default class DjangoGet<Model> extends DjangoApi {
   /**
    * PAGINATION HELPERS
    */
-  protected calculatePageCurrent () {
+  protected calculatePageCurrent (): void {
     if (typeof this.next !== 'undefined' && this.next != null) {
       const num = Number(this.getQueryString('page', this.next)) || 2
       this.pageCurrent = num - 1
@@ -221,12 +221,12 @@ export default class DjangoGet<Model> extends DjangoApi {
     }
   }
 
-  protected calculatePageTotal () {
+  protected calculatePageTotal (): void {
     if (typeof this.list !== 'undefined') {
       if (this.list?.length > 0 && typeof this.count !== 'undefined') {
         let pageTotal = Math.floor(this.count / this.list?.length)
         const remainder = this.count % this.list?.length
-        if (remainder != 0) {
+        if (remainder !== 0) {
           pageTotal++
         }
         this.pageTotal = pageTotal

@@ -122,7 +122,7 @@ export default abstract class DjangoApi extends BaseApi {
    * @param {string} key - Key to get value for
    */
   protected getQueryString (key: string, url: string): number {
-    key = key.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]')
+    key = key.replace(/[[]/, '\\[').replace(/[\]]/, '\\]')
     const regex = new RegExp('[\\?&]' + key + '=([^&#]*)')
     const results = regex.exec(url)
     if (results === null || typeof results === 'undefined') {

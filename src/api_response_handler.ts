@@ -122,16 +122,16 @@ export class ApiResponseHandler<Model> {
             for (let j = 0; j < errKeys.length; ++j) {
               errorFields = errorFields.set(errKeys[j], err[errKeys[j]].toString().replace('_', ' '))
             }
-          } else if (key == 'non_field_errors') {
+          } else if (key === 'non_field_errors') {
             // this is when django gives an object with field specific errors
             errorNonField = exception.response.data[key][0]
-          } else if (key == 'error_fields') {
+          } else if (key === 'error_fields') {
             // this is when django gives an object with field specific errors
             errorFields = exception.response.data[key]
-          } else if (key == 'message') {
+          } else if (key === 'message') {
             // this is a 'generic' error from our django bootstrapper and custom error handler
             errorMessage = exception.response.data.message
-          } else if (key == 'detail') {
+          } else if (key === 'detail') {
             // this is a 'generic' error from django - shouldn't really happen
             errorDetail = exception.response.data.detail
           }
