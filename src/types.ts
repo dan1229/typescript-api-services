@@ -1,4 +1,4 @@
-import { AxiosRequestConfig } from 'axios';
+import { type AxiosRequestConfig } from 'axios'
 
 /**
  * API RESPONSE
@@ -10,24 +10,24 @@ import { AxiosRequestConfig } from 'axios';
  * @param {Model=} obj - Actual object returned by API if applicable
  */
 export abstract class ApiResponse<Model> {
-  response: any; // update from 'any' as well
-  message: string;
-  error: boolean;
-  errorFields?: Map<string, string>;
-  obj?: Model; // update these from 'any'
+  response: any // update from 'any' as well
+  message: string
+  error: boolean
+  errorFields?: Map<string, string>
+  obj?: Model // update these from 'any'
 
-  protected constructor(
+  protected constructor (
     response: any,
     message: string = 'API response.',
     error = true,
     errorFields?: Map<string, string>,
     obj?: Model
   ) {
-    this.response = response;
-    this.message = message;
-    this.error = error;
-    this.errorFields = errorFields;
-    this.obj = obj;
+    this.response = response
+    this.message = message
+    this.error = error
+    this.errorFields = errorFields
+    this.obj = obj
   }
 }
 
@@ -40,13 +40,13 @@ export abstract class ApiResponse<Model> {
  * @param {Model=} obj - Actual object returned by API if applicable
  */
 export class ApiResponseError<Model> extends ApiResponse<Model> {
-  constructor(
+  constructor (
     response: any,
     message: string = 'Error handling request. Please try again later.',
     errorFields?: Map<string, string>,
     obj?: Model
   ) {
-    super(response, message, true, errorFields, obj);
+    super(response, message, true, errorFields, obj)
   }
 }
 
@@ -58,8 +58,8 @@ export class ApiResponseError<Model> extends ApiResponse<Model> {
  * @param {Model=} obj - Actual object returned by API if applicable
  */
 export class ApiResponseSuccess<Model> extends ApiResponse<Model> {
-  constructor(response: any, message: string = 'Successful request.', obj?: Model) {
-    super(response, message, false, undefined, obj);
+  constructor (response: any, message: string = 'Successful request.', obj?: Model) {
+    super(response, message, false, undefined, obj)
   }
 }
 
@@ -74,10 +74,10 @@ export class ApiResponseSuccess<Model> extends ApiResponse<Model> {
  * @param {any} request - HTTP request object
  */
 export interface AxiosResponse<T = never> {
-  data: T;
-  status: number;
-  statusText: string;
-  headers: Record<string, string>;
-  config: AxiosRequestConfig<T>;
-  request?: any;
+  data: T
+  status: number
+  statusText: string
+  headers: Record<string, string>
+  config: AxiosRequestConfig<T>
+  request?: any
 }
