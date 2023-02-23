@@ -1,0 +1,36 @@
+name: Build Client
+
+on: push
+
+jobs:
+  build-client:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./client
+    env:
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          cache-dependency-path: './client'
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Inject Google API key(s) into client
+        run: echo "GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }}" >> .env.production
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run eslint
+        run: npm run lint
+
+      - name: Build client
+        run: npm run build
