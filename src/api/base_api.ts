@@ -1,5 +1,4 @@
-import axios, { AxiosInstance } from 'axios';
-import Cookies from 'js-cookie';
+import axios, { AxiosInstance, AxiosResponse } from 'axios';
 
 /**
  *
@@ -22,7 +21,6 @@ export abstract class BaseApi {
    * CONSTRUCTOR
    */
   protected constructor(name: string, urlBase: string, timeout: number = 10000) {
-    console.log(urlBase);
     this.name = name;
     this.urlBase = urlBase;
     this.timeout = timeout;
@@ -30,14 +28,16 @@ export abstract class BaseApi {
     // setup axios client
     this._axiosInstance = axios.create({
       baseURL: this.urlBase,
-      timeout: this.timeout,
-      xsrfCookieName: 'csrftoken',
+      // timeout: this.timeout,
       withCredentials: true,
       headers: {
         'Content-Type': 'application/json',
-        'X-CSRFToken': Cookies.get('csrftoken') || '',
       },
     });
+  }
+
+  cleanUrlParamString(word: string) {
+    return word.replace(/\s/g, '%20').replace(/and/gi, '%26');
   }
 
   /**
@@ -46,7 +46,7 @@ export abstract class BaseApi {
    **/
   _axiosInstance: AxiosInstance;
 
-  protected get client() {
+  protected get client(): AxiosInstance {
     return this._axiosInstance;
   }
 
@@ -60,19 +60,19 @@ export abstract class BaseApi {
    * Supported methods
    * - GET, POST, PATCH, DELETE
    **/
-  protected async httpGet(url: string, headers = {}): Promise<any> {
+  protected async httpGet(url: string, headers = {}): Promise<AxiosResponse> {
     return this.client.get(url, { headers: headers });
   }
 
-  protected async httpPost(url: string, body: object, headers = {}): Promise<any> {
+  protected async httpPost(url: string, body: object, headers = {}): Promise<AxiosResponse> {
     return this.client.post(url, body, headers);
   }
 
-  protected async httpPatch(url: string, body: object, headers = {}): Promise<any> {
+  protected async httpPatch(url: string, body: object, headers = {}): Promise<AxiosResponse> {
     return await this.client.patch(url, body, headers);
   }
 
-  protected async httpDelete(url: string, headers = {}): Promise<any> {
+  protected async httpDelete(url: string, headers = {}): Promise<AxiosResponse> {
     return await this.client.delete(url, { headers: headers });
   }
 }

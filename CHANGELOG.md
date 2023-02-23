@@ -45,7 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - keep api response handler more generic?
 
 ----
-### 0.1.1
+### 0.1.2
 
 #### base api handler
 - split up handler into django variant and a base variant
@@ -53,6 +53,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - detect errors and use 'error' boolean
   - generic message with 'message' string
 
+
+----
+### 0.1.1
 
 #### ci/cd
 - CD for releasing
@@ -64,8 +67,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - lint?
 
 
-### [0.1.1] - 2023-MM-DD
+### [0.1.1] - 2023-02-DD
 - Fixed import and dependency issues
+- Updated axios client in Django Api to use different headers
+- Cleaned up BaseApi to be more generic than DjangoApi
 #### TODO
 - CI
 - CD

@@ -1,3 +1,5 @@
+import axios from 'axios';
+import Cookies from 'js-cookie';
 import { BaseApi } from '../base_api';
 
 export type TDjangoApiMethod = 'get' | 'post' | 'patch' | 'delete';
@@ -28,6 +30,18 @@ export default abstract class DjangoApi extends BaseApi {
     }
     this.token = token;
     this.urlEndpoint = urlEndpoint;
+
+    // setup axios client
+    this._axiosInstance = axios.create({
+      baseURL: this.urlBase,
+      timeout: this.timeout,
+      xsrfCookieName: 'csrftoken',
+      withCredentials: true,
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': Cookies.get('csrftoken') || '',
+      },
+    });
   }
 
   /**
