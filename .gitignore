@@ -2,6 +2,9 @@
 .DS_Store
 
 
+# javascript
+node_modules/
+
 # SQL lite
 **/db.sqlite3
 
