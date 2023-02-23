@@ -48,7 +48,7 @@ export default class DjangoGet<Model> extends DjangoApi {
     filters?: TypeFilters
   ): Promise<ApiResponse<Model[]>> {
     const responseHandler = new ApiResponseHandler<Model>(this, this.httpGet(this.urlApi(undefined, filters)))
-    return await this.handleDjangoGet(responseHandler, paginated)
+    return await this.handleDjangoGet(responseHandler, paginated) as ApiResponse<Model[]>
   }
 
   /**
@@ -68,7 +68,7 @@ export default class DjangoGet<Model> extends DjangoApi {
       const nextPage = await this.getNext()
       if (typeof nextPage !== 'undefined') {
         const nextList = nextPage.obj
-        if (!(nextList === null) && nextList.length > 0) {
+        if (!!nextList && nextList.length > 0) {
           nextList.map(function (i: any) {
             return res.push(i)
           })
