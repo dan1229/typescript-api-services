@@ -1,9 +1,9 @@
-name: Deploy AWS ELB
+name: Deploy Branch
 
 on:
   workflow_dispatch:
     branches:
-      - 'main'
+      - 'master'
     inputs:
       version:
         required: true
@@ -11,91 +11,16 @@ on:
         description: Version for this release. Format "X.X.X".
 
 jobs:
-  build-docker:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+      - name: Create release branch
+        uses: peterjgrainger/action-create-branch@v2.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          fetch-depth: 0 # full clone
-          submodules: recursive
+          branch: version/${{ github.event.inputs.version }}
 
-      # Update Docker images
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Login to DockerHub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build and push SERVER
-        id: docker_build_server
-        uses: docker/build-push-action@v2
-        with:
-          context: ./server
-          file: ./server/Dockerfile
-          push: true
-          tags: danielnazarian/get-twenty:server
-
-      - name: Inject Google API key(s) into client
-        run: cd client && echo "GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }}" >> .env.production
-
-      - name: Build and push CLIENT
-        id: docker_build_client
-        uses: docker/build-push-action@v2
-        with:
-          context: ./client
-          file: ./client/Dockerfile
-          push: true
-          tags: danielnazarian/get-twenty:client
-
-      - name: Build and push NGINX (AWS folder)
-        id: docker_build_nginx
-        uses: docker/build-push-action@v2
-        with:
-          context: ./nginx/aws
-          file: ./nginx/aws/Dockerfile
-          push: true
-          tags: danielnazarian/get-twenty:nginx
-
-  deploy-aws:
-    runs-on: ubuntu-latest
-    needs: build-docker
-    env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
-      AWS_DEFAULT_REGION: us-east-1
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0 # full clone
-          submodules: recursive
-
-      # Deploy to AWS ELB
-      - name: Install Python 3.10
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.10
-
-      - name: Install EB CLI using pip
-        run: |
-          python -m pip install --upgrade pip
-          pip install awsebcli
-
-      - name: EB init
-        run: |
-          eb init get_twenty -r $AWS_DEFAULT_REGION -p docker
-          eb use get-twenty-dev
-
-      - name: Deploy to Elastic Beanstalk
-        run: |
-          eb deploy
 
       - name: Create release in GitHub
         uses: ncipollo/release-action@v1
