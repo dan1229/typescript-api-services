@@ -39,7 +39,7 @@ export default abstract class DjangoApi extends BaseApi {
       withCredentials: true,
       headers: {
         'Content-Type': 'application/json',
-        'X-CSRFToken': Cookies.get('csrftoken') || ''
+        'X-CSRFToken': Cookies.get('csrftoken') ?? ''
       }
     })
   }
@@ -81,7 +81,7 @@ export default abstract class DjangoApi extends BaseApi {
       url = `${this.urlBase}/api/${this.urlEndpoint}/${id}/`
     }
 
-    if (queryString.length) {
+    if (!queryString.length) {
       url += `?${queryString}`
     }
     return url
@@ -102,7 +102,7 @@ export default abstract class DjangoApi extends BaseApi {
     let i = 0
     for (const key in filters) {
       if (filters.hasOwnProperty(key)) {
-        if (!!key && key != '') {
+        if (!!key && key !== '') {
           const value = filters[key]
           queryString += `${key}=${value}&`
           if (i === len - 1) {

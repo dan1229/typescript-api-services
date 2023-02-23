@@ -61,14 +61,14 @@ export default class DjangoGet<Model> extends DjangoApi {
   public async getListAll (): Promise<Model[]> {
     let res = []
     const first = await this.getList()
-    res = (first.obj != null) || []
+    res = first.obj ?? []
     let pages = 1
-    while (typeof this.next !== 'undefined' && this.next != null && this.next != '') {
+    while (typeof this.next !== 'undefined' && this.next !== null && this.next !== '') {
       pages += 1
       const nextPage = await this.getNext()
       if (typeof nextPage !== 'undefined') {
         const nextList = nextPage.obj
-        if (!(nextList == null) && nextList.length > 0) {
+        if (!(nextList === null) && nextList.length > 0) {
           nextList.map(function (i: any) {
             return res.push(i)
           })
@@ -105,7 +105,7 @@ export default class DjangoGet<Model> extends DjangoApi {
    * @param paginated
    * @returns ApiResponse
    */
-  protected async handleDjangoGet (responseHandler: ApiResponseHandler<Model | Model[]>, paginated: boolean) {
+  protected async handleDjangoGet (responseHandler: ApiResponseHandler<Model | Model[]>, paginated: boolean): Promise<ApiResponse<Model | Model[]>> {
     // helper function to clean up get and retrieve methods
     if (!paginated) {
       const res = await responseHandler.handleResponse()
