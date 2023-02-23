@@ -16,13 +16,7 @@ export abstract class ApiResponse<Model> {
   errorFields?: Map<string, string>
   obj?: Model // update these from 'any'
 
-  protected constructor (
-    response: any,
-    message: string = 'API response.',
-    error = true,
-    errorFields?: Map<string, string>,
-    obj?: Model
-  ) {
+  protected constructor (response: any, message: string = 'API response.', error = true, errorFields?: Map<string, string>, obj?: Model) {
     this.response = response
     this.message = message
     this.error = error

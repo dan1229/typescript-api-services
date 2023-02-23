@@ -43,12 +43,9 @@ export default class DjangoGet<Model> extends DjangoApi {
    * @param {TypeFilters=} filters - Filters to send with request
    * @return {ApiResponse} Api response object
    */
-  public async getList<TypeFilters extends object>(
-    paginated: boolean = true,
-    filters?: TypeFilters
-  ): Promise<ApiResponse<Model[]>> {
+  public async getList<TypeFilters extends object>(paginated: boolean = true, filters?: TypeFilters): Promise<ApiResponse<Model[]>> {
     const responseHandler = new ApiResponseHandler<Model>(this, this.httpGet(this.urlApi(undefined, filters)))
-    return await this.handleDjangoGet(responseHandler, paginated) as ApiResponse<Model[]>
+    return (await this.handleDjangoGet(responseHandler, paginated)) as ApiResponse<Model[]>
   }
 
   /**
@@ -105,7 +102,10 @@ export default class DjangoGet<Model> extends DjangoApi {
    * @param paginated
    * @returns ApiResponse
    */
-  protected async handleDjangoGet (responseHandler: ApiResponseHandler<Model | Model[]>, paginated: boolean): Promise<ApiResponse<Model | Model[]>> {
+  protected async handleDjangoGet (
+    responseHandler: ApiResponseHandler<Model | Model[]>,
+    paginated: boolean
+  ): Promise<ApiResponse<Model | Model[]>> {
     // helper function to clean up get and retrieve methods
     if (!paginated) {
       const res = await responseHandler.handleResponse()
