@@ -28,11 +28,6 @@ export abstract class BaseApi {
     // setup axios client
     this._axiosInstance = axios.create({
       baseURL: this.urlBase,
-      // timeout: this.timeout,
-      withCredentials: true,
-      headers: {
-        'Content-Type': 'application/json',
-      },
     });
   }
 
