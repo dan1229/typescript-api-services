@@ -1,8 +1,8 @@
-import axios from 'axios'
-import Cookies from 'js-cookie'
-import { BaseApi } from '../base_api'
+import axios from 'axios';
+import Cookies from 'js-cookie';
+import { BaseApi } from '../base_api';
 
-export type TDjangoApiMethod = 'get' | 'post' | 'patch' | 'delete'
+export type TDjangoApiMethod = 'get' | 'post' | 'patch' | 'delete';
 
 /**
  *
@@ -20,16 +20,16 @@ export type TDjangoApiMethod = 'get' | 'post' | 'patch' | 'delete'
  * @param {string=} token - Auth token to use.
  */
 export default abstract class DjangoApi extends BaseApi {
-  urlEndpoint: string
-  token: string
+  urlEndpoint: string;
+  token: string;
 
-  public constructor (name: string, urlBase: string, urlEndpoint: string, token?: string) {
-    super(name, urlBase)
+  public constructor(name: string, urlBase: string, urlEndpoint: string, token?: string) {
+    super(name, urlBase);
     if (!token) {
-      token = ''
+      token = '';
     }
-    this.token = token
-    this.urlEndpoint = urlEndpoint
+    this.token = token;
+    this.urlEndpoint = urlEndpoint;
 
     // setup axios client
     this._axiosInstance = axios.create({
@@ -39,9 +39,9 @@ export default abstract class DjangoApi extends BaseApi {
       withCredentials: true,
       headers: {
         'Content-Type': 'application/json',
-        'X-CSRFToken': Cookies.get('csrftoken') ?? ''
-      }
-    })
+        'X-CSRFToken': Cookies.get('csrftoken') ?? '',
+      },
+    });
   }
 
   /**
@@ -49,18 +49,20 @@ export default abstract class DjangoApi extends BaseApi {
    *
    * Get headers for API request - authenticated or otherwise.
    *
+   * @param {Object=} extraHeaders - Extra headers to include
    * @return {AxiosRequestHeaders} Header object/map
    **/
-  protected getHeaders (): any {
+  protected getHeaders(extraHeaders?: Object): any {
     if (typeof this.token !== 'undefined' && this.token !== '') {
       return {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Token ${this.token}`
-        }
-      }
+          Authorization: `Token ${this.token}`,
+          ...extraHeaders,
+        },
+      };
     } else {
-      return {}
+      return { ...extraHeaders };
     }
   }
 
@@ -73,18 +75,18 @@ export default abstract class DjangoApi extends BaseApi {
    * @return {string} URL
    */
   protected urlApi<TypeFilters extends object>(id?: string, filters?: TypeFilters): string {
-    const queryString = this.createQueryString(filters)
-    let url = ''
+    const queryString = this.createQueryString(filters);
+    let url = '';
     if (typeof id === 'undefined' || id === '') {
-      url = `${this.urlBase}/api/${this.urlEndpoint}/`
+      url = `${this.urlBase}/api/${this.urlEndpoint}/`;
     } else {
-      url = `${this.urlBase}/api/${this.urlEndpoint}/${id}/`
+      url = `${this.urlBase}/api/${this.urlEndpoint}/${id}/`;
     }
 
     if (!queryString.length) {
-      url += `?${queryString}`
+      url += `?${queryString}`;
     }
-    return url
+    return url;
   }
 
   /**
@@ -95,24 +97,24 @@ export default abstract class DjangoApi extends BaseApi {
    */
   protected createQueryString<TypeFilters extends object>(filters?: TypeFilters): string {
     if (filters == null) {
-      return ''
+      return '';
     }
-    let queryString = ''
-    const len = Object.keys(filters).length
-    let i = 0
+    let queryString = '';
+    const len = Object.keys(filters).length;
+    let i = 0;
     for (const key in filters) {
       if (filters.hasOwnProperty(key)) {
         if (!!key && key !== '') {
-          const value = filters[key]
-          queryString += `${key}=${value}&`
+          const value = filters[key];
+          queryString += `${key}=${value}&`;
           if (i === len - 1) {
-            queryString = queryString.slice(0, -1) // remove last &
+            queryString = queryString.slice(0, -1); // remove last &
           }
         }
       }
-      i += 1
+      i += 1;
     }
-    return queryString
+    return queryString;
   }
 
   /**
@@ -121,13 +123,13 @@ export default abstract class DjangoApi extends BaseApi {
    *
    * @param {string} key - Key to get value for
    */
-  protected getQueryString (key: string, url: string): number {
-    key = key.replace(/[[]/, '\\[').replace(/[\]]/, '\\]')
-    const regex = new RegExp('[\\?&]' + key + '=([^&#]*)')
-    const results = regex.exec(url)
+  protected getQueryString(key: string, url: string): number {
+    key = key.replace(/[[]/, '\\[').replace(/[\]]/, '\\]');
+    const regex = new RegExp('[\\?&]' + key + '=([^&#]*)');
+    const results = regex.exec(url);
     if (results === null || typeof results === 'undefined') {
-      return 1
+      return 1;
     }
-    return Number(decodeURIComponent(results[1].replace(/\+/g, '    ')))
+    return Number(decodeURIComponent(results[1].replace(/\+/g, '    ')));
   }
 }
