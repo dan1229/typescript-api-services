@@ -18,6 +18,10 @@ export default class DjangoPatch<Model, IBody extends object> extends DjangoApi 
 
   /**
    * HTTP call
+   * 
+   * @param {string} url - URL to call
+   * @param {IBody | FormData} body - Body of request to include, probably the object data
+   * @param {Object} extraHeaders - Extra headers to add to request
    */
   protected async httpPatch(url: string, body: IBody | FormData, extraHeaders?: Object): Promise<any> {
     const headers = this.getHeaders(extraHeaders);
