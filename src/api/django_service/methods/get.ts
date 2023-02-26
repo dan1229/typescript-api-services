@@ -200,7 +200,7 @@ export default class DjangoGet<Model> extends DjangoApi {
    */
   public async getPrev (combineLists: boolean = false, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model[]> | undefined> {
     if (typeof this.prev !== 'undefined') {
-      const responseHandler = new ApiResponseHandler<Model[]>(this, this.httpGet(this.prev), extraHeaders)
+      const responseHandler = new ApiResponseHandler<Model[]>(this, this.httpGet(this.prev, extraHeaders))
       return await this.handlePaginatedResponse(responseHandler, combineLists)
     }
   }
