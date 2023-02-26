@@ -116,7 +116,7 @@ export class ApiResponseHandler<Model> {
             } else {
               errorFields = errorFields.set(key, err[0])
             }
-          } else if (key === 'error_fields' && err instanceof Record<string, unknown>) {
+          } else if (key === 'error_fields' && err instanceof Object) {
             // handle object errors
             const errKeys = Object.keys(err)
             for (let j = 0; j < errKeys.length; ++j) {
