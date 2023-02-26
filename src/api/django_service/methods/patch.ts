@@ -18,14 +18,18 @@ export default class DjangoPatch<Model, IBody extends object> extends DjangoApi 
 
   /**
    * HTTP call
+   *
+   * @param {string} url - URL to call
+   * @param {IBody | FormData} body - Body of request to include, probably the object data
+   * @param {Record<string, unknown>} extraHeaders - Extra headers to add to request
    */
-  protected async httpPatch (url: string, body: IBody): Promise<any> {
-    const headers = this.getHeaders()
+  protected async httpPatch (url: string, body: IBody | FormData, extraHeaders?: Record<string, unknown>): Promise<any> {
+    const headers = this.getHeaders(extraHeaders)
     return await this.client.patch(url, body, headers)
   }
 
-  protected async httpPatchGeneric<IBodyGeneric extends object>(url: string, body: IBodyGeneric): Promise<any> {
-    const headers = this.getHeaders()
+  protected async httpPatchGeneric<IBodyGeneric extends object>(url: string, body: IBodyGeneric, extraHeaders?: Record<string, unknown>): Promise<any> {
+    const headers = this.getHeaders(extraHeaders)
     return await this.client.patch(url, body, headers)
   }
 
@@ -36,10 +40,11 @@ export default class DjangoPatch<Model, IBody extends object> extends DjangoApi 
    *
    * @param {string} id - ID of object to update
    * @param {IBody} body - Body of request to include, probably the object data
+   * @param {Record<string, unknown>=} extraHeaders - Extra headers to include
    * @return {ApiResponse} Api response object
    */
-  public async patchUpdate (id: string, body: IBody): Promise<ApiResponse<Model>> {
-    const responseHandler = new ApiResponseHandler<Model>(this, this.httpPatch(this.urlApi(id), body))
+  public async patchUpdate (id: string, body: IBody | FormData, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model>> {
+    const responseHandler = new ApiResponseHandler<Model>(this, this.httpPatch(this.urlApi(id), body, extraHeaders))
     const res = await responseHandler.handleResponse()
     try {
       this.result = res.obj

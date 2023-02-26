@@ -49,18 +49,20 @@ export default abstract class DjangoApi extends BaseApi {
    *
    * Get headers for API request - authenticated or otherwise.
    *
+   * @param {Record<string, unknown>=} extraHeaders - Extra headers to include
    * @return {AxiosRequestHeaders} Header object/map
    **/
-  protected getHeaders (): any {
+  protected getHeaders (extraHeaders?: Record<string, unknown>): any {
     if (typeof this.token !== 'undefined' && this.token !== '') {
       return {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Token ${this.token}`
+          Authorization: `Token ${this.token}`,
+          ...extraHeaders
         }
       }
     } else {
-      return {}
+      return { ...extraHeaders }
     }
   }
 
