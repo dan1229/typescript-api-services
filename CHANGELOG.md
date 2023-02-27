@@ -14,6 +14,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Released]
 
+### [0.2.0] - 2023-02-22
+- Fixed import and dependency issues
+- Updated axios client in Django Api to use different headers
+- Cleaned up BaseApi to be more generic than DjangoApi
+- Eslint added and package set up
+- CI - lint for TS
+- CD - for creating branch and release
+
+
 ### [0.1.0] - 2023-01-13
 - Architectural/structural changes to help make APIs more specific
 - Broke up Django API into method APIs
