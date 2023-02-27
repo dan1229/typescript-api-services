@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Released]
 
+### [0.2.1] - 2023-02-27
+- Lots of type cleanup
+
+
 ### [0.2.0] - 2023-02-22
 - Fixed import and dependency issues
 - Updated axios client in Django Api to use different headers
@@ -54,7 +58,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - keep api response handler more generic?
 
 ----
-### 0.2.1
+### 0.3.0
 
 #### base api handler
 - split up handler into django variant and a base variant
@@ -64,7 +68,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
-### [0.2.1] - 2023-MM-DD
+### [0.3.0] - 2023-MM-DD
 - Added 'extraHeaders' param to Django services
 #### TODO
 
