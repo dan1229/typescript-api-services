@@ -119,16 +119,11 @@ export class ApiResponseHandler<Model> {
             }
           } else if (key === 'error_fields' && err instanceof Object) {
             // handle object errors
-            console.log('PROCESSING ERROR FIELDS');
             const errKeys = Object.keys(err);
             for (let j = 0; j < errKeys.length; ++j) {
-              console.log('=========');
-              console.log('errKeys[j]', errKeys[j]);
-              console.log('err[errKeys[j]]', err[errKeys[j]]);
               const errKey = errKeys[j];
               const errVal = err[errKey];
               if (errVal instanceof Array) {
-                console.log('errVal is array', errVal);
                 for (let k = 0; k < errVal.length; ++k) {
                   const tmp = errVal[k];
                   if (tmp instanceof Object) {
