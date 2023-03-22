@@ -127,7 +127,6 @@ export class ApiResponseHandler<Model> {
                 for (let k = 0; k < errVal.length; ++k) {
                   const tmp = errVal[k];
                   if (tmp instanceof Object) {
-                    console.log(tmp[Object.keys(tmp)[0]]);
                     errorFields = errorFields.set(errKey, tmp[Object.keys(tmp)[0]]);
                   } else {
                     errorFields = errorFields.set(errKey, errVal[k].toString());
