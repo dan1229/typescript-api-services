@@ -106,6 +106,7 @@ export class ApiResponseHandler<Model> {
         let errorFields = new Map<string, string>();
 
         // loop through 'data' response keys
+        // this is one of the worst pieces of code i've ever written i apologize
         for (let i = 0; i < keys.length; ++i) {
           const key = keys[i];
           const err = exception.response.data[key];
@@ -118,16 +119,35 @@ export class ApiResponseHandler<Model> {
             }
           } else if (key === 'error_fields' && err instanceof Object) {
             // handle object errors
+            console.log('PROCESSING ERROR FIELDS');
             const errKeys = Object.keys(err);
             for (let j = 0; j < errKeys.length; ++j) {
-              errorFields = errorFields.set(errKeys[j], err[errKeys[j]].toString().replace('_', ' '));
+              console.log('=========');
+              console.log('errKeys[j]', errKeys[j]);
+              console.log('err[errKeys[j]]', err[errKeys[j]]);
+              const errKey = errKeys[j];
+              const errVal = err[errKey];
+              if (errVal instanceof Array) {
+                console.log('errVal is array', errVal);
+                for (let k = 0; k < errVal.length; ++k) {
+                  const tmp = errVal[k];
+                  if (tmp instanceof Object) {
+                    console.log(tmp[Object.keys(tmp)[0]]);
+                    errorFields = errorFields.set(errKey, tmp[Object.keys(tmp)[0]]);
+                  } else {
+                    errorFields = errorFields.set(errKey, errVal[k].toString());
+                  }
+                }
+              } else {
+                errorFields = errorFields.set(errKey, errVal.toString().replace('_', ' '));
+              }
             }
-          } else if (key === 'non_field_errors') {
-            // this is when django gives an object with field specific errors
-            errorNonField = err[0];
           } else if (key === 'error_fields') {
             // this is when django gives an object with field specific errors
             errorFields = err;
+          } else if (key === 'non_field_errors') {
+            // this is when django gives an object with field specific errors
+            errorNonField = err[0];
           } else if (key === 'message') {
             // this is a 'generic' error from our django bootstrapper and custom error handler
             errorMessage = exception.response.data.message;
@@ -138,22 +158,25 @@ export class ApiResponseHandler<Model> {
         }
 
         // craft response - precedence of errors below
+        // 1. error non field errors
         if (!!errorNonField && !!errorNonField.length) {
-          // 1. error non field errors
           return new ApiResponseError<Model>(this.response, errorNonField, errorFields);
-        } else if (!!errorDetail && !!errorDetail.length) {
-          // 2. error detail - default django error field, shouldn't really happen but just in case
+        }
+        // 2. error detail - default django error field, shouldn't really happen but just in case
+        else if (!!errorDetail && !!errorDetail.length) {
           return new ApiResponseError<Model>(this.response, errorDetail, errorFields);
-        } else if (!!errorMessage && !!errorMessage.length) {
-          // 3. error message - these are the most generic from our bootstrapper
+        }
+        // 3. error message - these are the most generic from our bootstrapper
+        else if (!!errorMessage && !!errorMessage.length) {
           return new ApiResponseError<Model>(this.response, errorMessage, errorFields);
-        } else {
-          // 4. default error
-          return new ApiResponseError<Model>(this.response);
+        }
+        // 4. default error
+        else {
+          return new ApiResponseError<Model>(this.response, undefined, errorFields);
         }
       } else {
         // 'data' doesn't exist -> error
-        return new ApiResponseError<Model>(this.response, exception.response);
+        return new ApiResponseError<Model>(this.response, undefined);
       }
     }
     // default case error -> unsure how to handle
