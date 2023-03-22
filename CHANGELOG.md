@@ -14,6 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Released]
 
+### [0.2.2] - 2023-03-22
+- Added 'extraHeaders' param to Django services
+- Some field error processing cleanup
+
+
 ### [0.2.1] - 2023-02-27
 - Lots of type cleanup
 
@@ -69,8 +74,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ### [0.3.0] - 2023-MM-DD
-- Added 'extraHeaders' param to Django services
-- Some field error processing cleanup
 #### TODO
 
 -------------------------------------------------------
