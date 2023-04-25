@@ -12,6 +12,7 @@
     "js-cookie": "3.0.1"
   },
   "devDependencies": {
+    "@types/js-cookie": "3.0.3",
     "@typescript-eslint/eslint-plugin": "5.53.0",
     "eslint": "8.34.0",
     "eslint-config-standard-with-typescript": "34.0.0",

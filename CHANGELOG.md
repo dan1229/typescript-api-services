@@ -14,6 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Released]
 
+### [0.2.3] - 2023-04-25
+- URL API fix for Django API
+- Installed `js-cookie`
+
+
 ### [0.2.2] - 2023-03-22
 - Added 'extraHeaders' param to Django services
 - Some field error processing cleanup
@@ -71,6 +76,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - detect errors and use 'error' boolean
   - generic message with 'message' string
 
+
+#### ci
+- add build step somehow
 
 
 ### [0.3.0] - 2023-MM-DD
