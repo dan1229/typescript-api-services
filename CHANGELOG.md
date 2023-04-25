@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Released]
 
+### [0.2.4] - 2023-04-25
+- Lint and cleanup
+
+
 ### [0.2.3] - 2023-04-25
 - URL API fix for Django API
 - Installed `js-cookie`

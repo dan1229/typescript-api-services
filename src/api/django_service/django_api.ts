@@ -83,7 +83,7 @@ export default abstract class DjangoApi extends BaseApi {
       url = `${this.urlBase}/api/${this.urlEndpoint}/${id}/`
     }
 
-    if (!!queryString.length) {
+    if (queryString.length) {
       url += `?${queryString}`
     }
     return url
