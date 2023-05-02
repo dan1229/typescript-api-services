@@ -105,7 +105,7 @@ export default abstract class DjangoApi extends BaseApi {
     for (const key in filters) {
       if (filters.hasOwnProperty(key)) {
         if (!!key && key !== '') {
-          const value = filters[key]
+          const value = filters[key] ?? ''
           queryString += `${key}=${value}&`
           if (i === len - 1) {
             queryString = queryString.slice(0, -1) // remove last &

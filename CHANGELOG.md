@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Released]
 
+### [0.2.5] - 2023-05-01
+- URL query param fix for `undefined` or `falsey` values
+
+
 ### [0.2.4] - 2023-04-25
 - Lint and cleanup
 
