@@ -83,6 +83,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - allow for baseapi instances to use this and get general functionality
   - detect errors and use 'error' boolean
   - generic message with 'message' string
+- just generally clean up error handling - it's pretty messy right now
 
 
 #### ci
