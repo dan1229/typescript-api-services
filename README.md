@@ -20,4 +20,4 @@ You must have these NPM packages installed
 
 -------------------------------------------------------
 ##### [https://danielnazarian.com](https://danielnazarian.com)
-##### Copyright 2023 © Daniel Nazarian.
+##### Copyright 2024 © Daniel Nazarian.
