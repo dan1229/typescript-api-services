@@ -62,21 +62,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### TODO
 
 
-#### ApiResponse error list
-- instead of individual error message, include a list of any
-- find some way to organize:
-  - message - main message
-  - messageList - full list
-  - some way to identify fields or something?
-    - maybe just mimic any fields django sends back?
-
-
-#### ApiResponseHandler -> DjangoApiResponseHandler?
-- move to new file?
-- keep api response handler more generic?
 
 ----
-### 0.3.0
+### 1.0.0
 
 #### base api handler
 - split up handler into django variant and a base variant
@@ -86,8 +74,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - just generally clean up error handling - it's pretty messy right now
 
 
+
+#### ApiResponse error list
+- instead of individual error message, include a list of any
+- find some way to organize:
+  - message - main message
+  - messageList - full list
+  - some way to identify fields or something?
+    - maybe just mimic any fields django sends back?
+
+
+#### move error fields to 'message' when no 'message'?
+- if no 'message' field, move all fields to 'message'?
+- or if default message?
+  - how to figure that out?
+    - maybe "None" instead of default message...?
+
+    
+---
+
+
+
 #### ci
 - add build step somehow
+
+
+#### repeat api calls
+- build in way to avoid multiple calling apis
+- maybe a way to cancel a call if it's already in progress?
+- customizable 'seconds since last call' to allow for repeat calls
+
+
+#### ApiResponseHandler -> DjangoApiResponseHandler?
+- move to new file?
+- keep api response handler more generic?
 
 
 ### [0.3.0] - 2023-MM-DD
