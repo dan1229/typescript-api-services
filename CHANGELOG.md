@@ -66,6 +66,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ----
 ### 1.0.0
 
+
+#### move typefilters to class level
+- right now you have to add them to the call itself
+- it would be nice/ideal to have them at the class level
+
+
+
 #### base api handler
 - split up handler into django variant and a base variant
 - allow for baseapi instances to use this and get general functionality
