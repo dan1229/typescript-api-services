@@ -81,6 +81,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - just generally clean up error handling - it's pretty messy right now
 
 
+#### add 'loading' property to base api?
+
 
 #### ApiResponse error list
 - instead of individual error message, include a list of any
