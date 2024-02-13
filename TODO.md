@@ -8,11 +8,6 @@
 ### 1.1.0
 
 
-#### ci
-- add build step somehow
-
-
-
 
 #### move error fields to 'message' when no 'message'?
 - if no 'message' field, move some field to 'message'?
@@ -20,13 +15,9 @@
   - how to figure that out?
     - maybe "None" instead of default message...?
 
+
+
     
------
-### 1.0.0
-
-
-
-
 #### ApiResponse error list
 - instead of individual error message, include a list of any
 - find some way to organize:
@@ -36,22 +27,24 @@
     - maybe just mimic any fields django sends back?
 
 
+-----
+### 1.0.0
 
----
 
 
-#### repeat api calls
+#### ci
+- add build step somehow
+  - add nextjs project? idk dont want to limit this to a specific framework
+
+
+
+
+
+
+#### repeat/debounce api calls
 - build in way to avoid multiple calling apis
 - maybe a way to cancel a call if it's already in progress?
 - customizable 'seconds since last call' to allow for repeat calls
-
-
-----
-
-
-#### move typefilters to class level
-- right now you have to add them to the call itself
-- it would be nice/ideal to have them at the class level
 
 
 
@@ -66,6 +59,8 @@
 - General support for `BaseApi` improved
 - `DjangoApi.post` - `extraHeaders` param fixed
 - Added `loading` property to `BaseApi` and `DjangoApi` for loading state
+- `TypeFilter` added to `BaseApi` and `DjangoApi` for type filtering
+  - Moved 'up' from method level to class level
 #### TODO
 
 -------------------------------------------------------
