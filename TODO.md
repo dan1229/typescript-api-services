@@ -12,13 +12,18 @@
 - add build step somehow
 
 
+
+
+#### move error fields to 'message' when no 'message'?
+- if no 'message' field, move some field to 'message'?
+- or if default message?
+  - how to figure that out?
+    - maybe "None" instead of default message...?
+
+    
 -----
 ### 1.0.0
 
-
-#### move typefilters to class level
-- right now you have to add them to the call itself
-- it would be nice/ideal to have them at the class level
 
 
 
@@ -31,13 +36,7 @@
     - maybe just mimic any fields django sends back?
 
 
-#### move error fields to 'message' when no 'message'?
-- if no 'message' field, move all fields to 'message'?
-- or if default message?
-  - how to figure that out?
-    - maybe "None" instead of default message...?
 
-    
 ---
 
 
@@ -45,6 +44,15 @@
 - build in way to avoid multiple calling apis
 - maybe a way to cancel a call if it's already in progress?
 - customizable 'seconds since last call' to allow for repeat calls
+
+
+----
+
+
+#### move typefilters to class level
+- right now you have to add them to the call itself
+- it would be nice/ideal to have them at the class level
+
 
 
 #### add 'loading' property to base api?
@@ -55,18 +63,12 @@
 
 
 
-#### clean up django api response handler
-- allow for baseapi instances to use this and get general functionality
-  - detect errors and use 'error' boolean
-  - generic message with 'message' string
-- just generally clean up error handling - it's pretty messy right now
-
-
-
 
 
 ### [1.0.0] - 2024-MM-DD
 - Created `BaseApiResponseHandler` and `DjangoApiResponseHandler` for more functionality
+  - Much more modular and customizable
+  - Cleaned up `DjangoApiResponseHandler` error handling
 - General support for `BaseApi` improved
 - `DjangoApi.post` - `extraHeaders` param fixed
 #### TODO
