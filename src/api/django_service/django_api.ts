@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { AxiosRequestConfig } from 'axios'
 import Cookies from 'js-cookie'
 import { BaseApi } from '../base_api'
 
@@ -22,6 +22,7 @@ export type TDjangoApiMethod = 'get' | 'post' | 'patch' | 'delete'
 export default abstract class DjangoApi extends BaseApi {
   urlEndpoint: string
   token: string
+  loading: boolean
 
   public constructor (name: string, urlBase: string, urlEndpoint: string, token?: string) {
     super(name, urlBase)
@@ -30,6 +31,7 @@ export default abstract class DjangoApi extends BaseApi {
     }
     this.token = token
     this.urlEndpoint = urlEndpoint
+    this.loading = false
 
     // setup axios client
     this._axiosInstance = axios.create({

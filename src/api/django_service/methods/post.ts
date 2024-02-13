@@ -28,6 +28,7 @@ export default class DjangoPost<Model, IBody extends object> extends DjangoApi {
     return await this.client.post(url, body, headers)
   }
 
+  // Generic version of httpPost that allows you to specify the body type and doesn't handle the response
   protected async httpPostGeneric<IBodyGeneric extends object>(url: string, body: IBodyGeneric): Promise<any> {
     const headers = this.getHeaders()
     return await this.client.post(url, body, headers)
@@ -43,6 +44,7 @@ export default class DjangoPost<Model, IBody extends object> extends DjangoApi {
    * @return {ApiResponse} Api response object
    */
   public async postCreate (body: IBody | FormData, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model>> {
+    this.loading = true
     const responseHandler = new DjangoApiResponseHandler<Model>(this, this.httpPost(this.urlApi(), body, extraHeaders))
     const res = await responseHandler.handleResponse()
     try {
@@ -50,6 +52,7 @@ export default class DjangoPost<Model, IBody extends object> extends DjangoApi {
     } catch (e) {
       console.error(e)
     }
+    this.loading = false
     return res
   }
 }
