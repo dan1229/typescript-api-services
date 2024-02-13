@@ -49,12 +49,12 @@
 - add build step somehow
 
 
-#### base api handler
-- split up handler into django variant and a base variant
+#### django api handler
 - allow for baseapi instances to use this and get general functionality
   - detect errors and use 'error' boolean
   - generic message with 'message' string
 - just generally clean up error handling - it's pretty messy right now
+
 
 
 
