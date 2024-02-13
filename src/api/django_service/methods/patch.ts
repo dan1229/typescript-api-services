@@ -1,5 +1,5 @@
 import DjangoApi from '../django_api'
-import { ApiResponseHandler } from '../../../api_response_handler'
+import { DjangoApiResponseHandler } from '../django_api_response_handler'
 import { type ApiResponse } from '../../../types'
 
 /**
@@ -44,7 +44,7 @@ export default class DjangoPatch<Model, IBody extends object> extends DjangoApi 
    * @return {ApiResponse} Api response object
    */
   public async patchUpdate (id: string, body: IBody | FormData, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model>> {
-    const responseHandler = new ApiResponseHandler<Model>(this, this.httpPatch(this.urlApi(id), body, extraHeaders))
+    const responseHandler = new DjangoApiResponseHandler<Model>(this, this.httpPatch(this.urlApi(id), body, extraHeaders))
     const res = await responseHandler.handleResponse()
     try {
       this.result = res.obj

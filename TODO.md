@@ -49,8 +49,7 @@
 - add build step somehow
 
 
-#### base api handler
-- split up handler into django variant and a base variant
+#### django api handler
 - allow for baseapi instances to use this and get general functionality
   - detect errors and use 'error' boolean
   - generic message with 'message' string
@@ -58,14 +57,14 @@
 
 
 
-#### ApiResponseHandler -> DjangoApiResponseHandler?
-- move to new file?
-- keep api response handler more generic?
 
+#### base api response handler?
+- create BaseApiResponseHandler??
 
 
 
 ### [1.0.0] - 2024-MM-DD
+- Created `DjangoApiResponseHandler` for better organization
 #### TODO
 
 -------------------------------------------------------
