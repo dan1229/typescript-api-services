@@ -1,6 +1,6 @@
 import axios, { type AxiosInstance } from 'axios'
 import { BaseApiResponseHandler } from './base_api_response_handler'
-import { type ApiResponse } from 'src/types'
+import { ApiResponse } from '../types'
 
 /**
  *
