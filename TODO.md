@@ -55,12 +55,6 @@
 
 
 
-#### add 'loading' property to base api?
-- update at beginning and end of call
-- maybe a way to cancel a call if it's already in progress?
-
-
-
 
 
 
@@ -71,6 +65,7 @@
   - Cleaned up `DjangoApiResponseHandler` error handling
 - General support for `BaseApi` improved
 - `DjangoApi.post` - `extraHeaders` param fixed
+- Added `loading` property to `BaseApi` and `DjangoApi` for loading state
 #### TODO
 
 -------------------------------------------------------

@@ -28,6 +28,7 @@ export default class DjangoPatch<Model, IBody extends object> extends DjangoApi 
     return await this.client.patch(url, body, headers)
   }
 
+  // Generic version of httpPatch that allows you to specify the body type and doesn't handle the response
   protected async httpPatchGeneric<IBodyGeneric extends object>(url: string, body: IBodyGeneric, extraHeaders?: Record<string, unknown>): Promise<any> {
     const headers = this.getHeaders(extraHeaders)
     return await this.client.patch(url, body, headers)
@@ -44,6 +45,7 @@ export default class DjangoPatch<Model, IBody extends object> extends DjangoApi 
    * @return {ApiResponse} Api response object
    */
   public async patchUpdate (id: string, body: IBody | FormData, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model>> {
+    this.loading = true
     const responseHandler = new DjangoApiResponseHandler<Model>(this, this.httpPatch(this.urlApi(id), body, extraHeaders))
     const res = await responseHandler.handleResponse()
     try {
@@ -51,6 +53,7 @@ export default class DjangoPatch<Model, IBody extends object> extends DjangoApi 
     } catch (e) {
       console.error(e)
     }
+    this.loading = false
     return res
   }
 }
