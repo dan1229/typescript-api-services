@@ -4,7 +4,7 @@ import { BaseApi } from '../base_api'
 
 export type TDjangoApiMethod = 'get' | 'post' | 'patch' | 'delete'
 
-export type TypeFilters = object | null
+export type TypeFilters = object | null 
 
 /**
  *
