@@ -1,5 +1,5 @@
 import { type ApiResponse, ApiResponseError, ApiResponseSuccess, type AxiosResponse } from '../../types'
-import DjangoApi from './django_api'
+import type DjangoApi from './django_api'
 
 /**
  * DJANGO API RESPONSE HANDLER

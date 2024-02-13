@@ -5,6 +5,14 @@
 -------------------------------------------------------
 ## [Unreleased]
 -----
+### 1.1.0
+
+
+#### ci
+- add build step somehow
+
+
+-----
 ### 1.0.0
 
 
@@ -43,10 +51,6 @@
 - update at beginning and end of call
 - maybe a way to cancel a call if it's already in progress?
 
-
-
-#### ci
-- add build step somehow
 
 
 

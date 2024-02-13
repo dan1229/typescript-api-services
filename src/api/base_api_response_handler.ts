@@ -33,33 +33,31 @@ export class BaseApiResponseHandler<Model> {
   async handleResponse (): Promise<ApiResponse<any>> {
     // await response and ensure valid
     try {
-        this.response = await this.request
-        if (typeof this.response === 'undefined' || !this.response.data) {
-            throw Error('Response undefined.')
-        }
+      this.response = await this.request
+      if (typeof this.response === 'undefined' || !this.response.data) {
+        throw Error('Response undefined.')
+      }
     } catch (e) {
-        this.handleLogError(e)
-        return new ApiResponseError<Model>(this.response, e?.toString())
+      this.handleLogError(e)
+      return new ApiResponseError<Model>(this.response, e?.toString())
     }
 
     // detect if error or not
     let error = false
     if (this.response.status >= 300) {
-        error = true
+      error = true
     }
-
 
     // serialize and return
     try {
       if (!error) {
-        return new ApiResponseSuccess<Model>(this.response, "Successfully completed request.")
+        return new ApiResponseSuccess<Model>(this.response, 'Successfully completed request.')
       }
 
-      throw Error(`Error fetching API.`) 
+      throw Error('Error fetching API.')
     } catch (e) {
       this.handleLogError(e)
       return new ApiResponseError<Model>(this.response, e?.toString())
     }
   }
-
 }
