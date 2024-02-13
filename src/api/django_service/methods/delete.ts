@@ -30,7 +30,7 @@ export default class DjangoDelete<Model> extends DjangoApi {
    * @return {ApiResponse} Api response object
    */
   public async deleteItem (id: string, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model>> {
-    this.loading = true 
+    this.loading = true
     const responseHandler = new DjangoApiResponseHandler<Model>(this, this.httpDelete(this.urlApi(id), extraHeaders))
     const response = await responseHandler.handleResponse()
     this.loading = false

@@ -55,12 +55,6 @@
 
 
 
-#### add 'loading' property to base api?
-- update at beginning and end of call
-- maybe a way to cancel a call if it's already in progress?
-
-
-
 
 
 
