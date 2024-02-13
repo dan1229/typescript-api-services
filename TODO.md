@@ -49,7 +49,9 @@
 - add build step somehow
 
 
-#### django api handler
+
+
+#### clean up django api response handler
 - allow for baseapi instances to use this and get general functionality
   - detect errors and use 'error' boolean
   - generic message with 'message' string
@@ -58,13 +60,11 @@
 
 
 
-#### base api response handler?
-- create BaseApiResponseHandler??
-
-
 
 ### [1.0.0] - 2024-MM-DD
-- Created `DjangoApiResponseHandler` for better organization
+- Created `BaseApiResponseHandler` and `DjangoApiResponseHandler` for more functionality
+- General support for `BaseApi` improved
+- `DjangoApi.post` - `extraHeaders` param fixed
 #### TODO
 
 -------------------------------------------------------

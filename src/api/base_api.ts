@@ -1,4 +1,6 @@
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios'
+import { BaseApiResponseHandler } from './base_api_response_handler'
+import { ApiResponse } from 'src/types'
 
 /**
  *
@@ -54,19 +56,23 @@ export abstract class BaseApi {
    * Supported methods
    * - GET, POST, PATCH, DELETE
    **/
-  protected async httpGet (url: string, headers = {}): Promise<AxiosResponse> {
-    return await this.client.get(url, { headers })
+  protected async httpGet<T> (url: string, headers = {}): Promise<ApiResponse<T>> {
+    const responseHandler = new BaseApiResponseHandler<T>(this, this.client.get(url, { headers }))
+    return await responseHandler.handleResponse()
   }
 
-  protected async httpPost (url: string, body: object, headers = {}): Promise<AxiosResponse> {
-    return await this.client.post(url, body, headers)
+  protected async httpPost<T> (url: string, body: object, headers = {}): Promise<ApiResponse<T>> {
+    const responseHandler = new BaseApiResponseHandler<T>(this, this.client.post(url, body, headers))
+    return await responseHandler.handleResponse()
   }
 
-  protected async httpPatch (url: string, body: object, headers = {}): Promise<AxiosResponse> {
-    return await this.client.patch(url, body, headers)
+  protected async httpPatch<T> (url: string, body: object, headers = {}): Promise<ApiResponse<T>> {
+    const responseHandler = new BaseApiResponseHandler<T>(this, this.client.patch(url, body, headers))
+    return await responseHandler.handleResponse()
   }
 
-  protected async httpDelete (url: string, headers = {}): Promise<AxiosResponse> {
-    return await this.client.delete(url, { headers })
+  protected async httpDelete<T> (url: string, headers = {}): Promise<ApiResponse<T>> {
+    const responseHandler = new BaseApiResponseHandler<T>(this, this.client.delete(url, { headers }))
+    return await responseHandler.handleResponse()
   }
 }
