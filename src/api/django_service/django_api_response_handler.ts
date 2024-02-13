@@ -90,93 +90,44 @@ export class DjangoApiResponseHandler<Model> {
    * @param {any | string} exception - Exception to log/handle
    * @return {ApiResponseError<Model>} Api response ERROR object
    */
-  handleError (exception: any | string): ApiResponseError<Model> {
-    // js exception/errors -> return as is
+  handleError(exception: any | string): ApiResponseError<Model> {
     if (typeof exception === 'string') {
-      return new ApiResponseError<Model>(this.response, exception, new Map<string, string>())
+        return new ApiResponseError<Model>(this.response, exception, new Map<string, string>());
     }
-    // response obj errors -> django api errors
-    else if ('response' in exception && typeof exception.response !== 'undefined') {
-      // 'data' in response
-      if ('data' in exception.response && typeof !!exception.response.data) {
-        const keys = Object.keys(exception.response.data)
-        let errorMessage = null // if it was in the 'message' field
-        let errorDetail = null // if it was in the 'detail' field
-        let errorNonField = null // any non field errors
-        let errorFields = new Map<string, string>()
 
-        // loop through 'data' response keys
-        // this is one of the worst pieces of code i've ever written i apologize
-        for (let i = 0; i < keys.length; ++i) {
-          const key = keys[i]
-          const err = exception.response.data[key]
-          if (err instanceof Array) {
-            if (key === 'non_field_errors') {
-              // handle non field errors
-              errorNonField = err[0]
-            } else {
-              errorFields = errorFields.set(key, err[0])
-            }
-          } else if (key === 'error_fields' && err instanceof Object) {
-            // handle object errors
-            const errKeys = Object.keys(err)
-            for (let j = 0; j < errKeys.length; ++j) {
-              const errKey = errKeys[j]
-              const errVal = err[errKey]
-              if (errVal instanceof Array) {
-                for (let k = 0; k < errVal.length; ++k) {
-                  const tmp = errVal[k]
-                  if (tmp instanceof Object) {
-                    errorFields = errorFields.set(errKey, tmp[Object.keys(tmp)[0]])
-                  } else {
-                    errorFields = errorFields.set(errKey, errVal[k].toString())
-                  }
+    if ('response' in exception && exception.response && exception.response.data) {
+        const responseData = exception.response.data;
+
+        if (responseData.non_field_errors && responseData.non_field_errors.length) {
+            return new ApiResponseError<Model>(this.response, responseData.non_field_errors[0]);
+        }
+
+        if (responseData.detail) {
+            return new ApiResponseError<Model>(this.response, responseData.detail);
+        }
+
+        if (responseData.message) {
+            return new ApiResponseError<Model>(this.response, responseData.message);
+        }
+
+        const errorFields = new Map<string, string>();
+
+        if (responseData.error_fields) {
+            Object.keys(responseData.error_fields).forEach(key => {
+                const errorValue = responseData.error_fields[key];
+                if (Array.isArray(errorValue)) {
+                    errorFields.set(key, errorValue[0].toString());
+                } else {
+                    errorFields.set(key, errorValue.toString());
                 }
-              } else {
-                errorFields = errorFields.set(errKey, errVal.toString().replace('_', ' '))
-              }
-            }
-          } else if (key === 'error_fields') {
-            // this is when django gives an object with field specific errors
-            errorFields = err
-          } else if (key === 'non_field_errors') {
-            // this is when django gives an object with field specific errors
-            errorNonField = err[0]
-          } else if (key === 'message') {
-            // this is a 'generic' error from our django bootstrapper and custom error handler
-            errorMessage = exception.response.data.message
-          } else if (key === 'detail') {
-            // this is a 'generic' error from django - shouldn't really happen
-            errorDetail = exception.response.data.detail
-          }
+            });
         }
 
-        // craft response - precedence of errors below
-        // 1. error non field errors
-        if (!!errorNonField && !!errorNonField.length) {
-          return new ApiResponseError<Model>(this.response, errorNonField, errorFields)
-        }
-        // 2. error detail - default django error field, shouldn't really happen but just in case
-        else if (!!errorDetail && !!errorDetail.length) {
-          return new ApiResponseError<Model>(this.response, errorDetail, errorFields)
-        }
-        // 3. error message - these are the most generic from our bootstrapper
-        else if (!!errorMessage && !!errorMessage.length) {
-          return new ApiResponseError<Model>(this.response, errorMessage, errorFields)
-        }
-        // 4. default error
-        else {
-          return new ApiResponseError<Model>(this.response, undefined, errorFields)
-        }
-      } else {
-        // 'data' doesn't exist -> error
-        return new ApiResponseError<Model>(this.response, undefined)
-      }
+        return new ApiResponseError<Model>(this.response, undefined, errorFields);
     }
-    // default case error -> unsure how to handle
-    else {
-      console.error(`Unknown error type: ${exception}`)
-      return new ApiResponseError<Model>(this.response)
-    }
-  }
+
+    console.error(`Unknown error type: ${exception}`);
+    return new ApiResponseError<Model>(this.response);
+}
+
 }
