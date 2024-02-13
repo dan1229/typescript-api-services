@@ -17,7 +17,7 @@ import { type ApiResponse } from '../../../types'
  * - getPrev()
  * - getPage(num)
  */
-export default class DjangoGet<Model> extends DjangoApi {
+export default class DjangoGet<Model, TypeFilters extends object | null = null> extends DjangoApi {
   list: Model[] = []
   result?: Model
   count?: number
@@ -47,7 +47,7 @@ export default class DjangoGet<Model> extends DjangoApi {
    * @param {Record<string, unknown>=} extraHeaders - Extra headers to add to request
    * @return {ApiResponse} Api response object
    */
-  public async getList<TypeFilters extends object>(paginated: boolean = true, filters?: TypeFilters, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model[]>> {
+  public async getList (paginated: boolean = true, filters?: TypeFilters, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model[]>> {
     this.loading = true
     const responseHandler = new DjangoApiResponseHandler<Model>(this, this.httpGet(this.urlApi(undefined, filters), extraHeaders))
     const response = await this.handleDjangoGet(responseHandler, paginated) as ApiResponse<Model[]>
@@ -97,7 +97,7 @@ export default class DjangoGet<Model> extends DjangoApi {
    * @param {TypeFilters=} filters - Filters to send with request
    * @return {ApiResponse} Api response object
    */
-  public async getRetrieve<TypeFilters extends object>(
+  public async getRetrieve (
     id: string,
     paginated: boolean = false,
     extraHeaders?: Record<string, unknown>,
