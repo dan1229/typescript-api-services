@@ -18,6 +18,7 @@ export abstract class BaseApi {
   name: string
   urlBase: string
   timeout: number
+  loading: boolean
 
   /**
    * CONSTRUCTOR
@@ -26,6 +27,7 @@ export abstract class BaseApi {
     this.name = name
     this.urlBase = urlBase
     this.timeout = timeout
+    this.loading = false
 
     // setup axios client
     this._axiosInstance = axios.create({
@@ -57,22 +59,34 @@ export abstract class BaseApi {
    * - GET, POST, PATCH, DELETE
    **/
   protected async httpGet<T> (url: string, headers = {}): Promise<ApiResponse<T>> {
+    this.loading = true
     const responseHandler = new BaseApiResponseHandler<T>(this, this.client.get(url, { headers }))
-    return await responseHandler.handleResponse()
+    const response = await responseHandler.handleResponse()
+    this.loading = false
+    return response
   }
 
   protected async httpPost<T> (url: string, body: object, headers = {}): Promise<ApiResponse<T>> {
+    this.loading = true
     const responseHandler = new BaseApiResponseHandler<T>(this, this.client.post(url, body, headers))
-    return await responseHandler.handleResponse()
+    const response = await responseHandler.handleResponse()
+    this.loading = false
+    return response
   }
 
   protected async httpPatch<T> (url: string, body: object, headers = {}): Promise<ApiResponse<T>> {
+    this.loading = true
     const responseHandler = new BaseApiResponseHandler<T>(this, this.client.patch(url, body, headers))
-    return await responseHandler.handleResponse()
+    const response = await responseHandler.handleResponse()
+    this.loading = false
+    return response
   }
 
   protected async httpDelete<T> (url: string, headers = {}): Promise<ApiResponse<T>> {
+    this.loading = true
     const responseHandler = new BaseApiResponseHandler<T>(this, this.client.delete(url, { headers }))
-    return await responseHandler.handleResponse()
+    const response = await responseHandler.handleResponse()
+    this.loading = false
+    return response
   }
 }

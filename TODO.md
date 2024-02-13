@@ -71,6 +71,7 @@
   - Cleaned up `DjangoApiResponseHandler` error handling
 - General support for `BaseApi` improved
 - `DjangoApi.post` - `extraHeaders` param fixed
+- Added `loading` property to `BaseApi` and `DjangoApi` for loading state
 #### TODO
 
 -------------------------------------------------------
