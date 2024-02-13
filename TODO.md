@@ -31,13 +31,9 @@
 ### 1.0.0
 
 
-
 #### ci
 - add build step somehow
   - add nextjs project? idk dont want to limit this to a specific framework
-
-
-
 
 
 
@@ -45,10 +41,6 @@
 - build in way to avoid multiple calling apis
 - maybe a way to cancel a call if it's already in progress?
 - customizable 'seconds since last call' to allow for repeat calls
-
-
-
-
 
 
 
