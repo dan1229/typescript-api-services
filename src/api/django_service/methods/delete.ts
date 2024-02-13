@@ -1,5 +1,5 @@
 import DjangoApi from '../django_api'
-import { ApiResponseHandler } from '../../../api_response_handler'
+import { ApiResponseHandler } from '../../../response_handler/api_response_handler'
 import { type ApiResponse } from '../../../types'
 
 /**

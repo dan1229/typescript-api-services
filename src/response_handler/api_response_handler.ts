@@ -1,5 +1,5 @@
-import { type ApiResponse, ApiResponseError, ApiResponseSuccess, type AxiosResponse } from './types'
-import { type BaseApi } from './api/base_api'
+import { type ApiResponse, ApiResponseError, ApiResponseSuccess, type AxiosResponse } from '../types'
+import { type BaseApi } from '../api/base_api'
 
 /**
  * API RESPONSE HANDLER
