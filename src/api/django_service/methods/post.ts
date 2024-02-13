@@ -1,5 +1,5 @@
 import DjangoApi from '../django_api'
-import { ApiResponseHandler } from '../../../response_handler/api_response_handler'
+import { DjangoApiResponseHandler } from '../django_api_response_handler'
 import { type ApiResponse } from '../../../types'
 
 /**
@@ -43,7 +43,7 @@ export default class DjangoPost<Model, IBody extends object> extends DjangoApi {
    * @return {ApiResponse} Api response object
    */
   public async postCreate (body: IBody | FormData, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model>> {
-    const responseHandler = new ApiResponseHandler<Model>(this, this.httpPost(this.urlApi(), body, extraHeaders))
+    const responseHandler = new DjangoApiResponseHandler<Model>(this, this.httpPost(this.urlApi(), body, extraHeaders))
     const res = await responseHandler.handleResponse()
     try {
       this.result = res.obj

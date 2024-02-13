@@ -50,7 +50,6 @@ export abstract class BaseApi {
    *
    * Standard HTTP wrapper functions to handle basic
    * functionality, formatting, auth, sanitizing etc.
-   * Automatically wrap responses in ApiResponseHandler.
    *
    * Supported methods
    * - GET, POST, PATCH, DELETE

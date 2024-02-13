@@ -1,5 +1,5 @@
 import DjangoApi from '../django_api'
-import { ApiResponseHandler } from '../../../response_handler/api_response_handler'
+import { DjangoApiResponseHandler } from '../django_api_response_handler'
 import { type ApiResponse } from '../../../types'
 
 /**
@@ -30,7 +30,7 @@ export default class DjangoDelete<Model> extends DjangoApi {
    * @return {ApiResponse} Api response object
    */
   public async deleteItem (id: string, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model>> {
-    const responseHandler = new ApiResponseHandler<Model>(this, this.httpDelete(this.urlApi(id), extraHeaders))
+    const responseHandler = new DjangoApiResponseHandler<Model>(this, this.httpDelete(this.urlApi(id), extraHeaders))
     return await responseHandler.handleResponse()
   }
 }

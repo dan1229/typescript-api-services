@@ -1,15 +1,15 @@
-import { type ApiResponse, ApiResponseError, ApiResponseSuccess, type AxiosResponse } from '../types'
-import { type BaseApi } from '../api/base_api'
+import { type ApiResponse, ApiResponseError, ApiResponseSuccess, type AxiosResponse } from '../../types'
+import { type BaseApi } from '../base_api'
 
 /**
- * API RESPONSE HANDLER
+ * DJANGO API RESPONSE HANDLER
  *
  * Handle, sanitize and standardize API responses for services
  *
  * @param {BaseApi} api - API to use for response
  * @param {Promise<any>} request - Request to fulfil
  */
-export class ApiResponseHandler<Model> {
+export class DjangoApiResponseHandler<Model> {
   api: BaseApi
   request: Promise<any>
   response?: AxiosResponse<any>

@@ -58,14 +58,13 @@
 
 
 
-#### ApiResponseHandler -> DjangoApiResponseHandler?
-- move to new file?
-- keep api response handler more generic?
-
+#### base api response handler?
+- create BaseApiResponseHandler??
 
 
 
 ### [1.0.0] - 2024-MM-DD
+- Created `DjangoApiResponseHandler` for better organization
 #### TODO
 
 -------------------------------------------------------
