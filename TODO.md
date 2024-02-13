@@ -60,8 +60,6 @@
 - maybe a way to cancel a call if it's already in progress?
 
 
-#### clean up django api response handler
-- just generally clean up error handling - it's pretty messy right now
 
 
 

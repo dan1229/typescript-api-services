@@ -90,44 +90,43 @@ export class DjangoApiResponseHandler<Model> {
    * @param {any | string} exception - Exception to log/handle
    * @return {ApiResponseError<Model>} Api response ERROR object
    */
-  handleError(exception: any | string): ApiResponseError<Model> {
+  handleError (exception: any | string): ApiResponseError<Model> {
     if (typeof exception === 'string') {
-        return new ApiResponseError<Model>(this.response, exception, new Map<string, string>());
+      return new ApiResponseError<Model>(this.response, exception, new Map<string, string>())
     }
 
     if ('response' in exception && exception.response && exception.response.data) {
-        const responseData = exception.response.data;
+      const responseData = exception.response.data
 
-        if (responseData.non_field_errors && responseData.non_field_errors.length) {
-            return new ApiResponseError<Model>(this.response, responseData.non_field_errors[0]);
-        }
+      if (responseData.non_field_errors?.length) {
+        return new ApiResponseError<Model>(this.response, responseData.non_field_errors[0])
+      }
 
-        if (responseData.detail) {
-            return new ApiResponseError<Model>(this.response, responseData.detail);
-        }
+      if (responseData.detail) {
+        return new ApiResponseError<Model>(this.response, responseData.detail)
+      }
 
-        if (responseData.message) {
-            return new ApiResponseError<Model>(this.response, responseData.message);
-        }
+      if (responseData.message) {
+        return new ApiResponseError<Model>(this.response, responseData.message)
+      }
 
-        const errorFields = new Map<string, string>();
+      const errorFields = new Map<string, string>()
 
-        if (responseData.error_fields) {
-            Object.keys(responseData.error_fields).forEach(key => {
-                const errorValue = responseData.error_fields[key];
-                if (Array.isArray(errorValue)) {
-                    errorFields.set(key, errorValue[0].toString());
-                } else {
-                    errorFields.set(key, errorValue.toString());
-                }
-            });
-        }
+      if (responseData.error_fields) {
+        Object.keys(responseData.error_fields).forEach(key => {
+          const errorValue = responseData.error_fields[key]
+          if (Array.isArray(errorValue)) {
+            errorFields.set(key, errorValue[0].toString())
+          } else {
+            errorFields.set(key, errorValue.toString())
+          }
+        })
+      }
 
-        return new ApiResponseError<Model>(this.response, undefined, errorFields);
+      return new ApiResponseError<Model>(this.response, undefined, errorFields)
     }
 
-    console.error(`Unknown error type: ${exception}`);
-    return new ApiResponseError<Model>(this.response);
-}
-
+    console.error(`Unknown error type: ${exception}`)
+    return new ApiResponseError<Model>(this.response)
+  }
 }
