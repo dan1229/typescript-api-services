@@ -138,36 +138,36 @@ export default abstract class DjangoApi<TypeFilters extends | object | null = nu
   }
 
   /**
-   * HTTP METHODS
+   * RETRY IF NECESSARY
    * Drop duplicate calls integrated into the HTTP methods.
    **/
   async retryIfNecessary (
     requestFunction: () => Promise<AxiosResponse<unknown>>,
     url: string
   ): Promise<any> {
-    const now = Date.now()
-    const lastRequestTime = BaseApi.lastRequestTimestamps[url] || 0
-    const timeElapsed = now - lastRequestTime
+    const now = Date.now();
+    const lastRequestTime = BaseApi.lastRequestTimestamps[url] || 0;
+    const timeElapsed = now - lastRequestTime;
 
-    const MINIMUM_DELAY = 5000 // Minimum delay between requests in milliseconds
+    const MINIMUM_DELAY = 5000; // Minimum delay between requests in milliseconds
 
+    console.log('CALLING: ', url);
+
+    // Check if there is a pending request for this URL within the time window
     if (timeElapsed < MINIMUM_DELAY) {
-      // console.warn('Dropping duplicate call: ', url)
-      // return null
-      // If not enough time has passed, wait before retrying
-      console.log('WAITING BEFORE RETRYING: ', url)
-      await new Promise((resolve) => setTimeout(resolve, MINIMUM_DELAY - timeElapsed))
+      console.log('Duplicate call dropped:', url);
+      return null;
     }
 
     // Update the last request timestamp
-    console.log('CALLING: ', url)
-    BaseApi.lastRequestTimestamps[url] = Date.now()
+    BaseApi.lastRequestTimestamps[url] = Date.now();
 
     // Do whatever handling necessary with the response, e.g., error handling
     const responseHandler = new DjangoApiResponseHandler(
       this,
       requestFunction()
-    )
-    return await responseHandler.handleResponse()
+    );
+    return await responseHandler.handleResponse();
   }
+
 }
