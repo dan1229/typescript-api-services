@@ -1,13 +1,12 @@
-import axios from 'axios'
-import Cookies from 'js-cookie'
-import { BaseApi } from '../base_api'
+import axios, { AxiosInstance } from 'axios';
+import Cookies from 'js-cookie';
+import { BaseApi } from '../base_api';
 
-export type TDjangoApiMethod = 'get' | 'post' | 'patch' | 'delete'
+export type TDjangoApiMethod = 'get' | 'post' | 'patch' | 'delete';
 
-export type TypeFilters = object | null
+export type TypeFilters = object | null;
 
 /**
- *
  * DJANGO API
  *
  * Django Api abstract base class - base any API methods off of this.
@@ -22,18 +21,18 @@ export type TypeFilters = object | null
  * @param {string=} token - Auth token to use.
  */
 export default abstract class DjangoApi<TypeFilters extends object | null = null> extends BaseApi {
-  urlEndpoint: string
-  token: string
-  loading: boolean
+  urlEndpoint: string;
+  token: string;
+  loading: boolean;
 
-  public constructor (name: string, urlBase: string, urlEndpoint: string, token?: string) {
-    super(name, urlBase)
+  public constructor(name: string, urlBase: string, urlEndpoint: string, token?: string) {
+    super(name, urlBase);
     if (!token) {
-      token = ''
+      token = '';
     }
-    this.token = token
-    this.urlEndpoint = urlEndpoint
-    this.loading = false
+    this.token = token;
+    this.urlEndpoint = urlEndpoint;
+    this.loading = false;
 
     // setup axios client
     this._axiosInstance = axios.create({
@@ -43,11 +42,10 @@ export default abstract class DjangoApi<TypeFilters extends object | null = null
       withCredentials: true,
       headers: {
         'Content-Type': 'application/json',
-        'X-CSRFToken': Cookies.get('csrftoken') ?? ''
-      }
-    })
+        'X-CSRFToken': Cookies.get('csrftoken') ?? '',
+      },
+    });
   }
-
   /**
    * HEADERS
    *

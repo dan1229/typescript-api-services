@@ -21,7 +21,7 @@ export abstract class BaseApi {
   loading: boolean;
 
   // Maintain a dictionary to store the timestamps of recent requests
-  private lastRequestTimestamps: { [url: string]: number } = {};
+  lastRequestTimestamps: { [url: string]: number } = {};
 
   /**
    * CONSTRUCTOR
@@ -45,7 +45,7 @@ export abstract class BaseApi {
   /**
    * CLIENT
    * The API Client should be defined as a `static` value on the subclass.
-   **/
+   */
   _axiosInstance: AxiosInstance;
 
   protected get client(): AxiosInstance {
@@ -60,8 +60,7 @@ export abstract class BaseApi {
    *
    * Supported methods
    * - GET, POST, PATCH, DELETE
-   **/
-
+   */
   protected async httpGet<T>(
     url: string,
     headers = {}
@@ -116,8 +115,11 @@ export abstract class BaseApi {
     return response;
   }
 
-  // Retry the request only if enough time has passed since the last request
-  private async retryIfNecessary<T>(
+  /**
+   * Retry If Necessary
+   * Retry the request only if enough time has passed since the last request
+   */
+ async retryIfNecessary<T>(
     requestFunction: () => Promise<any>,
     url: string
   ): Promise<ApiResponse<T>> {
