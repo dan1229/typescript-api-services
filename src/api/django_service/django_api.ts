@@ -136,33 +136,4 @@ export default abstract class DjangoApi<TypeFilters extends | object | null = nu
     }
     return Number(decodeURIComponent(results[1].replace(/\+/g, '    ')))
   }
-
-  /**
-   * RETRY IF NECESSARY
-   * Drop duplicate calls integrated into the HTTP methods.
-   **/
-  async retryIfNecessary (
-    requestFunction: () => Promise<AxiosResponse<unknown>>,
-    url: string
-  ): Promise<any> {
-    const now = Date.now()
-    const lastRequestTime = BaseApi.lastRequestTimestamps[url] || 0
-    const timeElapsed = now - lastRequestTime
-
-    // Check if there is a pending request for this URL within the time window
-    if (timeElapsed < this.minimumDelay) {
-      console.warn('Duplicate call dropped:', url)
-      return new ApiResponseDuplicate(requestFunction)
-    }
-
-    // Update the last request timestamp
-    BaseApi.lastRequestTimestamps[url] = Date.now()
-
-    // Do whatever handling necessary with the response, e.g., error handling
-    const responseHandler = new DjangoApiResponseHandler(
-      this,
-      requestFunction()
-    )
-    return await responseHandler.handleResponse()
-  }
 }
