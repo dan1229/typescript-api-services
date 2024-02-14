@@ -136,38 +136,50 @@ export default abstract class DjangoApi<TypeFilters extends | object | null = nu
     }
     return Number(decodeURIComponent(results[1].replace(/\+/g, '    ')))
   }
+/**
+ * retryIfNecessary
+ * Drop duplicate calls integrated into the HTTP methods.
+ **/
+async retryIfNecessary (
+  requestFunction: () => Promise<any>,
+  url: string
+): Promise<any> {
+  const now = Date.now()
+  const lastRequestTime = this.lastRequestTimestamps[url] || 0
+  const timeElapsed = now - lastRequestTime
 
-  /**
-   * HTTP METHODS
-   * Retry mechanism integrated into the HTTP methods.
-  **/
-  async retryIfNecessary (
-    requestFunction: () => Promise<any>,
-    url: string
-  ): Promise<any> {
-    const now = Date.now()
-    const lastRequestTime = this.lastRequestTimestamps[url] || 0
-    const timeElapsed = now - lastRequestTime
+  const MINIMUM_DELAY = 5000 // Minimum delay between requests in milliseconds
 
-    const MINIMUM_DELAY = 5000 // Minimum delay between requests in milliseconds
-
-    console.log("TIME ELAPSED: ", timeElapsed)
-    if (timeElapsed < MINIMUM_DELAY) {
-      // If not enough time has passed, wait before retrying
-      await new Promise((resolve) => setTimeout(resolve, MINIMUM_DELAY - timeElapsed))
+  console.log("TIME ELAPSED: ", timeElapsed)
+  if (timeElapsed < MINIMUM_DELAY) {
+    // If a request is already pending for this URL, drop the duplicate call
+    if (this.pendingRequests[url]) {
+      console.log('Duplicate call dropped:', url);
+      return null;
     }
+    
+    // Mark the request as pending
+    this.pendingRequests[url] = true;
 
-    // Update the last request timestamp
-    this.lastRequestTimestamps[url] = Date.now()
+    // If not enough time has passed, wait before retrying
+    await new Promise((resolve) => setTimeout(resolve, MINIMUM_DELAY - timeElapsed))
 
-    // Ensure the response is correctly typed
-    const response = await requestFunction()
-
-    // Do whatever handling necessary with the response, e.g., error handling
-    const responseHandler = new DjangoApiResponseHandler(
-      this,
-      response
-    )
-    return await responseHandler.handleResponse()
+    // Clear the pending status after the delay
+    delete this.pendingRequests[url];
   }
+
+  // Update the last request timestamp
+  this.lastRequestTimestamps[url] = Date.now()
+
+  // Ensure the response is correctly typed
+  const response = await requestFunction()
+
+  // Do whatever handling necessary with the response, e.g., error handling
+  const responseHandler = new DjangoApiResponseHandler(
+    this,
+    response
+  )
+  return await responseHandler.handleResponse()
+}
+
 }
