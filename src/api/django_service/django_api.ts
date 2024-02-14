@@ -1,7 +1,8 @@
-import axios, { AxiosResponse } from 'axios'
+import axios, { type AxiosResponse } from 'axios'
 import Cookies from 'js-cookie'
 import { BaseApi } from '../base_api'
 import { DjangoApiResponseHandler } from './django_api_response_handler'
+import { ApiResponse, ApiResponseDuplicate } from 'src/types'
 
 export type TDjangoApiMethod = 'get' | 'post' | 'patch' | 'delete'
 
@@ -145,29 +146,28 @@ export default abstract class DjangoApi<TypeFilters extends | object | null = nu
     requestFunction: () => Promise<AxiosResponse<unknown>>,
     url: string
   ): Promise<any> {
-    const now = Date.now();
-    const lastRequestTime = BaseApi.lastRequestTimestamps[url] || 0;
-    const timeElapsed = now - lastRequestTime;
+    const now = Date.now()
+    const lastRequestTime = BaseApi.lastRequestTimestamps[url] || 0
+    const timeElapsed = now - lastRequestTime
 
-    const MINIMUM_DELAY = 5000; // Minimum delay between requests in milliseconds
+    const MINIMUM_DELAY = 5000 // Minimum delay between requests in milliseconds
 
-    console.log('CALLING: ', url);
+    console.log('CALLING: ', url)
 
     // Check if there is a pending request for this URL within the time window
     if (timeElapsed < MINIMUM_DELAY) {
-      console.log('Duplicate call dropped:', url);
-      return null;
+      console.log('Duplicate call dropped:', url)
+      return new ApiResponseDuplicate(requestFunction)
     }
 
     // Update the last request timestamp
-    BaseApi.lastRequestTimestamps[url] = Date.now();
+    BaseApi.lastRequestTimestamps[url] = Date.now()
 
     // Do whatever handling necessary with the response, e.g., error handling
     const responseHandler = new DjangoApiResponseHandler(
       this,
       requestFunction()
-    );
-    return await responseHandler.handleResponse();
+    )
+    return await responseHandler.handleResponse()
   }
-
 }

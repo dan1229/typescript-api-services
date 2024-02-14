@@ -22,7 +22,7 @@ export default class DjangoPost<Model, IBody extends object> extends DjangoApi {
    * @param {IBody | FormData} body - Body of request to include, probably the object data
    * @param {Record<string, unknown>} extraHeaders - Extra headers to add to request
    */
-  protected async httpPost(url: string, body: IBody | FormData, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model>> {
+  protected async httpPost (url: string, body: IBody | FormData, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model>> {
     const headers = { ...this.getHeaders(), ...extraHeaders }
     return await this.retryIfNecessary(async () => await this.client.post(url, body, headers), url)
   }

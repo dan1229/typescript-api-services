@@ -23,6 +23,7 @@ export abstract class ApiResponse<Model> {
     this.errorFields = errorFields
     this.obj = obj
   }
+
 }
 
 /**
@@ -54,6 +55,17 @@ export class ApiResponseError<Model> extends ApiResponse<Model> {
 export class ApiResponseSuccess<Model> extends ApiResponse<Model> {
   constructor (response: any, message: string = 'Successful request.', obj?: Model) {
     super(response, message, false, undefined, obj)
+  }
+}
+
+/**
+ * API RESPONSE DUPLICATE
+ *
+ * @param {any} response - HTTP response object
+ */
+export class ApiResponseDuplicate extends ApiResponse<unknown> {
+  constructor(response: any) {
+    super(response, 'Duplicate request.', true, undefined, undefined)
   }
 }
 

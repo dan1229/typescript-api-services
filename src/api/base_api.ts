@@ -61,7 +61,7 @@ export abstract class BaseApi {
    * Supported methods
    * - GET, POST, PATCH, DELETE
    */
-  protected async httpGet(
+  protected async httpGet (
     url: string,
     headers = {}
   ): Promise<ApiResponse<unknown>> {
@@ -74,7 +74,7 @@ export abstract class BaseApi {
     return response
   }
 
-  protected async httpPost(
+  protected async httpPost (
     url: string,
     body: object,
     headers = {}
@@ -88,7 +88,7 @@ export abstract class BaseApi {
     return response
   }
 
-  protected async httpPatch(
+  protected async httpPatch (
     url: string,
     body: object,
     headers = {}
@@ -102,7 +102,7 @@ export abstract class BaseApi {
     return response
   }
 
-  protected async httpDelete(
+  protected async httpDelete (
     url: string,
     headers = {}
   ): Promise<ApiResponse<unknown>> {
