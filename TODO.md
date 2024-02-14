@@ -9,6 +9,7 @@
 
 
 
+
 #### move error fields to 'message' when no 'message'?
 - if no 'message' field, move some field to 'message'?
 - or if default message?
@@ -34,6 +35,11 @@
 #### ci
 - add build step somehow
   - add nextjs project? idk dont want to limit this to a specific framework
+
+
+
+#### add prettier/eslint
+- it's badly formatted code here!
 
 
 

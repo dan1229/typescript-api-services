@@ -61,12 +61,12 @@ export abstract class BaseApi {
    * Supported methods
    * - GET, POST, PATCH, DELETE
    */
-  protected async httpGet<T>(
+  protected async httpGet(
     url: string,
     headers = {}
-  ): Promise<ApiResponse<T>> {
+  ): Promise<ApiResponse<unknown>> {
     this.loading = true
-    const response = await this.retryIfNecessary<T>(
+    const response = await this.retryIfNecessary(
       async () => await this.client.get(url, { headers }),
       url
     )
@@ -74,13 +74,13 @@ export abstract class BaseApi {
     return response
   }
 
-  protected async httpPost<T>(
+  protected async httpPost(
     url: string,
     body: object,
     headers = {}
-  ): Promise<ApiResponse<T>> {
+  ): Promise<ApiResponse<unknown>> {
     this.loading = true
-    const response = await this.retryIfNecessary<T>(
+    const response = await this.retryIfNecessary(
       async () => await this.client.post(url, body, headers),
       url
     )
@@ -88,13 +88,13 @@ export abstract class BaseApi {
     return response
   }
 
-  protected async httpPatch<T>(
+  protected async httpPatch(
     url: string,
     body: object,
     headers = {}
-  ): Promise<ApiResponse<T>> {
+  ): Promise<ApiResponse<unknown>> {
     this.loading = true
-    const response = await this.retryIfNecessary<T>(
+    const response = await this.retryIfNecessary(
       async () => await this.client.patch(url, body, headers),
       url
     )
@@ -102,12 +102,12 @@ export abstract class BaseApi {
     return response
   }
 
-  protected async httpDelete<T>(
+  protected async httpDelete(
     url: string,
     headers = {}
-  ): Promise<ApiResponse<T>> {
+  ): Promise<ApiResponse<unknown>> {
     this.loading = true
-    const response = await this.retryIfNecessary<T>(
+    const response = await this.retryIfNecessary(
       async () => await this.client.delete(url, { headers }),
       url
     )

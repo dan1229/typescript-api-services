@@ -1,5 +1,4 @@
 import DjangoApi from '../django_api'
-import { DjangoApiResponseHandler } from '../django_api_response_handler'
 import { type ApiResponse } from '../../../types'
 
 /**
@@ -23,13 +22,13 @@ export default class DjangoPatch<Model, IBody extends object> extends DjangoApi 
    * @param {IBody | FormData} body - Body of request to include, probably the object data
    * @param {Record<string, unknown>} extraHeaders - Extra headers to add to request
    */
-  protected async httpPatch (url: string, body: IBody | FormData, extraHeaders?: Record<string, unknown>): Promise<any> {
+  protected async httpPatch (url: string, body: IBody | FormData, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model>> {
     const headers = this.getHeaders(extraHeaders)
-    return await this.client.patch(url, body, headers)
+    return await this.retryIfNecessary(async () => await this.client.patch(url, body, headers), url)
   }
 
   // Generic version of httpPatch that allows you to specify the body type and doesn't handle the response
-  protected async httpPatchGeneric<IBodyGeneric extends object>(url: string, body: IBodyGeneric, extraHeaders?: Record<string, unknown>): Promise<any> {
+  protected async httpPatchGeneric<IBodyGeneric extends object>(url: string, body: IBodyGeneric, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model>> {
     const headers = this.getHeaders(extraHeaders)
     return await this.retryIfNecessary(async () => await this.client.patch(url, body, headers), url)
   }
@@ -46,8 +45,8 @@ export default class DjangoPatch<Model, IBody extends object> extends DjangoApi 
    */
   public async patchUpdate (id: string, body: IBody | FormData, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model>> {
     this.loading = true
-    const responseHandler = new DjangoApiResponseHandler<Model>(this, this.httpPatch(this.urlApi(id), body, extraHeaders))
-    const res = await responseHandler.handleResponse()
+    const url = this.urlApi(id)
+    const res = await this.httpPatch(url, body, extraHeaders)
     try {
       this.result = res.obj
     } catch (e) {

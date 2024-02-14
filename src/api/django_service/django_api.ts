@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { AxiosResponse } from 'axios'
 import Cookies from 'js-cookie'
 import { BaseApi } from '../base_api'
 import { DjangoApiResponseHandler } from './django_api_response_handler'
@@ -142,7 +142,7 @@ export default abstract class DjangoApi<TypeFilters extends | object | null = nu
    * Drop duplicate calls integrated into the HTTP methods.
    **/
   async retryIfNecessary (
-    requestFunction: () => Promise<any>,
+    requestFunction: () => Promise<AxiosResponse<unknown>>,
     url: string
   ): Promise<any> {
     const now = Date.now()
@@ -152,7 +152,7 @@ export default abstract class DjangoApi<TypeFilters extends | object | null = nu
     const MINIMUM_DELAY = 5000 // Minimum delay between requests in milliseconds
 
     if (timeElapsed < MINIMUM_DELAY) {
-      console.warn("Dropping duplicate call: ", url)
+      console.warn('Dropping duplicate call: ', url)
       return null
       // If not enough time has passed, wait before retrying
       // console.log('WAITING BEFORE RETRYING: ', url)
@@ -163,13 +163,10 @@ export default abstract class DjangoApi<TypeFilters extends | object | null = nu
     console.log('CALLING: ', url)
     BaseApi.lastRequestTimestamps[url] = Date.now()
 
-    // Ensure the response is correctly typed
-    const response = await requestFunction()
-
     // Do whatever handling necessary with the response, e.g., error handling
     const responseHandler = new DjangoApiResponseHandler(
       this,
-      response
+      requestFunction()
     )
     return await responseHandler.handleResponse()
   }

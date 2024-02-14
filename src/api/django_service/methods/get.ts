@@ -1,5 +1,4 @@
 import DjangoApi from '../django_api'
-import { DjangoApiResponseHandler } from '../django_api_response_handler'
 import { type ApiResponse } from '../../../types'
 
 /**
@@ -49,8 +48,9 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
    */
   public async getList (paginated: boolean = true, filters?: TypeFilters, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model[]>> {
     this.loading = true
-    const responseHandler = new DjangoApiResponseHandler<Model>(this, this.httpGet(this.urlApi(undefined, filters), extraHeaders))
-    const response = await this.handleDjangoGet(responseHandler, paginated) as ApiResponse<Model[]>
+    const url = this.urlApi(undefined, filters)
+    const apiResponse = await this.httpGet(url, extraHeaders)
+    const response = await this.handleDjangoGet(apiResponse, paginated) as ApiResponse<Model[]>
     this.loading = false
     return response
   }
@@ -104,8 +104,9 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
     filters?: TypeFilters
   ): Promise<ApiResponse<Model | Model[]>> {
     this.loading = true
-    const responseHandler = new DjangoApiResponseHandler<Model | Model[]>(this, this.httpGet(this.urlApi(id, filters), extraHeaders))
-    const response = await this.handleDjangoGet(responseHandler, paginated)
+    const url = this.urlApi(id, filters)
+    const apiResponse = await this.httpGet(url, extraHeaders)
+    const response = await this.handleDjangoGet(apiResponse, paginated)
     this.loading = false
     return response
   }
@@ -113,38 +114,35 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
   /**
    * handleDjangoGet
    *
-   * @param responseHandler
+   * @param ApiResponse
    * @param paginated
    * @returns ApiResponse
    */
   protected async handleDjangoGet (
-    responseHandler: DjangoApiResponseHandler<Model | Model[]>,
+    apiResponse: ApiResponse<Model | Model[]>,
     paginated: boolean
   ): Promise<ApiResponse<Model | Model[]>> {
     // helper function to clean up get and retrieve methods
     if (!paginated) {
-      const res = await responseHandler.handleResponse()
       try {
-        this.result = res.obj
-        if (res.obj instanceof Array) {
-          this.list = res.obj
+        if (apiResponse.obj instanceof Array) {
+          this.list = apiResponse.obj
         } else {
-          this.result = res.obj
+          this.result = apiResponse.obj as Model
         }
       } catch (e) {
         console.error(e)
       }
-      return res
+      return apiResponse
     } else {
-      const res = await this.handlePaginatedResponse(responseHandler as DjangoApiResponseHandler<Model[]>)
       try {
-        this.count = res.response.data.count
-        this.list = res.obj ?? []
+        this.count = apiResponse.response.data.count
+        this.list = apiResponse.obj as Model[] ?? []
         this.calculatePageTotal() // this should only be called during the initial call NOT during any next/prev calls
       } catch (e) {
         console.error(e)
       }
-      return res
+      return apiResponse
     }
   }
 
@@ -155,34 +153,33 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
    * Handles 'next', 'prev', 'count', etc. and
    * this API data
    *
-   * @param {DjangoApiResponseHandler<Model[]>} responseHandler - response handler containing request to make
+   * @param {ApiResponse<Model[]>} apiResponse - Api response object
    * @param {Boolean=} combineLists - Whether to add next page to the current list or replace it
    * @return {ApiResponse} Api response object
    */
   protected async handlePaginatedResponse (
-    responseHandler: DjangoApiResponseHandler<Model[]>,
+    apiResponse: ApiResponse<Model[]>,
     combineLists: boolean = false
   ): Promise<ApiResponse<Model[]>> {
-    const res = await responseHandler.handleResponse()
     try {
-      this.count = res.response.data.count
-      this.next = res.response.data.next
-      this.prev = res.response.data.previous
+      this.count = apiResponse.response.data.count
+      this.next = apiResponse.response.data.next
+      this.prev = apiResponse.response.data.previous
 
       if (!combineLists) {
-        this.list = res.obj
+        this.list = apiResponse.obj || []
       } else {
         if (!!this.list && this.list.length > 0) {
-          this.list = [...this.list, ...res.obj]
+          this.list = [...this.list, ...apiResponse.obj || []]
         } else {
-          this.list = res.obj
+          this.list = apiResponse.obj || []
         }
       }
       this.calculatePageCurrent()
     } catch (e) {
       console.error(e)
     }
-    return res
+    return apiResponse
   }
 
   /**
@@ -195,8 +192,8 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
   public async getNext (combineLists: boolean = false, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model[]> | undefined> {
     this.loading = true
     if (typeof this.next !== 'undefined') {
-      const responseHandler = new DjangoApiResponseHandler<Model[]>(this, this.httpGet(this.next, extraHeaders))
-      const response = await this.handlePaginatedResponse(responseHandler, combineLists)
+      const apiResponse = await this.httpGet(this.next, extraHeaders)
+      const response = await this.handlePaginatedResponse(apiResponse, combineLists)
       this.loading = false
       return response
     }
@@ -213,8 +210,8 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
   public async getPrev (combineLists: boolean = false, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model[]> | undefined> {
     this.loading = true
     if (typeof this.prev !== 'undefined') {
-      const responseHandler = new DjangoApiResponseHandler<Model[]>(this, this.httpGet(this.prev, extraHeaders))
-      const response = await this.handlePaginatedResponse(responseHandler, combineLists)
+      const apiResponse = await this.httpGet(this.prev, extraHeaders)
+      const response = await this.handlePaginatedResponse(apiResponse, combineLists)
       this.loading = false
       return response
     }
@@ -231,8 +228,8 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
   public async getPage (page: number, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model[]>> {
     this.loading = true
     const pageUrl = `${this.urlApi()}?page=${page}`
-    const responseHandler = new DjangoApiResponseHandler<Model[]>(this, this.httpGet(pageUrl, extraHeaders))
-    const response = await this.handlePaginatedResponse(responseHandler)
+    const apiResponse = await this.httpGet(pageUrl, extraHeaders)
+    const response = await this.handlePaginatedResponse(apiResponse)
     this.loading = false
     return response
   }
