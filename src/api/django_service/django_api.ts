@@ -26,7 +26,7 @@ export default abstract class DjangoApi<TypeFilters extends | object | null = nu
   urlEndpoint: string
   token: string
 
-  public constructor (name: string, urlBase: string, urlEndpoint: string, token?: string, timeout: number = 10000, minimumDelay: number = 5000) {
+  public constructor (name: string, urlBase: string, urlEndpoint: string, token?: string, minimumDelay: number = 5000, timeout: number = 10000) {
     super(name, urlBase, timeout, minimumDelay)
     if (!token) {
       token = ''

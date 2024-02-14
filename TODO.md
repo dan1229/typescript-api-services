@@ -28,18 +28,21 @@
     - maybe just mimic any fields django sends back?
 
 
------
-### 1.0.0
-
-
 #### ci
 - add build step somehow
   - add nextjs project? idk dont want to limit this to a specific framework
 
 
+-----
+### 1.0.0
+
+
 
 #### add prettier/eslint
 - it's badly formatted code here!
+- add eslint for imports
+  - ONLY relative no absolute
+  - remove tsconfig?
 
 
 
