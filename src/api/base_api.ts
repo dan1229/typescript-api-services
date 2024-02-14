@@ -66,7 +66,7 @@ export abstract class BaseApi {
     headers = {}
   ): Promise<ApiResponse<T>> {
     this.loading = true;
-    const response = await this.retryIfNecessary(
+    const response = await this.retryIfNecessary<T>(
       () => this.client.get(url, { headers }),
       url
     );
@@ -80,7 +80,7 @@ export abstract class BaseApi {
     headers = {}
   ): Promise<ApiResponse<T>> {
     this.loading = true;
-    const response = await this.retryIfNecessary(
+    const response = await this.retryIfNecessary<T>(
       () => this.client.post(url, body, headers),
       url
     );
@@ -94,7 +94,7 @@ export abstract class BaseApi {
     headers = {}
   ): Promise<ApiResponse<T>> {
     this.loading = true;
-    const response = await this.retryIfNecessary(
+    const response = await this.retryIfNecessary<T>(
       () => this.client.patch(url, body, headers),
       url
     );
@@ -107,7 +107,7 @@ export abstract class BaseApi {
     headers = {}
   ): Promise<ApiResponse<T>> {
     this.loading = true;
-    const response = await this.retryIfNecessary(
+    const response = await this.retryIfNecessary<T>(
       () => this.client.delete(url, { headers }),
       url
     );

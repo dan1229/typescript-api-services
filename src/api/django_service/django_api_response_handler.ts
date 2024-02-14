@@ -10,11 +10,11 @@ import type DjangoApi from './django_api'
  * @param {Promise<any>} request - Request to fulfil
  */
 export class DjangoApiResponseHandler<Model> {
-  api: DjangoApi
+  api: DjangoApi<object | null>
   request: Promise<any>
   response?: AxiosResponse<any>
 
-  constructor (api: DjangoApi, request: Promise<AxiosResponse<any>>) {
+  constructor (api: DjangoApi<object | null>, request: Promise<AxiosResponse<any>>) {
     this.api = api
     this.request = request
   }

@@ -1,6 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 import Cookies from 'js-cookie';
 import { BaseApi } from '../base_api';
+import { DjangoApiResponseHandler } from './django_api_response_handler';
 
 export type TDjangoApiMethod = 'get' | 'post' | 'patch' | 'delete';
 
@@ -20,7 +21,7 @@ export type TypeFilters = object | null;
  * @param {string} urlEndpoint - Endpoint of this URL. Should NOT include / or urlBase (i.e., "/api/").
  * @param {string=} token - Auth token to use.
  */
-export default abstract class DjangoApi<TypeFilters extends object | null = null> extends BaseApi {
+export default abstract class DjangoApi<TypeFilters extends | object | null = null> extends BaseApi {
   urlEndpoint: string;
   token: string;
   loading: boolean;
@@ -133,5 +134,42 @@ export default abstract class DjangoApi<TypeFilters extends object | null = null
       return 1
     }
     return Number(decodeURIComponent(results[1].replace(/\+/g, '    ')))
+  }
+
+  /**
+   * TODO
+   */
+
+  /**
+   * HTTP METHODS
+   * Retry mechanism integrated into the HTTP methods.
+   **/
+  async retryIfNecessary<T>(
+    requestFunction: () => Promise<any>,
+    url: string
+  ): Promise<any> {
+    const now = Date.now();
+    const lastRequestTime = this.lastRequestTimestamps[url] || 0;
+    const timeElapsed = now - lastRequestTime;
+
+    const MINIMUM_DELAY = 5000; // Minimum delay between requests in milliseconds
+
+    if (timeElapsed < MINIMUM_DELAY) {
+      // If not enough time has passed, wait before retrying
+      await new Promise((resolve) => setTimeout(resolve, MINIMUM_DELAY - timeElapsed));
+    }
+
+    // Update the last request timestamp
+    this.lastRequestTimestamps[url] = Date.now();
+
+    // Ensure the response is correctly typed
+    const response = await requestFunction();
+
+    // Do whatever handling necessary with the response, e.g., error handling
+    const responseHandler = new DjangoApiResponseHandler(
+      this,
+      response
+    );
+    return await responseHandler.handleResponse();
   }
 }
