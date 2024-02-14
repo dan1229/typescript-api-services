@@ -140,7 +140,7 @@ export default abstract class DjangoApi<TypeFilters extends | object | null = nu
   /**
    * HTTP METHODS
    * Retry mechanism integrated into the HTTP methods.
-   **/
+  **/
   async retryIfNecessary (
     requestFunction: () => Promise<any>,
     url: string
@@ -153,13 +153,6 @@ export default abstract class DjangoApi<TypeFilters extends | object | null = nu
 
     console.log("TIME ELAPSED: ", timeElapsed)
     if (timeElapsed < MINIMUM_DELAY) {
-      return null
-      // If not enough time has passed, drop the request and return
-      const responseHandler = new DjangoApiResponseHandler(
-        this,
-        Promise.reject(new Error('Request dropped due to retry delay'))
-      )
-      return await responseHandler.handleResponse()
       // If not enough time has passed, wait before retrying
       await new Promise((resolve) => setTimeout(resolve, MINIMUM_DELAY - timeElapsed))
     }
