@@ -147,20 +147,17 @@ export default abstract class DjangoApi<TypeFilters extends | object | null = nu
   ): Promise<any> {
     const now = Date.now();
     const lastRequestTime = BaseApi.lastRequestTimestamps[url] || 0;
-    console.log("URL: ", url)
-    console.log("LAST REQUEST TIME: ", lastRequestTime)
-    console.log("NOW: ", now)
     const timeElapsed = now - lastRequestTime;
-    console.log("TIME ELAPSED: ", timeElapsed);
 
     const MINIMUM_DELAY = 5000; // Minimum delay between requests in milliseconds
 
     if (timeElapsed < MINIMUM_DELAY) {
       // If not enough time has passed, wait before retrying
+      console.log("WAITING BEFORE RETRYING: ", url)
       await new Promise((resolve) => setTimeout(resolve, MINIMUM_DELAY - timeElapsed))
     }
     // Update the last request timestamp
-    console.log("UPDATING LAST REQUEST TIMESTAMP: ", url)
+    console.log("CALLING: ", url)
     BaseApi.lastRequestTimestamps[url] = Date.now();
 
     // Ensure the response is correctly typed
