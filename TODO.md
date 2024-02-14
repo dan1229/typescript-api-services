@@ -46,6 +46,7 @@
 #### repeat/debounce api calls
 - responses undefined?
 - customizable 'seconds since last call' to allow for repeat calls
+  - should calls be repeated or dropped?
 - update base api to match
 
 
