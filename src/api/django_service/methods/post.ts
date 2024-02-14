@@ -31,7 +31,7 @@ export default class DjangoPost<Model, IBody extends object> extends DjangoApi {
   // Generic version of httpPost that allows you to specify the body type and doesn't handle the response
   protected async httpPostGeneric<IBodyGeneric extends object>(url: string, body: IBodyGeneric): Promise<any> {
     const headers = this.getHeaders()
-    return await this.retryIfNecessary<Model>(() => this.client.post(url, body, headers), url);
+    return await this.retryIfNecessary(async () => await this.client.post(url, body, headers), url)
   }
 
   /**

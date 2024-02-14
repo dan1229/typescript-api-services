@@ -32,11 +32,11 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
    * @param {string} url - URL to call
    * @param {Record<string, unknown>} extraHeaders - Extra headers to add to request
    */
-  protected async httpGet(url: string, extraHeaders?: Record<string, unknown>): Promise<any> {
-    const headers = this.getHeaders(extraHeaders);
-    return await this.retryIfNecessary<Model>(() => this.client.get(url, headers), url);
+  protected async httpGet (url: string, extraHeaders?: Record<string, unknown>): Promise<any> {
+    const headers = this.getHeaders(extraHeaders)
+    return await this.retryIfNecessary(async () => await this.client.get(url, headers), url)
   }
-  
+
   /**
    * getList
    *

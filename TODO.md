@@ -38,13 +38,13 @@
 
 
 #### repeat/debounce api calls
-- build in way to avoid multiple calling apis
-- maybe a way to cancel a call if it's already in progress?
 - customizable 'seconds since last call' to allow for repeat calls
 
 
 
 ### [1.0.0] - 2024-MM-DD
+- Added automatic call limiting/retrying to `BaseApi` and `DjangoApi`
+  - Ability to choose amount of time
 - Created `BaseApiResponseHandler` and `DjangoApiResponseHandler` for more functionality
   - Much more modular and customizable
   - Cleaned up `DjangoApiResponseHandler` error handling

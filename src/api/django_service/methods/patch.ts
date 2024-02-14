@@ -31,7 +31,7 @@ export default class DjangoPatch<Model, IBody extends object> extends DjangoApi 
   // Generic version of httpPatch that allows you to specify the body type and doesn't handle the response
   protected async httpPatchGeneric<IBodyGeneric extends object>(url: string, body: IBodyGeneric, extraHeaders?: Record<string, unknown>): Promise<any> {
     const headers = this.getHeaders(extraHeaders)
-    return await this.retryIfNecessary<Model>(() => this.client.patch(url, body, headers), url)
+    return await this.retryIfNecessary(async () => await this.client.patch(url, body, headers), url)
   }
 
   /**
