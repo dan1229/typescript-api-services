@@ -149,6 +149,7 @@ export default abstract class DjangoApi<TypeFilters extends | object | null = nu
   ): Promise<any> {
     const now = Date.now();
     const lastRequestTime = this.lastRequestTimestamps[url] || 0;
+    console.log("URL: ", url)
     console.log("LAST REQUEST TIME: ", lastRequestTime)
     console.log("NOW: ", now)
     const timeElapsed = now - lastRequestTime;
@@ -163,6 +164,7 @@ export default abstract class DjangoApi<TypeFilters extends | object | null = nu
       await new Promise((resolve) => setTimeout(resolve, MINIMUM_DELAY - timeElapsed))
     }
     // Update the last request timestamp
+    console.log("UPDATING LAST REQUEST TIMESTAMP: ", url)
     this.lastRequestTimestamps[url] = Date.now();
 
     // Ensure the response is correctly typed
