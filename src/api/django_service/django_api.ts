@@ -25,16 +25,15 @@ export type TypeFilters = object | null
 export default abstract class DjangoApi<TypeFilters extends | object | null = null> extends BaseApi {
   urlEndpoint: string
   token: string
-  loading: boolean
 
-  public constructor (name: string, urlBase: string, urlEndpoint: string, token?: string) {
-    super(name, urlBase)
+  public constructor (name: string, urlBase: string, urlEndpoint: string, token?: string, timeout: number = 10000, minimumDelay: number = 5000) {
+    super(name, urlBase, timeout, minimumDelay)
     if (!token) {
       token = ''
     }
+    // params
     this.token = token
     this.urlEndpoint = urlEndpoint
-    this.loading = false
 
     // setup axios client
     this._axiosInstance = axios.create({
@@ -150,13 +149,9 @@ export default abstract class DjangoApi<TypeFilters extends | object | null = nu
     const lastRequestTime = BaseApi.lastRequestTimestamps[url] || 0
     const timeElapsed = now - lastRequestTime
 
-    const MINIMUM_DELAY = 5000 // Minimum delay between requests in milliseconds
-
-    console.log('CALLING: ', url)
-
     // Check if there is a pending request for this URL within the time window
-    if (timeElapsed < MINIMUM_DELAY) {
-      console.log('Duplicate call dropped:', url)
+    if (timeElapsed < this.minimumDelay) {
+      console.warn('Duplicate call dropped:', url)
       return new ApiResponseDuplicate(requestFunction)
     }
 

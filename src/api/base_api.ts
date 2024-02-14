@@ -1,6 +1,6 @@
-import axios, { type AxiosInstance } from 'axios'
+import axios, { type AxiosInstance, type AxiosResponse } from 'axios'
 import { BaseApiResponseHandler } from './base_api_response_handler'
-import { type ApiResponse } from '../types'
+import { ApiResponseDuplicate, type ApiResponse } from '../types'
 
 /**
  *
@@ -18,6 +18,8 @@ export abstract class BaseApi {
   name: string
   urlBase: string
   timeout: number
+  minimumDelay: number
+
   loading: boolean
 
   // Maintain a dictionary to store the timestamps of recent requests
@@ -26,10 +28,14 @@ export abstract class BaseApi {
   /**
    * CONSTRUCTOR
    */
-  protected constructor (name: string, urlBase: string, timeout: number = 10000) {
+  protected constructor (name: string, urlBase: string, timeout: number = 10000, minimumDelay: number = 5000) {
+    // params
     this.name = name
     this.urlBase = urlBase
     this.timeout = timeout
+    this.minimumDelay = minimumDelay
+
+    // auto
     this.loading = false
 
     // setup axios client
@@ -116,28 +122,28 @@ export abstract class BaseApi {
   }
 
   /**
-   * Retry If Necessary
-   * Retry the request only if enough time has passed since the last request
-   */
-  async retryIfNecessary<T>(
-    requestFunction: () => Promise<any>,
+   * RETRY IF NECESSARY
+   * Drop duplicate calls integrated into the HTTP methods.
+   **/
+  async retryIfNecessary (
+    requestFunction: () => Promise<AxiosResponse<unknown>>,
     url: string
-  ): Promise<ApiResponse<T>> {
+  ): Promise<any> {
     const now = Date.now()
     const lastRequestTime = BaseApi.lastRequestTimestamps[url] || 0
     const timeElapsed = now - lastRequestTime
 
-    const MINIMUM_DELAY = 5000 // Minimum delay between requests in milliseconds
-
-    if (timeElapsed < MINIMUM_DELAY) {
-      // If not enough time has passed, wait before retrying
-      await new Promise((resolve) => setTimeout(resolve, MINIMUM_DELAY - timeElapsed))
+    // Check if there is a pending request for this URL within the time window
+    if (timeElapsed < this.minimumDelay) {
+      console.warn('Duplicate call dropped:', url)
+      return new ApiResponseDuplicate(requestFunction)
     }
 
     // Update the last request timestamp
     BaseApi.lastRequestTimestamps[url] = Date.now()
 
-    const responseHandler = new BaseApiResponseHandler<T>(
+    // Do whatever handling necessary with the response, e.g., error handling
+    const responseHandler = new BaseApiResponseHandler(
       this,
       requestFunction()
     )

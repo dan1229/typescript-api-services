@@ -1,5 +1,6 @@
-import { type ApiResponse, ApiResponseError, ApiResponseSuccess, type AxiosResponse } from '../types'
+import { type ApiResponse, ApiResponseError, ApiResponseSuccess } from '../types'
 import { type BaseApi } from './base_api'
+import { type AxiosResponse } from 'axios'
 
 /**
  * BASE API RESPONSE HANDLER
@@ -14,7 +15,7 @@ export class BaseApiResponseHandler<Model> {
   request: Promise<any>
   response?: AxiosResponse<any>
 
-  constructor (api: BaseApi, request: Promise<AxiosResponse<any>>) {
+  constructor (api: BaseApi, request: Promise<AxiosResponse>) {
     this.api = api
     this.request = request
   }
