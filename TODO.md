@@ -38,7 +38,9 @@
 
 
 #### repeat/debounce api calls
+- responses undefined?
 - customizable 'seconds since last call' to allow for repeat calls
+- update base api to match
 
 
 

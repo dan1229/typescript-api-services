@@ -145,33 +145,32 @@ export default abstract class DjangoApi<TypeFilters extends | object | null = nu
     requestFunction: () => Promise<any>,
     url: string
   ): Promise<any> {
-    const now = Date.now();
-    const lastRequestTime = BaseApi.lastRequestTimestamps[url] || 0;
-    const timeElapsed = now - lastRequestTime;
+    const now = Date.now()
+    const lastRequestTime = BaseApi.lastRequestTimestamps[url] || 0
+    const timeElapsed = now - lastRequestTime
 
-    const MINIMUM_DELAY = 5000; // Minimum delay between requests in milliseconds
+    const MINIMUM_DELAY = 5000 // Minimum delay between requests in milliseconds
 
     if (timeElapsed < MINIMUM_DELAY) {
+      console.warn("Dropping duplicate call: ", url)
       return null
       // If not enough time has passed, wait before retrying
-      console.log("WAITING BEFORE RETRYING: ", url)
-      await new Promise((resolve) => setTimeout(resolve, MINIMUM_DELAY - timeElapsed))
+      // console.log('WAITING BEFORE RETRYING: ', url)
+      // await new Promise((resolve) => setTimeout(resolve, MINIMUM_DELAY - timeElapsed))
     }
 
     // Update the last request timestamp
-    console.log("CALLING: ", url)
-    BaseApi.lastRequestTimestamps[url] = Date.now();
+    console.log('CALLING: ', url)
+    BaseApi.lastRequestTimestamps[url] = Date.now()
 
     // Ensure the response is correctly typed
-    const response = await requestFunction();
+    const response = await requestFunction()
 
     // Do whatever handling necessary with the response, e.g., error handling
     const responseHandler = new DjangoApiResponseHandler(
       this,
       response
-    );
-    return await responseHandler.handleResponse();
+    )
+    return await responseHandler.handleResponse()
   }
-
-
 }
