@@ -152,11 +152,11 @@ export default abstract class DjangoApi<TypeFilters extends | object | null = nu
     const MINIMUM_DELAY = 5000 // Minimum delay between requests in milliseconds
 
     if (timeElapsed < MINIMUM_DELAY) {
-      console.warn('Dropping duplicate call: ', url)
-      return null
+      // console.warn('Dropping duplicate call: ', url)
+      // return null
       // If not enough time has passed, wait before retrying
-      // console.log('WAITING BEFORE RETRYING: ', url)
-      // await new Promise((resolve) => setTimeout(resolve, MINIMUM_DELAY - timeElapsed))
+      console.log('WAITING BEFORE RETRYING: ', url)
+      await new Promise((resolve) => setTimeout(resolve, MINIMUM_DELAY - timeElapsed))
     }
 
     // Update the last request timestamp
