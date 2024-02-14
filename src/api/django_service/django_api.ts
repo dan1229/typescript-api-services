@@ -138,10 +138,6 @@ export default abstract class DjangoApi<TypeFilters extends | object | null = nu
   }
 
   /**
-   * TODO
-   */
-
-  /**
    * HTTP METHODS
    * Retry mechanism integrated into the HTTP methods.
    **/
@@ -155,7 +151,15 @@ export default abstract class DjangoApi<TypeFilters extends | object | null = nu
 
     const MINIMUM_DELAY = 5000 // Minimum delay between requests in milliseconds
 
+    console.log("TIME ELAPSED: ", timeElapsed)
     if (timeElapsed < MINIMUM_DELAY) {
+      return null
+      // If not enough time has passed, drop the request and return
+      const responseHandler = new DjangoApiResponseHandler(
+        this,
+        Promise.reject(new Error('Request dropped due to retry delay'))
+      )
+      return await responseHandler.handleResponse()
       // If not enough time has passed, wait before retrying
       await new Promise((resolve) => setTimeout(resolve, MINIMUM_DELAY - timeElapsed))
     }
