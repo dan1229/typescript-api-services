@@ -21,7 +21,7 @@ export abstract class BaseApi {
   loading: boolean
 
   // Maintain a dictionary to store the timestamps of recent requests
-  lastRequestTimestamps: Record<string, number> = {}
+  static lastRequestTimestamps: Record<string, number> = {}
 
   /**
    * CONSTRUCTOR
@@ -124,7 +124,7 @@ export abstract class BaseApi {
     url: string
   ): Promise<ApiResponse<T>> {
     const now = Date.now()
-    const lastRequestTime = this.lastRequestTimestamps[url] || 0
+    const lastRequestTime = BaseApi.lastRequestTimestamps[url] || 0
     const timeElapsed = now - lastRequestTime
 
     const MINIMUM_DELAY = 5000 // Minimum delay between requests in milliseconds
@@ -135,7 +135,7 @@ export abstract class BaseApi {
     }
 
     // Update the last request timestamp
-    this.lastRequestTimestamps[url] = Date.now()
+    BaseApi.lastRequestTimestamps[url] = Date.now()
 
     const responseHandler = new BaseApiResponseHandler<T>(
       this,

@@ -136,19 +136,17 @@ export default abstract class DjangoApi<TypeFilters extends | object | null = nu
     }
     return Number(decodeURIComponent(results[1].replace(/\+/g, '    ')))
   }
-/**
- * retryIfNecessary
- * Drop duplicate calls integrated into the HTTP methods.
- **//**
- * HTTP METHODS
- * Drop duplicate calls integrated into the HTTP methods.
- **/
+
+  /**
+   * HTTP METHODS
+   * Drop duplicate calls integrated into the HTTP methods.
+   **/
   async retryIfNecessary (
     requestFunction: () => Promise<any>,
     url: string
   ): Promise<any> {
     const now = Date.now();
-    const lastRequestTime = this.lastRequestTimestamps[url] || 0;
+    const lastRequestTime = BaseApi.lastRequestTimestamps[url] || 0;
     console.log("URL: ", url)
     console.log("LAST REQUEST TIME: ", lastRequestTime)
     console.log("NOW: ", now)
@@ -157,15 +155,13 @@ export default abstract class DjangoApi<TypeFilters extends | object | null = nu
 
     const MINIMUM_DELAY = 5000; // Minimum delay between requests in milliseconds
 
-    
-
     if (timeElapsed < MINIMUM_DELAY) {
       // If not enough time has passed, wait before retrying
       await new Promise((resolve) => setTimeout(resolve, MINIMUM_DELAY - timeElapsed))
     }
     // Update the last request timestamp
     console.log("UPDATING LAST REQUEST TIMESTAMP: ", url)
-    this.lastRequestTimestamps[url] = Date.now();
+    BaseApi.lastRequestTimestamps[url] = Date.now();
 
     // Ensure the response is correctly typed
     const response = await requestFunction();
