@@ -23,7 +23,6 @@ export abstract class ApiResponse<Model> {
     this.errorFields = errorFields
     this.obj = obj
   }
-
 }
 
 /**
@@ -64,7 +63,7 @@ export class ApiResponseSuccess<Model> extends ApiResponse<Model> {
  * @param {any} response - HTTP response object
  */
 export class ApiResponseDuplicate extends ApiResponse<unknown> {
-  constructor(response: any) {
+  constructor (response: any) {
     super(response, 'Duplicate request.', true, undefined, undefined)
   }
 }

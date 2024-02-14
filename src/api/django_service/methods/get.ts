@@ -167,12 +167,12 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
       this.prev = apiResponse.response.data.previous
 
       if (!combineLists) {
-        this.list = apiResponse.obj || []
+        this.list = apiResponse.obj ?? []
       } else {
         if (!!this.list && this.list.length > 0) {
-          this.list = [...this.list, ...apiResponse.obj || []]
+          this.list = [...this.list, ...apiResponse.obj ?? []]
         } else {
-          this.list = apiResponse.obj || []
+          this.list = apiResponse.obj ?? []
         }
       }
       this.calculatePageCurrent()
