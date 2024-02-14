@@ -22,7 +22,6 @@ export abstract class BaseApi {
 
   // Maintain a dictionary to store the timestamps of recent requests
   lastRequestTimestamps: Record<string, number> = {}
-  pendingRequests: Record<string, boolean> = {}
 
   /**
    * CONSTRUCTOR

@@ -149,29 +149,19 @@ export default abstract class DjangoApi<TypeFilters extends | object | null = nu
   ): Promise<any> {
     const now = Date.now();
     const lastRequestTime = this.lastRequestTimestamps[url] || 0;
+    console.log("LAST REQUEST TIME: ", lastRequestTime)
+    console.log("NOW: ", now)
     const timeElapsed = now - lastRequestTime;
+    console.log("TIME ELAPSED: ", timeElapsed);
 
     const MINIMUM_DELAY = 5000; // Minimum delay between requests in milliseconds
 
-    console.log("TIME ELAPSED: ", timeElapsed);
     
-    // If a request is already pending for this URL, drop the duplicate call
-    if (this.pendingRequests[url]) {
-      console.log('Duplicate call dropped:', url);
-      return null;
-    }
 
     if (timeElapsed < MINIMUM_DELAY) {
-      // Mark the request as pending
-      this.pendingRequests[url] = true;
-
       // If not enough time has passed, wait before retrying
       await new Promise((resolve) => setTimeout(resolve, MINIMUM_DELAY - timeElapsed))
-
-      // Clear the pending status after the delay
-      delete this.pendingRequests[url];
     }
-
     // Update the last request timestamp
     this.lastRequestTimestamps[url] = Date.now();
 
