@@ -13,7 +13,7 @@ export async function retryIfNecessary (
   apiInstance: BaseApi | DjangoApi<any>, // Modify if needed to support specific DjangoApi types
   requestFunction: () => Promise<AxiosResponse<unknown>>,
   url: string
-): Promise<any> {
+): Promise<ApiResponse<unknown>> {
   const now = Date.now()
   const lastRequestTime = BaseApi.lastRequestTimestamps[url] || 0
   const timeElapsed = now - lastRequestTime

@@ -15,6 +15,7 @@ module.exports = {
     "@typescript-eslint/strict-boolean-expressions": "off",
     "no-prototype-builtins": "off",
     "@typescript-eslint/brace-style": "off",
+    "@typescript-eslint/no-explicit-any": "error",
     // TODO would like to add this one back
     "@typescript-eslint/restrict-template-expressions": "off",
     // no absolute imports

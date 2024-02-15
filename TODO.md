@@ -38,8 +38,22 @@
 ### [1.1.0] - 2024-MM-DD
 #### TODO
 
+----
+### 1.0.1
+
+
+
+fix weird 404s!
+
+
+remove 'any's!
+
+
+### [1.0.1] - 2024-02-DD
+- Improved typing in handler classesa and `DjangoApi` methods
+- Improved lint - no more `any` types
+
 -------------------------------------------------------
 
 ##### [https://danielnazarian.com](https://danielnazarian.com)
 ##### Copyright 2024 © Daniel Nazarian.
-s
