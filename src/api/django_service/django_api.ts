@@ -29,7 +29,7 @@ export default abstract class DjangoApi<TypeFilters extends object | null = null
     urlBase: string,
     urlEndpoint: string,
     token?: string,
-    minimumDelay: number = 5000,
+    minimumDelay: number = 1000,
     timeout: number = 10000
   ) {
     super(name, urlBase, timeout, minimumDelay)

@@ -63,7 +63,7 @@ export abstract class BaseApi {
   /**
    * CONSTRUCTOR
    */
-  protected constructor (name: string, urlBase: string, minimumDelay: number = 5000, timeout: number = 10000) {
+  protected constructor (name: string, urlBase: string, minimumDelay: number = 1000, timeout: number = 10000) {
     // params
     this.name = name
     this.urlBase = urlBase

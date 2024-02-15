@@ -8,14 +8,14 @@ import { type AxiosResponse } from 'axios'
  * Handle, sanitize and standardize API responses for services
  *
  * @param {BaseApi} api - API to use for response
- * @param {Promise<any>} request - Request to fulfil
+ * @param {Promise<unknown>} request - Request to fulfill
  */
-export class BaseApiResponseHandler<Model> {
+export class BaseApiResponseHandler<T> {
   api: BaseApi
-  request: Promise<any>
-  response?: AxiosResponse<any>
+  request: Promise<AxiosResponse<T>>
+  response?: AxiosResponse<T>
 
-  constructor (api: BaseApi, request: Promise<AxiosResponse>) {
+  constructor (api: BaseApi, request: Promise<AxiosResponse<T>>) {
     this.api = api
     this.request = request
   }
@@ -29,9 +29,9 @@ export class BaseApiResponseHandler<Model> {
    *
    * Method to standardize, sanitize and handle API responses. Handles deserializing objects as well if given 'fromJson'.
    *
-   * @return {Promise<ApiResponse<any>>} Api response object
+   * @return {Promise<ApiResponse<T>>} Api response object
    */
-  async handleResponse (): Promise<ApiResponse<any>> {
+  async handleResponse (): Promise<ApiResponse<T>> {
     // await response and ensure valid
     try {
       this.response = await this.request
@@ -40,7 +40,7 @@ export class BaseApiResponseHandler<Model> {
       }
     } catch (e) {
       this.handleLogError(e)
-      return new ApiResponseError<Model>(this.response, e?.toString())
+      return new ApiResponseError<T>(this.response, e?.toString())
     }
 
     // detect if error or not
@@ -52,13 +52,13 @@ export class BaseApiResponseHandler<Model> {
     // serialize and return
     try {
       if (!error) {
-        return new ApiResponseSuccess<Model>(this.response, 'Successfully completed request.')
+        return new ApiResponseSuccess<T>(this.response, 'Successfully completed request.')
       }
 
       throw Error('Error fetching API.')
     } catch (e) {
       this.handleLogError(e)
-      return new ApiResponseError<Model>(this.response, e?.toString())
+      return new ApiResponseError<T>(this.response, e?.toString())
     }
   }
 }
