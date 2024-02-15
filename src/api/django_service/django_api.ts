@@ -1,8 +1,6 @@
-import axios, { type AxiosResponse } from 'axios'
+import axios from 'axios'
 import Cookies from 'js-cookie'
 import { BaseApi } from '../base_api'
-import { DjangoApiResponseHandler } from './django_api_response_handler'
-import { ApiResponseDuplicate } from '../../types'
 
 export type TDjangoApiMethod = 'get' | 'post' | 'patch' | 'delete'
 

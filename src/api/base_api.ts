@@ -4,13 +4,12 @@ import { ApiResponseDuplicate, type ApiResponse } from '../types'
 import { DjangoApiResponseHandler } from './django_service/django_api_response_handler'
 import DjangoApi from './django_service/django_api'
 
-
 /**
  * retryIfNecessary
  * A helper/wrapper function to handle retrying requests if necessary.
  * Avoids duplicate requests within a certain time window.
  */
-export async function retryIfNecessary(
+export async function retryIfNecessary (
   apiInstance: BaseApi | DjangoApi<any>, // Modify if needed to support specific DjangoApi types
   requestFunction: () => Promise<AxiosResponse<unknown>>,
   url: string
@@ -29,9 +28,9 @@ export async function retryIfNecessary(
   BaseApi.lastRequestTimestamps[url] = Date.now()
 
   // Determine the appropriate response handler based on the API instance type
-  const responseHandler = apiInstance instanceof DjangoApi ? 
-    new DjangoApiResponseHandler(apiInstance, requestFunction()) :
-    new BaseApiResponseHandler(apiInstance, requestFunction())
+  const responseHandler = apiInstance instanceof DjangoApi
+    ? new DjangoApiResponseHandler(apiInstance, requestFunction())
+    : new BaseApiResponseHandler(apiInstance, requestFunction())
 
   // Do whatever handling necessary with the response, e.g., error handling
   return await responseHandler.handleResponse()

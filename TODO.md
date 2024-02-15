@@ -46,8 +46,6 @@
 
 
 
-#### repeat/debounce api calls
-- finalize checking/testing
 
 
 ### [1.0.0] - 2024-MM-DD
