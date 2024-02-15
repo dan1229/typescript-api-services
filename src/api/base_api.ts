@@ -22,7 +22,9 @@ export abstract class BaseApi {
   timeout: number;
   minimumDelay: number;
   loading: boolean;
-  lastRequestTimestamps: Record<string, number>;
+  
+  // Maintain a dictionary to store the timestamps of recent requests
+  static lastRequestTimestamps: Record<string, number> = {}
 
   /**
    * CONSTRUCTOR
@@ -36,7 +38,6 @@ export abstract class BaseApi {
     this._axiosInstance = axios.create({
       baseURL: this.urlBase
     });
-    this.lastRequestTimestamps = {};
   }
 
   cleanUrlParamString(word: string): string {
@@ -96,16 +97,15 @@ export abstract class BaseApi {
    */
   async retryIfNecessary<T = null>(requestFunction: () => Promise<AxiosResponse>, url: string): Promise<ApiResponse<T>> {
     const now = Date.now();
-    console.log("URL", url)
-    const lastRequestTime = this.lastRequestTimestamps[url];
-    const timeElapsed = now - (lastRequestTime || 0);
+    const lastRequestTime = BaseApi.lastRequestTimestamps[url] || 0
+    const timeElapsed = now - lastRequestTime
 
     if (timeElapsed < this.minimumDelay) {
       console.warn('Duplicate call dropped:', url);
       return new ApiResponseDuplicate(undefined); // Pass undefined as the response for a duplicate call
     }
 
-    this.lastRequestTimestamps[url] = now;
+    BaseApi.lastRequestTimestamps[url] = Date.now()
 
     const responseHandler =
       this instanceof DjangoApi

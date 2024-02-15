@@ -42,19 +42,19 @@
 ### 1.0.1
 
 
-
-fix weird 404s!
-
-double check get stuff
-
-remove 'any's!
+how to handle api duplicates?
+- if a user moves through the app too quickly, then they might send the same request twice LEGITIMATELY
+- however, the new updates would drop those calls and it results in weird behavior
+- because the timestamp list is static it is shared between all isntances of api objects
+  - so, if a user has two api objects, they will share the same timestamp list
+- how can we 
 
 
 ### [1.0.1] - 2024-02-DD
 - Improved `retry` logic
 - Fixed some bugs in `DjangoGet` methods
 - Improved typing in handler classes and `DjangoApi` methods
-- Improved lint - no more `any` types
+- Improved lint - no more (unexpected) `any` types
 
 -------------------------------------------------------
 
