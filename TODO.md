@@ -59,6 +59,7 @@
 - Added `loading` property to `BaseApi` and `DjangoApi` for loading state
 - `TypeFilter` added to `BaseApi` and `DjangoApi` for type filtering
   - Moved 'up' from method level to class level
+- Improved linting to help prevent some errors
 #### TODO
 
 -------------------------------------------------------
