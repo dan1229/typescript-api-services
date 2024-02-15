@@ -38,13 +38,6 @@
 
 
 
-#### add prettier/eslint
-- it's badly formatted code here!
-- add eslint for imports
-  - ONLY relative no absolute
-  - remove tsconfig?
-
-
 
 
 
@@ -60,6 +53,7 @@
 - `TypeFilter` added to `BaseApi` and `DjangoApi` for type filtering
   - Moved 'up' from method level to class level
 - Improved linting to help prevent some errors
+- Added `prettier` to help with code formatting
 #### TODO
 
 -------------------------------------------------------
