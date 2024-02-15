@@ -10,6 +10,7 @@ import DjangoApi from './django_service/django_api'
  * Avoids duplicate requests within a certain time window.
  */
 export async function retryIfNecessary (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   apiInstance: BaseApi | DjangoApi<any>, // Modify if needed to support specific DjangoApi types
   requestFunction: () => Promise<AxiosResponse<unknown>>,
   url: string
