@@ -13,7 +13,7 @@ import { retryIfNecessary } from '../../base_api'
  * - httpPostGeneric(id, body)
  *  - Generic version of httpPost that allows you to specify the body type and doesn't handle the response
  */
-export default class DjangoPost<Model, IBody extends object> extends DjangoApi {
+export default class DjangoPost<Model, IBody extends object> extends DjangoApi<Model, IBody> {
   result?: Model
 
   /**

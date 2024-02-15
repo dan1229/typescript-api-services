@@ -8,14 +8,14 @@ import { type AxiosResponse } from 'axios'
  * Handle, sanitize and standardize API responses for services
  *
  * @param {BaseApi} api - API to use for response
- * @param {Promise<any>} request - Request to fulfil
+ * @param {Promise<AxiosResponse<unknown, any>>} request - Request to fulfil
  */
 export class DjangoApiResponseHandler<Model> {
   api: DjangoApi<object | null>
-  request: Promise<AxiosResponse<unknown>>
+  request: Promise<AxiosResponse<unknown, any>>
   response?: AxiosResponse<unknown>
 
-  constructor (api: DjangoApi<object | null>, request: Promise<AxiosResponse<unknown>>) {
+  constructor (api: DjangoApi<object | null>, request: Promise<AxiosResponse<unknown, any>>) {
     this.api = api
     this.request = request
   }

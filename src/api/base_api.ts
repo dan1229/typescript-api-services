@@ -9,34 +9,30 @@ import DjangoApi from './django_service/django_api'
  * A helper/wrapper function to handle retrying requests if necessary.
  * Avoids duplicate requests within a certain time window.
  */
-export async function retryIfNecessary (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  apiInstance: BaseApi | DjangoApi<any>, // Modify if needed to support specific DjangoApi types
-  requestFunction: () => Promise<AxiosResponse<unknown>>,
+export async function retryIfNecessary<Model>(
+  apiInstance: BaseApi | DjangoApi<Model>,
+  requestFunction: () => Promise<AxiosResponse<Model>>,
   url: string
-): Promise<ApiResponse<unknown>> {
-  const now = Date.now()
-  const lastRequestTime = BaseApi.lastRequestTimestamps[url] || 0
-  const timeElapsed = now - lastRequestTime
+): Promise<ApiResponse<Model>> {
+  const now = Date.now();
+  const lastRequestTime = BaseApi.lastRequestTimestamps[url] || 0;
+  const timeElapsed = now - lastRequestTime;
 
-  // Check if there is a pending request for this URL within the time window
   if (timeElapsed < apiInstance.minimumDelay) {
-    console.warn('Duplicate call dropped:', url)
-    return new ApiResponseDuplicate(requestFunction)
+    console.warn('Duplicate call dropped:', url);
+    return new ApiResponseDuplicate<Model>(requestFunction());
   }
 
-  // Update the last request timestamp
-  BaseApi.lastRequestTimestamps[url] = Date.now()
+  BaseApi.lastRequestTimestamps[url] = Date.now();
 
-  // Determine the appropriate response handler based on the API instance type
   const responseHandler =
     apiInstance instanceof DjangoApi
-      ? new DjangoApiResponseHandler(apiInstance, requestFunction())
-      : new BaseApiResponseHandler(apiInstance, requestFunction())
+      ? new DjangoApiResponseHandler<Model>(apiInstance, requestFunction())
+      : new BaseApiResponseHandler<Model>(apiInstance, requestFunction());
 
-  // Do whatever handling necessary with the response, e.g., error handling
-  return await responseHandler.handleResponse()
+  return await responseHandler.handleResponse();
 }
+
 
 /**
  *

@@ -62,27 +62,9 @@ export class ApiResponseSuccess<Model> extends ApiResponse<Model> {
  *
  * @param {any} response - HTTP response object
  */
-export class ApiResponseDuplicate extends ApiResponse<unknown> {
+export class ApiResponseDuplicate<Model> extends ApiResponse<Model> {
   constructor (response: any) {
     super(response, 'Duplicate request.', true, undefined, undefined)
   }
 }
 
-/**
- * AXIOS RESPONSE
- *
- * @param {T} data - Data returned by API
- * @param {number} status - HTTP status code
- * @param {string} statusText - HTTP status text
- * @param {Record<string, string>} headers - HTTP headers
- * @param {AxiosRequestConfig<T>} config - Axios request config
- * @param {any} request - HTTP request object
- */
-export interface AxiosResponse<T = never> {
-  data: T
-  status: number
-  statusText: string
-  headers: Record<string, string>
-  config: AxiosRequestConfig<T>
-  request?: any
-}

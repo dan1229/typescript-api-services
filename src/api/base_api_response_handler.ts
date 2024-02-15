@@ -8,7 +8,7 @@ import { type AxiosResponse } from 'axios'
  * Handle, sanitize and standardize API responses for services
  *
  * @param {BaseApi} api - API to use for response
- * @param {Promise<unknown>} request - Request to fulfill
+ * @param {Promise<AxiosResponse<T>>} request - Request to fulfill
  */
 export class BaseApiResponseHandler<T> {
   api: BaseApi

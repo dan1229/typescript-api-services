@@ -20,7 +20,7 @@ export type TypeFilters = object | null
  * @param {string} urlEndpoint - Endpoint of this URL. Should NOT include / or urlBase (i.e., "/api/").
  * @param {string=} token - Auth token to use.
  */
-export default abstract class DjangoApi<TypeFilters extends object | null = null> extends BaseApi {
+export default abstract class DjangoApi<Model, TypeFilters extends object | null = null> extends BaseApi {
   urlEndpoint: string
   token: string
 

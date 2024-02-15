@@ -13,7 +13,7 @@ import { retryIfNecessary } from '../../base_api'
  * - patchUpdateGeneric(id, body)
  *  - Generic version of httpPatch that allows you to specify the body type and doesn't handle the response
  */
-export default class DjangoPatch<Model, IBody extends object> extends DjangoApi {
+export default class DjangoPatch<Model, IBody extends object> extends DjangoApi<Model, IBody> {
   result?: Model
 
   /**

@@ -7,7 +7,7 @@ import { retryIfNecessary } from '../../base_api'
  *
  * Django Delete - API methods for DELETE requests for a Django API
  */
-export default class DjangoDelete<Model> extends DjangoApi {
+export default class DjangoDelete<Model> extends DjangoApi<Model> {
   /**
    * HTTP call
    *
