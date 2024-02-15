@@ -1,6 +1,6 @@
-import DjangoApi from '../django_api';
-import { type ApiResponse } from '../../../types';
-import { retryIfNecessary } from '../../base_api';
+import DjangoApi from '../django_api'
+import { type ApiResponse } from '../../../types'
+import { retryIfNecessary } from '../../base_api'
 
 /**
  *
@@ -14,7 +14,7 @@ import { retryIfNecessary } from '../../base_api';
  *  - Generic version of httpPost that allows you to specify the body type and doesn't handle the response
  */
 export default class DjangoPost<Model, IBody extends object> extends DjangoApi {
-  result?: Model;
+  result?: Model
 
   /**
    * HTTP call
@@ -23,15 +23,15 @@ export default class DjangoPost<Model, IBody extends object> extends DjangoApi {
    * @param {IBody | FormData} body - Body of request to include, probably the object data
    * @param {Record<string, unknown>} extraHeaders - Extra headers to add to request
    */
-  protected async httpPost(url: string, body: IBody | FormData, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model>> {
-    const headers = { ...this.getHeaders(), ...extraHeaders };
-    return await retryIfNecessary(this, async () => await this.client.post(url, body, headers), url);
+  protected async httpPost (url: string, body: IBody | FormData, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model>> {
+    const headers = { ...this.getHeaders(), ...extraHeaders }
+    return await retryIfNecessary(this, async () => await this.client.post(url, body, headers), url)
   }
 
   // Generic version of httpPost that allows you to specify the body type and doesn't handle the response
   protected async httpPostGeneric<IBodyGeneric extends object>(url: string, body: IBodyGeneric): Promise<ApiResponse<Model>> {
-    const headers = this.getHeaders();
-    return await retryIfNecessary(this, async () => await this.client.post(url, body, headers), url);
+    const headers = this.getHeaders()
+    return await retryIfNecessary(this, async () => await this.client.post(url, body, headers), url)
   }
 
   /**
@@ -43,15 +43,15 @@ export default class DjangoPost<Model, IBody extends object> extends DjangoApi {
    * @param {Record<string, unknown>=} extraHeaders - Extra headers to add to request
    * @return {ApiResponse} Api response object
    */
-  public async postCreate(body: IBody | FormData, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model>> {
-    this.loading = true;
-    const res = await this.httpPost(this.urlApi(), body, extraHeaders);
+  public async postCreate (body: IBody | FormData, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model>> {
+    this.loading = true
+    const res = await this.httpPost(this.urlApi(), body, extraHeaders)
     try {
-      this.result = res.obj;
+      this.result = res.obj
     } catch (e) {
-      console.error(e);
+      console.error(e)
     }
-    this.loading = false;
-    return res;
+    this.loading = false
+    return res
   }
 }

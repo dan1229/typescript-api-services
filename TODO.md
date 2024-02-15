@@ -41,7 +41,7 @@
 
 
 
-### [1.0.0] - 2024-MM-DD
+### [1.0.0] - 2024-02-14
 - Added automatic call limiting/retrying to `BaseApi` and `DjangoApi`
   - Ability to choose amount of time
 - Created `BaseApiResponseHandler` and `DjangoApiResponseHandler` for more functionality

@@ -1,10 +1,10 @@
-import axios from 'axios';
-import Cookies from 'js-cookie';
-import { BaseApi } from '../base_api';
+import axios from 'axios'
+import Cookies from 'js-cookie'
+import { BaseApi } from '../base_api'
 
-export type TDjangoApiMethod = 'get' | 'post' | 'patch' | 'delete';
+export type TDjangoApiMethod = 'get' | 'post' | 'patch' | 'delete'
 
-export type TypeFilters = object | null;
+export type TypeFilters = object | null
 
 /**
  * DJANGO API
@@ -21,24 +21,24 @@ export type TypeFilters = object | null;
  * @param {string=} token - Auth token to use.
  */
 export default abstract class DjangoApi<TypeFilters extends object | null = null> extends BaseApi {
-  urlEndpoint: string;
-  token: string;
+  urlEndpoint: string
+  token: string
 
-  public constructor(
+  public constructor (
     name: string,
     urlBase: string,
     urlEndpoint: string,
     token?: string,
     minimumDelay: number = 5000,
-    timeout: number = 10000,
+    timeout: number = 10000
   ) {
-    super(name, urlBase, timeout, minimumDelay);
+    super(name, urlBase, timeout, minimumDelay)
     if (!token) {
-      token = '';
+      token = ''
     }
     // params
-    this.token = token;
-    this.urlEndpoint = urlEndpoint;
+    this.token = token
+    this.urlEndpoint = urlEndpoint
 
     // setup axios client
     this._axiosInstance = axios.create({
@@ -48,9 +48,9 @@ export default abstract class DjangoApi<TypeFilters extends object | null = null
       withCredentials: true,
       headers: {
         'Content-Type': 'application/json',
-        'X-CSRFToken': Cookies.get('csrftoken') ?? '',
-      },
-    });
+        'X-CSRFToken': Cookies.get('csrftoken') ?? ''
+      }
+    })
   }
 
   /**
@@ -61,17 +61,17 @@ export default abstract class DjangoApi<TypeFilters extends object | null = null
    * @param {Record<string, unknown>=} extraHeaders - Extra headers to include
    * @return {AxiosRequestHeaders} Header object/map
    **/
-  protected getHeaders(extraHeaders?: Record<string, unknown>): any {
+  protected getHeaders (extraHeaders?: Record<string, unknown>): any {
     if (typeof this.token !== 'undefined' && this.token !== '') {
       return {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Token ${this.token}`,
-          ...extraHeaders,
-        },
-      };
+          ...extraHeaders
+        }
+      }
     } else {
-      return { ...extraHeaders };
+      return { ...extraHeaders }
     }
   }
 
@@ -83,19 +83,19 @@ export default abstract class DjangoApi<TypeFilters extends object | null = null
    * @param {string=} id - ID of object to include
    * @return {string} URL
    */
-  protected urlApi(id?: string, filters?: TypeFilters | object | undefined | null): string {
-    const queryString = this.createQueryString(filters);
-    let url = '';
+  protected urlApi (id?: string, filters?: TypeFilters | object | undefined | null): string {
+    const queryString = this.createQueryString(filters)
+    let url = ''
     if (typeof id === 'undefined' || id === '') {
-      url = `${this.urlBase}/api/${this.urlEndpoint}/`;
+      url = `${this.urlBase}/api/${this.urlEndpoint}/`
     } else {
-      url = `${this.urlBase}/api/${this.urlEndpoint}/${id}/`;
+      url = `${this.urlBase}/api/${this.urlEndpoint}/${id}/`
     }
 
     if (queryString.length) {
-      url += `?${queryString}`;
+      url += `?${queryString}`
     }
-    return url;
+    return url
   }
 
   /**
@@ -104,26 +104,26 @@ export default abstract class DjangoApi<TypeFilters extends object | null = null
    *
    * @param {TypeFilters} filters - Type object of filters to create query string from
    */
-  protected createQueryString(filters?: TypeFilters | object | undefined | null): string {
+  protected createQueryString (filters?: TypeFilters | object | undefined | null): string {
     if (filters == null) {
-      return '';
+      return ''
     }
-    let queryString = '';
-    const len = Object.keys(filters).length;
-    let i = 0;
+    let queryString = ''
+    const len = Object.keys(filters).length
+    let i = 0
     for (const key in filters) {
       if (filters.hasOwnProperty(key)) {
         if (!!key && key !== '') {
-          const value = (filters as NonNullable<TypeFilters>)[key as keyof NonNullable<TypeFilters>] ?? '';
-          queryString += `${key}=${value}&`;
+          const value = (filters as NonNullable<TypeFilters>)[key as keyof NonNullable<TypeFilters>] ?? ''
+          queryString += `${key}=${value}&`
           if (i === len - 1) {
-            queryString = queryString.slice(0, -1); // remove last &
+            queryString = queryString.slice(0, -1) // remove last &
           }
         }
       }
-      i += 1;
+      i += 1
     }
-    return queryString;
+    return queryString
   }
 
   /**
@@ -132,13 +132,13 @@ export default abstract class DjangoApi<TypeFilters extends object | null = null
    *
    * @param {string} key - Key to get value for
    */
-  protected getQueryString(key: string, url: string): number {
-    key = key.replace(/[[]/, '\\[').replace(/[\]]/, '\\]');
-    const regex = new RegExp('[\\?&]' + key + '=([^&#]*)');
-    const results = regex.exec(url);
+  protected getQueryString (key: string, url: string): number {
+    key = key.replace(/[[]/, '\\[').replace(/[\]]/, '\\]')
+    const regex = new RegExp('[\\?&]' + key + '=([^&#]*)')
+    const results = regex.exec(url)
     if (results === null || typeof results === 'undefined') {
-      return 1;
+      return 1
     }
-    return Number(decodeURIComponent(results[1].replace(/\+/g, '    ')));
+    return Number(decodeURIComponent(results[1].replace(/\+/g, '    ')))
   }
 }
