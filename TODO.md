@@ -33,27 +33,9 @@
   - add nextjs project? idk dont want to limit this to a specific framework
 
 
------
-### 1.0.0
 
 
-
-
-
-
-### [1.0.0] - 2024-02-14
-- Added automatic call limiting/retrying to `BaseApi` and `DjangoApi`
-  - Ability to choose amount of time
-- Created `BaseApiResponseHandler` and `DjangoApiResponseHandler` for more functionality
-  - Much more modular and customizable
-  - Cleaned up `DjangoApiResponseHandler` error handling
-- General support for `BaseApi` improved
-- `DjangoApi.post` - `extraHeaders` param fixed
-- Added `loading` property to `BaseApi` and `DjangoApi` for loading state
-- `TypeFilter` added to `BaseApi` and `DjangoApi` for type filtering
-  - Moved 'up' from method level to class level
-- Improved linting to help prevent some errors
-- Added `prettier` to help with code formatting
+### [1.1.0] - 2024-MM-DD
 #### TODO
 
 -------------------------------------------------------
