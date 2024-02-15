@@ -29,7 +29,7 @@ export default abstract class DjangoApi<Model, TypeFilters extends object | null
     urlBase: string,
     urlEndpoint: string,
     token?: string,
-    minimumDelay: number = 1000,
+    minimumDelay: number = 3000,
     timeout: number = 10000
   ) {
     super(name, urlBase, timeout, minimumDelay)
@@ -41,7 +41,7 @@ export default abstract class DjangoApi<Model, TypeFilters extends object | null
     this.urlEndpoint = urlEndpoint
 
     // setup axios client
-    this._axiosInstance = axios.create({
+    BaseApi.axiosInstance = axios.create({
       baseURL: this.urlBase,
       timeout: this.timeout,
       xsrfCookieName: 'csrftoken',

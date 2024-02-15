@@ -51,7 +51,9 @@ remove 'any's!
 
 
 ### [1.0.1] - 2024-02-DD
-- Improved typing in handler classesa and `DjangoApi` methods
+- Improved `retry` logic
+- Fixed some bugs in `DjangoGet` methods
+- Improved typing in handler classes and `DjangoApi` methods
 - Improved lint - no more `any` types
 
 -------------------------------------------------------

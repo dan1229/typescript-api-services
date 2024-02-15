@@ -62,7 +62,7 @@ export class ApiResponseSuccess<Model> extends ApiResponse<Model> {
  *
  * @param {any} response - HTTP response object
  */
-export class ApiResponseDuplicate<Model> extends ApiResponse<Model> {
+export class ApiResponseDuplicate<Model = unknown> extends ApiResponse<Model> {
   constructor (response: any) {
     super(response, 'Duplicate request.', true, undefined, undefined)
   }

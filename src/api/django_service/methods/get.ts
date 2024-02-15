@@ -1,6 +1,6 @@
 import DjangoApi from '../django_api'
-import { type ApiResponse } from '../../../types'
-import { retryIfNecessary } from '../../base_api'
+import { ApiResponseDuplicate, type ApiResponse } from '../../../types'
+import { BaseApi, retryIfNecessary } from '../../base_api'
 
 /**
  *
@@ -34,7 +34,7 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
    */
   protected async httpGet (url: string, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model | Model[]>> {
     const headers = this.getHeaders(extraHeaders)
-    return await retryIfNecessary(this, async () => await this.client.get<Model>(url, headers), url)
+    return await retryIfNecessary(this, async () => await BaseApi.client.get<Model>(url, headers), url)
   }
 
   /**
@@ -55,6 +55,9 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
     this.loading = true
     const url = this.urlApi(undefined, filters)
     const apiResponse = await this.httpGet(url, extraHeaders)
+    if (apiResponse instanceof ApiResponseDuplicate) {
+      return apiResponse;
+    }
     const response = (await this.handleDjangoGet(apiResponse, paginated)) as ApiResponse<Model[]>
     this.loading = false
     return response
@@ -111,6 +114,9 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
     this.loading = true
     const url = this.urlApi(id, filters)
     const apiResponse = await this.httpGet(url, extraHeaders)
+    if (apiResponse instanceof ApiResponseDuplicate) {
+      return apiResponse;
+    }
     const response = await this.handleDjangoGet(apiResponse, paginated)
     this.loading = false
     return response

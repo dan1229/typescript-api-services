@@ -1,6 +1,6 @@
 import DjangoApi from '../django_api'
-import { type ApiResponse } from '../../../types'
-import { retryIfNecessary } from '../../base_api'
+import { ApiResponseDuplicate, type ApiResponse } from '../../../types'
+import { BaseApi, retryIfNecessary } from '../../base_api'
 
 /**
  *
@@ -25,7 +25,7 @@ export default class DjangoPatch<Model, IBody extends object> extends DjangoApi<
    */
   protected async httpPatch (url: string, body: IBody | FormData, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model>> {
     const headers = this.getHeaders(extraHeaders)
-    return await retryIfNecessary(this, async () => await this.client.patch(url, body, headers), url)
+    return await retryIfNecessary(this, async () => await BaseApi.client.patch(url, body, headers), url)
   }
 
   // Generic version of httpPatch that allows you to specify the body type and doesn't handle the response
@@ -35,7 +35,7 @@ export default class DjangoPatch<Model, IBody extends object> extends DjangoApi<
     extraHeaders?: Record<string, unknown>
   ): Promise<ApiResponse<Model>> {
     const headers = this.getHeaders(extraHeaders)
-    return await retryIfNecessary(this, async () => await this.client.patch(url, body, headers), url)
+    return await retryIfNecessary(this, async () => await BaseApi.client.patch(url, body, headers), url)
   }
 
   /**
@@ -51,13 +51,16 @@ export default class DjangoPatch<Model, IBody extends object> extends DjangoApi<
   public async patchUpdate (id: string, body: IBody | FormData, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model>> {
     this.loading = true
     const url = this.urlApi(id)
-    const res = await this.httpPatch(url, body, extraHeaders)
+    const apiResponse = await this.httpPatch(url, body, extraHeaders)
+    if (apiResponse instanceof ApiResponseDuplicate) {
+      return apiResponse;
+    }
     try {
-      this.result = res.obj
+      this.result = apiResponse.obj
     } catch (e) {
       console.error(e)
     }
     this.loading = false
-    return res
+    return apiResponse
   }
 }

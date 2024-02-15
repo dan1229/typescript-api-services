@@ -1,4 +1,4 @@
-import axios, { type AxiosInstance, type AxiosResponse } from 'axios'
+import axios, { AxiosRequestConfig, type AxiosInstance, type AxiosResponse, AxiosRequestHeaders } from 'axios'
 import { BaseApiResponseHandler } from './base_api_response_handler'
 import { ApiResponseDuplicate, type ApiResponse } from '../types'
 import { DjangoApiResponseHandler } from './django_service/django_api_response_handler'
@@ -12,18 +12,22 @@ import DjangoApi from './django_service/django_api'
 export async function retryIfNecessary<Model>(
   apiInstance: BaseApi | DjangoApi<Model>,
   requestFunction: () => Promise<AxiosResponse<Model>>,
-  url: string
+  url: string,
 ): Promise<ApiResponse<Model>> {
+  // Generate a unique identifier based on the URL and request config
+  const uniqueIdentifier = url + JSON.stringify(BaseApi.client.defaults);
+
   const now = Date.now();
-  const lastRequestTime = BaseApi.lastRequestTimestamps[url] || 0;
+  const lastRequestTime = BaseApi.lastRequestTimestamps[uniqueIdentifier] || 0;
   const timeElapsed = now - lastRequestTime;
 
   if (timeElapsed < apiInstance.minimumDelay) {
     console.warn('Duplicate call dropped:', url);
-    return new ApiResponseDuplicate<Model>(requestFunction());
+    return new ApiResponseDuplicate<Model>(requestFunction);
   }
 
-  BaseApi.lastRequestTimestamps[url] = Date.now();
+  BaseApi.lastRequestTimestamps[uniqueIdentifier] = Date.now();
+  console.debug("Calling", url, "at", new Date().toISOString())
 
   const responseHandler =
     apiInstance instanceof DjangoApi
@@ -60,7 +64,7 @@ export abstract class BaseApi {
   /**
    * CONSTRUCTOR
    */
-  protected constructor (name: string, urlBase: string, minimumDelay: number = 1000, timeout: number = 10000) {
+  protected constructor (name: string, urlBase: string, minimumDelay: number = 3000, timeout: number = 10000) {
     // params
     this.name = name
     this.urlBase = urlBase
@@ -71,7 +75,7 @@ export abstract class BaseApi {
     this.loading = false
 
     // setup axios client
-    this._axiosInstance = axios.create({
+    BaseApi.axiosInstance = axios.create({
       baseURL: this.urlBase
     })
   }
@@ -84,12 +88,13 @@ export abstract class BaseApi {
    * CLIENT
    * The API Client should be defined as a `static` value on the subclass.
    */
-  _axiosInstance: AxiosInstance
+  static axiosInstance: AxiosInstance
 
-  protected get client (): AxiosInstance {
-    return this._axiosInstance
+  static get client (): AxiosInstance {
+    return BaseApi.axiosInstance
   }
-
+  
+  
   /**
    * HTTP METHODS
    *
@@ -101,28 +106,28 @@ export abstract class BaseApi {
    */
   protected async httpGet (url: string, headers = {}): Promise<ApiResponse<unknown>> {
     this.loading = true
-    const response = await retryIfNecessary(this, async () => await this.client.get(url, { headers }), url)
+    const response = await retryIfNecessary(this, async () => await BaseApi.client.get(url, { headers }), url)
     this.loading = false
     return response
   }
 
   protected async httpPost (url: string, body: object, headers = {}): Promise<ApiResponse<unknown>> {
     this.loading = true
-    const response = await retryIfNecessary(this, async () => await this.client.post(url, body, headers), url)
+    const response = await retryIfNecessary(this, async () => await BaseApi.client.post(url, body, headers), url)
     this.loading = false
     return response
   }
 
   protected async httpPatch (url: string, body: object, headers = {}): Promise<ApiResponse<unknown>> {
     this.loading = true
-    const response = await retryIfNecessary(this, async () => await this.client.patch(url, body, headers), url)
+    const response = await retryIfNecessary(this, async () => await BaseApi.client.patch(url, body, headers), url)
     this.loading = false
     return response
   }
 
   protected async httpDelete (url: string, headers = {}): Promise<ApiResponse<unknown>> {
     this.loading = true
-    const response = await retryIfNecessary(this, async () => await this.client.delete(url, { headers }), url)
+    const response = await retryIfNecessary(this, async () => await BaseApi.client.delete(url, { headers }), url)
     this.loading = false
     return response
   }
