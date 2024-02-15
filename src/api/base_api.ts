@@ -28,9 +28,10 @@ export async function retryIfNecessary (
   BaseApi.lastRequestTimestamps[url] = Date.now()
 
   // Determine the appropriate response handler based on the API instance type
-  const responseHandler = apiInstance instanceof DjangoApi
-    ? new DjangoApiResponseHandler(apiInstance, requestFunction())
-    : new BaseApiResponseHandler(apiInstance, requestFunction())
+  const responseHandler =
+    apiInstance instanceof DjangoApi
+      ? new DjangoApiResponseHandler(apiInstance, requestFunction())
+      : new BaseApiResponseHandler(apiInstance, requestFunction())
 
   // Do whatever handling necessary with the response, e.g., error handling
   return await responseHandler.handleResponse()
@@ -101,56 +102,30 @@ export abstract class BaseApi {
    * Supported methods
    * - GET, POST, PATCH, DELETE
    */
-  protected async httpGet (
-    url: string,
-    headers = {}
-  ): Promise<ApiResponse<unknown>> {
+  protected async httpGet (url: string, headers = {}): Promise<ApiResponse<unknown>> {
     this.loading = true
-    const response = await retryIfNecessary(this,
-      async () => await this.client.get(url, { headers }),
-      url
-    )
+    const response = await retryIfNecessary(this, async () => await this.client.get(url, { headers }), url)
     this.loading = false
     return response
   }
 
-  protected async httpPost (
-    url: string,
-    body: object,
-    headers = {}
-  ): Promise<ApiResponse<unknown>> {
+  protected async httpPost (url: string, body: object, headers = {}): Promise<ApiResponse<unknown>> {
     this.loading = true
-    const response = await retryIfNecessary(this,
-      async () => await this.client.post(url, body, headers),
-      url
-    )
+    const response = await retryIfNecessary(this, async () => await this.client.post(url, body, headers), url)
     this.loading = false
     return response
   }
 
-  protected async httpPatch (
-    url: string,
-    body: object,
-    headers = {}
-  ): Promise<ApiResponse<unknown>> {
+  protected async httpPatch (url: string, body: object, headers = {}): Promise<ApiResponse<unknown>> {
     this.loading = true
-    const response = await retryIfNecessary(this,
-      async () => await this.client.patch(url, body, headers),
-      url
-    )
+    const response = await retryIfNecessary(this, async () => await this.client.patch(url, body, headers), url)
     this.loading = false
     return response
   }
 
-  protected async httpDelete (
-    url: string,
-    headers = {}
-  ): Promise<ApiResponse<unknown>> {
+  protected async httpDelete (url: string, headers = {}): Promise<ApiResponse<unknown>> {
     this.loading = true
-    const response = await retryIfNecessary(this,
-      async () => await this.client.delete(url, { headers }),
-      url
-    )
+    const response = await retryIfNecessary(this, async () => await this.client.delete(url, { headers }), url)
     this.loading = false
     return response
   }

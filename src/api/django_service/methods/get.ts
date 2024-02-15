@@ -47,11 +47,15 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
    * @param {Record<string, unknown>=} extraHeaders - Extra headers to add to request
    * @return {ApiResponse} Api response object
    */
-  public async getList (paginated: boolean = true, filters?: TypeFilters, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model[]>> {
+  public async getList (
+    paginated: boolean = true,
+    filters?: TypeFilters,
+    extraHeaders?: Record<string, unknown>
+  ): Promise<ApiResponse<Model[]>> {
     this.loading = true
     const url = this.urlApi(undefined, filters)
     const apiResponse = await this.httpGet(url, extraHeaders)
-    const response = await this.handleDjangoGet(apiResponse, paginated) as ApiResponse<Model[]>
+    const response = (await this.handleDjangoGet(apiResponse, paginated)) as ApiResponse<Model[]>
     this.loading = false
     return response
   }
@@ -119,10 +123,7 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
    * @param paginated
    * @returns ApiResponse
    */
-  protected async handleDjangoGet (
-    apiResponse: ApiResponse<Model | Model[]>,
-    paginated: boolean
-  ): Promise<ApiResponse<Model | Model[]>> {
+  protected async handleDjangoGet (apiResponse: ApiResponse<Model | Model[]>, paginated: boolean): Promise<ApiResponse<Model | Model[]>> {
     // helper function to clean up get and retrieve methods
     if (!paginated) {
       try {
@@ -138,7 +139,7 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
     } else {
       try {
         this.count = apiResponse.response.data.count
-        this.list = apiResponse.obj as Model[] ?? []
+        this.list = (apiResponse.obj as Model[]) ?? []
         this.calculatePageTotal() // this should only be called during the initial call NOT during any next/prev calls
       } catch (e) {
         console.error(e)
@@ -158,10 +159,7 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
    * @param {Boolean=} combineLists - Whether to add next page to the current list or replace it
    * @return {ApiResponse} Api response object
    */
-  protected async handlePaginatedResponse (
-    apiResponse: ApiResponse<Model[]>,
-    combineLists: boolean = false
-  ): Promise<ApiResponse<Model[]>> {
+  protected async handlePaginatedResponse (apiResponse: ApiResponse<Model[]>, combineLists: boolean = false): Promise<ApiResponse<Model[]>> {
     try {
       this.count = apiResponse.response.data.count
       this.next = apiResponse.response.data.next
@@ -171,7 +169,7 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
         this.list = apiResponse.obj ?? []
       } else {
         if (!!this.list && this.list.length > 0) {
-          this.list = [...this.list, ...apiResponse.obj ?? []]
+          this.list = [...this.list, ...(apiResponse.obj ?? [])]
         } else {
           this.list = apiResponse.obj ?? []
         }

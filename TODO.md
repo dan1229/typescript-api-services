@@ -38,17 +38,10 @@
 
 
 
-#### add prettier/eslint
-- it's badly formatted code here!
-- add eslint for imports
-  - ONLY relative no absolute
-  - remove tsconfig?
 
 
 
-
-
-### [1.0.0] - 2024-MM-DD
+### [1.0.0] - 2024-02-14
 - Added automatic call limiting/retrying to `BaseApi` and `DjangoApi`
   - Ability to choose amount of time
 - Created `BaseApiResponseHandler` and `DjangoApiResponseHandler` for more functionality
@@ -59,6 +52,8 @@
 - Added `loading` property to `BaseApi` and `DjangoApi` for loading state
 - `TypeFilter` added to `BaseApi` and `DjangoApi` for type filtering
   - Moved 'up' from method level to class level
+- Improved linting to help prevent some errors
+- Added `prettier` to help with code formatting
 #### TODO
 
 -------------------------------------------------------

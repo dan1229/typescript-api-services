@@ -17,5 +17,7 @@ module.exports = {
     "@typescript-eslint/brace-style": "off",
     // TODO would like to add this one back
     "@typescript-eslint/restrict-template-expressions": "off",
+    // no absolute imports
+    "no-restricted-imports": ["error",{ "patterns": ["^/", "src/*"] }],
   }
 }

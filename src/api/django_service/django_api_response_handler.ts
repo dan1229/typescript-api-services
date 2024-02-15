@@ -114,7 +114,7 @@ export class DjangoApiResponseHandler<Model> {
       const errorFields = new Map<string, string>()
 
       if (responseData.error_fields) {
-        Object.keys(responseData.error_fields).forEach(key => {
+        Object.keys(responseData.error_fields).forEach((key) => {
           const errorValue = responseData.error_fields[key]
           if (Array.isArray(errorValue)) {
             errorFields.set(key, errorValue[0].toString())
