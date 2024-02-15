@@ -58,6 +58,17 @@ export class ApiResponseSuccess<Model> extends ApiResponse<Model> {
 }
 
 /**
+ * API RESPONSE DUPLICATE
+ *
+ * @param {any} response - HTTP response object
+ */
+export class ApiResponseDuplicate extends ApiResponse<unknown> {
+  constructor (response: any) {
+    super(response, 'Duplicate request.', true, undefined, undefined)
+  }
+}
+
+/**
  * AXIOS RESPONSE
  *
  * @param {T} data - Data returned by API

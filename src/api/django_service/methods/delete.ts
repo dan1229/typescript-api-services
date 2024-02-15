@@ -1,9 +1,8 @@
 import DjangoApi from '../django_api'
-import { DjangoApiResponseHandler } from '../django_api_response_handler'
 import { type ApiResponse } from '../../../types'
+import { retryIfNecessary } from '../../base_api'
 
 /**
- *
  * DJANGO DELETE
  *
  * Django Delete - API methods for DELETE requests for a Django API
@@ -17,7 +16,7 @@ export default class DjangoDelete<Model> extends DjangoApi {
    */
   protected async httpDelete (url: string, extraHeaders?: Record<string, unknown>): Promise<any> {
     const headers = this.getHeaders(extraHeaders)
-    return await this.client.delete(url, headers)
+    return await retryIfNecessary(this, async () => await this.client.delete(url, headers), url)
   }
 
   /**
@@ -31,8 +30,8 @@ export default class DjangoDelete<Model> extends DjangoApi {
    */
   public async deleteItem (id: string, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model>> {
     this.loading = true
-    const responseHandler = new DjangoApiResponseHandler<Model>(this, this.httpDelete(this.urlApi(id), extraHeaders))
-    const response = await responseHandler.handleResponse()
+    const url = this.urlApi(id)
+    const response = await this.httpDelete(url, extraHeaders)
     this.loading = false
     return response
   }

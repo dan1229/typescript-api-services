@@ -1,5 +1,6 @@
-import { type ApiResponse, ApiResponseError, ApiResponseSuccess, type AxiosResponse } from '../../types'
+import { type ApiResponse, ApiResponseError, ApiResponseSuccess } from '../../types'
 import type DjangoApi from './django_api'
+import { type AxiosResponse } from 'axios'
 
 /**
  * DJANGO API RESPONSE HANDLER
@@ -10,11 +11,11 @@ import type DjangoApi from './django_api'
  * @param {Promise<any>} request - Request to fulfil
  */
 export class DjangoApiResponseHandler<Model> {
-  api: DjangoApi
+  api: DjangoApi<object | null>
   request: Promise<any>
   response?: AxiosResponse<any>
 
-  constructor (api: DjangoApi, request: Promise<AxiosResponse<any>>) {
+  constructor (api: DjangoApi<object | null>, request: Promise<AxiosResponse<unknown>>) {
     this.api = api
     this.request = request
   }
@@ -30,7 +31,7 @@ export class DjangoApiResponseHandler<Model> {
    *
    * @return {Promise<ApiResponse<any>>} Api response object
    */
-  async handleResponse (): Promise<ApiResponse<any>> {
+  async handleResponse (): Promise<ApiResponse<unknown>> {
     // await response and ensure valid
     try {
       this.response = await this.request

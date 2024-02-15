@@ -9,6 +9,7 @@
 
 
 
+
 #### move error fields to 'message' when no 'message'?
 - if no 'message' field, move some field to 'message'?
 - or if default message?
@@ -27,24 +28,29 @@
     - maybe just mimic any fields django sends back?
 
 
------
-### 1.0.0
-
-
 #### ci
 - add build step somehow
   - add nextjs project? idk dont want to limit this to a specific framework
 
 
+-----
+### 1.0.0
 
-#### repeat/debounce api calls
-- build in way to avoid multiple calling apis
-- maybe a way to cancel a call if it's already in progress?
-- customizable 'seconds since last call' to allow for repeat calls
+
+
+#### add prettier/eslint
+- it's badly formatted code here!
+- add eslint for imports
+  - ONLY relative no absolute
+  - remove tsconfig?
+
+
 
 
 
 ### [1.0.0] - 2024-MM-DD
+- Added automatic call limiting/retrying to `BaseApi` and `DjangoApi`
+  - Ability to choose amount of time
 - Created `BaseApiResponseHandler` and `DjangoApiResponseHandler` for more functionality
   - Much more modular and customizable
   - Cleaned up `DjangoApiResponseHandler` error handling

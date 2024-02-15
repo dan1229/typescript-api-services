@@ -1,6 +1,6 @@
 import DjangoApi from '../django_api'
-import { DjangoApiResponseHandler } from '../django_api_response_handler'
 import { type ApiResponse } from '../../../types'
+import { retryIfNecessary } from '../../base_api'
 
 /**
  *
@@ -23,15 +23,15 @@ export default class DjangoPost<Model, IBody extends object> extends DjangoApi {
    * @param {IBody | FormData} body - Body of request to include, probably the object data
    * @param {Record<string, unknown>} extraHeaders - Extra headers to add to request
    */
-  protected async httpPost (url: string, body: IBody | FormData, extraHeaders?: Record<string, unknown>): Promise<any> {
+  protected async httpPost (url: string, body: IBody | FormData, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model>> {
     const headers = { ...this.getHeaders(), ...extraHeaders }
-    return await this.client.post(url, body, headers)
+    return await retryIfNecessary(this, async () => await this.client.post(url, body, headers), url)
   }
 
   // Generic version of httpPost that allows you to specify the body type and doesn't handle the response
-  protected async httpPostGeneric<IBodyGeneric extends object>(url: string, body: IBodyGeneric): Promise<any> {
+  protected async httpPostGeneric<IBodyGeneric extends object>(url: string, body: IBodyGeneric): Promise<ApiResponse<Model>> {
     const headers = this.getHeaders()
-    return await this.client.post(url, body, headers)
+    return await retryIfNecessary(this, async () => await this.client.post(url, body, headers), url)
   }
 
   /**
@@ -45,8 +45,7 @@ export default class DjangoPost<Model, IBody extends object> extends DjangoApi {
    */
   public async postCreate (body: IBody | FormData, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model>> {
     this.loading = true
-    const responseHandler = new DjangoApiResponseHandler<Model>(this, this.httpPost(this.urlApi(), body, extraHeaders))
-    const res = await responseHandler.handleResponse()
+    const res = await this.httpPost(this.urlApi(), body, extraHeaders)
     try {
       this.result = res.obj
     } catch (e) {
