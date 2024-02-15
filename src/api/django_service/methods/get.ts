@@ -1,6 +1,5 @@
 import DjangoApi from '../django_api'
 import { ApiResponseDuplicate, type ApiResponse } from '../../../types'
-import { BaseApi, retryIfNecessary } from '../../base_api'
 
 /**
  *
@@ -34,7 +33,7 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
    */
   protected async httpGet (url: string, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model | Model[]>> {
     const headers = this.getHeaders(extraHeaders)
-    return await retryIfNecessary(this, async () => await BaseApi.client.get<Model>(url, headers), url)
+    return await this.retryIfNecessary<Model>(async () => await this.client.get<Model>(url, headers), url)
   }
 
   /**

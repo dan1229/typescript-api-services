@@ -1,6 +1,5 @@
 import DjangoApi from '../django_api'
 import { ApiResponseDuplicate, type ApiResponse } from '../../../types'
-import { BaseApi, retryIfNecessary } from '../../base_api'
 
 /**
  *
@@ -25,13 +24,13 @@ export default class DjangoPost<Model, IBody extends object> extends DjangoApi<M
    */
   protected async httpPost (url: string, body: IBody | FormData, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model>> {
     const headers = { ...this.getHeaders(), ...extraHeaders }
-    return await retryIfNecessary(this, async () => await BaseApi.client.post(url, body, headers), url)
+    return await this.retryIfNecessary<Model>(async () => await this.client.post(url, body, headers), url)
   }
 
   // Generic version of httpPost that allows you to specify the body type and doesn't handle the response
   protected async httpPostGeneric<IBodyGeneric extends object>(url: string, body: IBodyGeneric): Promise<ApiResponse<Model>> {
     const headers = this.getHeaders()
-    return await retryIfNecessary(this, async () => await BaseApi.client.post(url, body, headers), url)
+    return await this.retryIfNecessary<Model>(async () => await this.client.post(url, body, headers), url)
   }
 
   /**

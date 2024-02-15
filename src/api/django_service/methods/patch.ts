@@ -1,6 +1,5 @@
 import DjangoApi from '../django_api'
 import { ApiResponseDuplicate, type ApiResponse } from '../../../types'
-import { BaseApi, retryIfNecessary } from '../../base_api'
 
 /**
  *
@@ -25,7 +24,7 @@ export default class DjangoPatch<Model, IBody extends object> extends DjangoApi<
    */
   protected async httpPatch (url: string, body: IBody | FormData, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model>> {
     const headers = this.getHeaders(extraHeaders)
-    return await retryIfNecessary(this, async () => await BaseApi.client.patch(url, body, headers), url)
+    return await this.retryIfNecessary<Model>(async () => await this.client.patch(url, body, headers), url)
   }
 
   // Generic version of httpPatch that allows you to specify the body type and doesn't handle the response
@@ -35,7 +34,7 @@ export default class DjangoPatch<Model, IBody extends object> extends DjangoApi<
     extraHeaders?: Record<string, unknown>
   ): Promise<ApiResponse<Model>> {
     const headers = this.getHeaders(extraHeaders)
-    return await retryIfNecessary(this, async () => await BaseApi.client.patch(url, body, headers), url)
+    return await this.retryIfNecessary(async () => await this.client.patch(url, body, headers), url)
   }
 
   /**

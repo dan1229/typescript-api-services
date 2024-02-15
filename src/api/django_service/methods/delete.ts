@@ -1,6 +1,5 @@
 import DjangoApi from '../django_api'
 import { ApiResponseDuplicate, type ApiResponse } from '../../../types'
-import { BaseApi, retryIfNecessary } from '../../base_api'
 
 /**
  * DJANGO DELETE
@@ -16,7 +15,7 @@ export default class DjangoDelete<Model> extends DjangoApi<Model> {
    */
   protected async httpDelete (url: string, extraHeaders?: Record<string, unknown>): Promise<any> {
     const headers = this.getHeaders(extraHeaders)
-    return await retryIfNecessary(this, async () => await BaseApi.client.delete(url, headers), url)
+    return await this.retryIfNecessary<Model>(async () => await this.client.delete(url, headers), url)
   }
 
   /**

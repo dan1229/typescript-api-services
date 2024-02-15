@@ -41,7 +41,7 @@ export default abstract class DjangoApi<Model, TypeFilters extends object | null
     this.urlEndpoint = urlEndpoint
 
     // setup axios client
-    BaseApi.axiosInstance = axios.create({
+    this._axiosInstance = axios.create({
       baseURL: this.urlBase,
       timeout: this.timeout,
       xsrfCookieName: 'csrftoken',
