@@ -10,7 +10,7 @@ import { type AxiosResponse } from 'axios'
  * @param {BaseApi} api - API to use for response
  * @param {Promise<AxiosResponse<T>>} request - Request to fulfill
  */
-export class BaseApiResponseHandler<T> {
+export class BaseApiResponseHandler<T = null> {
   api: BaseApi
   request: Promise<AxiosResponse<T>>
   response?: AxiosResponse<T>
