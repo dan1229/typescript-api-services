@@ -1,5 +1,5 @@
+import { ApiResponse } from '../../../types'
 import DjangoApi from '../django_api'
-import { ApiResponseDuplicate, type ApiResponse } from '../../../types'
 
 /**
  *
@@ -45,9 +45,6 @@ export default class DjangoPost<Model, IBody extends object> extends DjangoApi {
   public async postCreate (body: IBody | FormData, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model>> {
     this.loading = true
     const apiResponse = await this.httpPost(this.urlApi(), body, extraHeaders)
-    if (apiResponse instanceof ApiResponseDuplicate) {
-      return apiResponse
-    }
     try {
       this.result = apiResponse.obj
     } catch (e) {

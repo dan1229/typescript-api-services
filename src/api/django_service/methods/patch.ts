@@ -1,5 +1,5 @@
 import DjangoApi from '../django_api'
-import { ApiResponseDuplicate, type ApiResponse } from '../../../types'
+import { type ApiResponse } from '../../../types'
 
 /**
  *
@@ -51,9 +51,6 @@ export default class DjangoPatch<Model, IBody extends object> extends DjangoApi 
     this.loading = true
     const url = this.urlApi(id)
     const apiResponse = await this.httpPatch(url, body, extraHeaders)
-    if (apiResponse instanceof ApiResponseDuplicate) {
-      return apiResponse
-    }
     try {
       this.result = apiResponse.obj
     } catch (e) {
