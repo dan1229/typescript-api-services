@@ -31,7 +31,7 @@ export default abstract class DjangoApi<TypeFilters extends object | null = null
     token?: string,
     minimumDelay: number = 3000,
     timeout: number = 10000,
-    currentUrl: string = ''
+    currentUrl: string = window.location.href
   ) {
     super(name, urlBase, timeout, minimumDelay, currentUrl)
     if (!token) {
