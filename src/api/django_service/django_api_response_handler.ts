@@ -8,14 +8,15 @@ import { type AxiosResponse } from 'axios'
  * Handle, sanitize and standardize API responses for services
  *
  * @param {BaseApi} api - API to use for response
- * @param {Promise<any>} request - Request to fulfil
+ * @param {Promise<AxiosResponse<unknown, any>>} request - Request to fulfil
  */
 export class DjangoApiResponseHandler<Model> {
   api: DjangoApi<object | null>
-  request: Promise<any>
-  response?: AxiosResponse<any>
+  request: Promise<AxiosResponse<unknown, unknown>>
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  response: AxiosResponse<unknown> = {} as AxiosResponse<unknown>
 
-  constructor (api: DjangoApi<object | null>, request: Promise<AxiosResponse<unknown>>) {
+  constructor (api: DjangoApi<object | null>, request: Promise<AxiosResponse<unknown, unknown>>) {
     this.api = api
     this.request = request
   }
@@ -29,9 +30,9 @@ export class DjangoApiResponseHandler<Model> {
    *
    * Method to standardize, sanitize and handle API responses. Handles deserializing objects as well if given 'fromJson'.
    *
-   * @return {Promise<ApiResponse<any>>} Api response object
+   * @return {Promise<ApiResponse<Model>>} Api response object
    */
-  async handleResponse (): Promise<ApiResponse<unknown>> {
+  async handleResponse (): Promise<ApiResponse<Model>> {
     // await response and ensure valid
     try {
       this.response = await this.request
@@ -51,24 +52,23 @@ export class DjangoApiResponseHandler<Model> {
 
     // get response message
     let message = 'Error. Please try again later.'
-    if (this.response.data.hasOwnProperty('message')) {
-      message = this.response.data.message
+    if (this.response.data && typeof this.response.data === 'object' && 'message' in this.response.data) {
+      message = this.response.data.message as string
     } else {
       // no 'message'
       error = true
     }
-
     // serialize and return
     try {
       if (!error) {
         // results based api
-        if (this.response.data.hasOwnProperty('results') && typeof this.response.data.results !== 'undefined') {
-          let res
+        if (typeof this.response.data === 'object' && this.response.data !== null && 'results' in this.response.data) {
+          let res: Model | undefined
           if (typeof this.response.data.results !== 'undefined') {
             // check 'results' key
-            res = this.response.data.results
-          } else if (typeof this.response.data !== 'undefined') {
-            res = this.response.data
+            res = this.response.data.results as Model
+          } else {
+            res = this.response.data as Model
           }
           return new ApiResponseSuccess<Model>(this.response, message, res)
         } else {
@@ -91,6 +91,7 @@ export class DjangoApiResponseHandler<Model> {
    * @param {any | string} exception - Exception to log/handle
    * @return {ApiResponseError<Model>} Api response ERROR object
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handleError (exception: any | string): ApiResponseError<Model> {
     if (typeof exception === 'string') {
       return new ApiResponseError<Model>(this.response, exception, new Map<string, string>())

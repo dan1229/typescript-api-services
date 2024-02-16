@@ -1,44 +1,10 @@
-import axios, { type AxiosInstance, type AxiosResponse } from 'axios'
+import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from 'axios'
 import { BaseApiResponseHandler } from './base_api_response_handler'
 import { ApiResponseDuplicate, type ApiResponse } from '../types'
 import { DjangoApiResponseHandler } from './django_service/django_api_response_handler'
 import DjangoApi from './django_service/django_api'
 
 /**
- * retryIfNecessary
- * A helper/wrapper function to handle retrying requests if necessary.
- * Avoids duplicate requests within a certain time window.
- */
-export async function retryIfNecessary (
-  apiInstance: BaseApi | DjangoApi<any>, // Modify if needed to support specific DjangoApi types
-  requestFunction: () => Promise<AxiosResponse<unknown>>,
-  url: string
-): Promise<any> {
-  const now = Date.now()
-  const lastRequestTime = BaseApi.lastRequestTimestamps[url] || 0
-  const timeElapsed = now - lastRequestTime
-
-  // Check if there is a pending request for this URL within the time window
-  if (timeElapsed < apiInstance.minimumDelay) {
-    console.warn('Duplicate call dropped:', url)
-    return new ApiResponseDuplicate(requestFunction)
-  }
-
-  // Update the last request timestamp
-  BaseApi.lastRequestTimestamps[url] = Date.now()
-
-  // Determine the appropriate response handler based on the API instance type
-  const responseHandler =
-    apiInstance instanceof DjangoApi
-      ? new DjangoApiResponseHandler(apiInstance, requestFunction())
-      : new BaseApiResponseHandler(apiInstance, requestFunction())
-
-  // Do whatever handling necessary with the response, e.g., error handling
-  return await responseHandler.handleResponse()
-}
-
-/**
- *
  * BASE API
  *
  * Generic API interface - use this for any external service/REST APIs to simplify
@@ -48,13 +14,13 @@ export async function retryIfNecessary (
  * @param {string} name - API Name, primarily for logging.
  * @param {string} urlBase - Base URL to use - defaults to environment URL.
  * @param {number=} timeout - Default request timeout.
+ * @param {number=} minimumDelay - Minimum delay between requests to avoid duplicates.
  */
 export abstract class BaseApi {
   name: string
   urlBase: string
   timeout: number
   minimumDelay: number
-
   loading: boolean
 
   // Maintain a dictionary to store the timestamps of recent requests
@@ -63,17 +29,12 @@ export abstract class BaseApi {
   /**
    * CONSTRUCTOR
    */
-  protected constructor (name: string, urlBase: string, minimumDelay: number = 5000, timeout: number = 10000) {
-    // params
+  protected constructor (name: string, urlBase: string, minimumDelay: number = 1000, timeout: number = 10000) {
     this.name = name
     this.urlBase = urlBase
     this.timeout = timeout
     this.minimumDelay = minimumDelay
-
-    // auto
     this.loading = false
-
-    // setup axios client
     this._axiosInstance = axios.create({
       baseURL: this.urlBase
     })
@@ -85,7 +46,6 @@ export abstract class BaseApi {
 
   /**
    * CLIENT
-   * The API Client should be defined as a `static` value on the subclass.
    */
   _axiosInstance: AxiosInstance
 
@@ -102,31 +62,59 @@ export abstract class BaseApi {
    * Supported methods
    * - GET, POST, PATCH, DELETE
    */
-  protected async httpGet (url: string, headers = {}): Promise<ApiResponse<unknown>> {
+  protected async httpGet (url: string, headers: AxiosRequestConfig['headers'] = {}): Promise<ApiResponse<unknown>> {
     this.loading = true
-    const response = await retryIfNecessary(this, async () => await this.client.get(url, { headers }), url)
+    const response = await this.catchDuplicates(async () => await this.client.get(url, { headers }), url)
     this.loading = false
     return response
   }
 
-  protected async httpPost (url: string, body: object, headers = {}): Promise<ApiResponse<unknown>> {
+  protected async httpPost (url: string, body: object, headers: AxiosRequestConfig['headers'] = {}): Promise<ApiResponse<unknown>> {
     this.loading = true
-    const response = await retryIfNecessary(this, async () => await this.client.post(url, body, headers), url)
+    const response = await this.catchDuplicates(async () => await this.client.post(url, body, { headers }), url)
     this.loading = false
     return response
   }
 
-  protected async httpPatch (url: string, body: object, headers = {}): Promise<ApiResponse<unknown>> {
+  protected async httpPatch (url: string, body: object, headers: AxiosRequestConfig['headers'] = {}): Promise<ApiResponse<unknown>> {
     this.loading = true
-    const response = await retryIfNecessary(this, async () => await this.client.patch(url, body, headers), url)
+    const response = await this.catchDuplicates(async () => await this.client.patch(url, body, { headers }), url)
     this.loading = false
     return response
   }
 
-  protected async httpDelete (url: string, headers = {}): Promise<ApiResponse<unknown>> {
+  protected async httpDelete (url: string, headers: AxiosRequestConfig['headers'] = {}): Promise<ApiResponse<unknown>> {
     this.loading = true
-    const response = await retryIfNecessary(this, async () => await this.client.delete(url, { headers }), url)
+    const response = await this.catchDuplicates(async () => await this.client.delete(url, { headers }), url)
     this.loading = false
     return response
+  }
+
+  /**
+   * catchDuplicates
+   * A helper/wrapper function to handle retrying requests if necessary.
+   * Avoids duplicate requests within a certain time window.
+   */
+  async catchDuplicates<T = null>(requestFunction: () => Promise<AxiosResponse>, urlToCall: string): Promise<ApiResponse<T>> {
+    const now = Date.now()
+    // this accounts for both the page the URL is called on and the URL itself
+    // that way if a user is changing pages, the following ID is different and
+    // the request will go through
+    const pageUrlId = `${urlToCall}`
+    const lastRequestTime = BaseApi.lastRequestTimestamps[pageUrlId] || 0
+    const timeElapsed = now - lastRequestTime
+
+    if (timeElapsed < this.minimumDelay) {
+      return new ApiResponseDuplicate()
+    }
+
+    BaseApi.lastRequestTimestamps[pageUrlId] = Date.now()
+
+    const responseHandler =
+      this instanceof DjangoApi
+        ? new DjangoApiResponseHandler<T>(this, requestFunction())
+        : new BaseApiResponseHandler<T>(this, requestFunction())
+
+    return await responseHandler.handleResponse()
   }
 }

@@ -1,6 +1,5 @@
 import DjangoApi from '../django_api'
-import { type ApiResponse } from '../../../types'
-import { retryIfNecessary } from '../../base_api'
+import { ApiResponseDuplicate, type ApiResponse } from '../../../types'
 
 /**
  *
@@ -17,7 +16,7 @@ import { retryIfNecessary } from '../../base_api'
  * - getPrev()
  * - getPage(num)
  */
-export default class DjangoGet<Model, TypeFilters extends object | null = null> extends DjangoApi {
+export default class DjangoGet<Model, TypeFilters extends object | null = null> extends DjangoApi<TypeFilters> {
   list: Model[] = []
   result?: Model
   count?: number
@@ -32,9 +31,9 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
    * @param {string} url - URL to call
    * @param {Record<string, unknown>} extraHeaders - Extra headers to add to request
    */
-  protected async httpGet (url: string, extraHeaders?: Record<string, unknown>): Promise<any> {
+  protected async httpGet (url: string, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model | Model[]>> {
     const headers = this.getHeaders(extraHeaders)
-    return await retryIfNecessary(this, async () => await this.client.get(url, headers), url)
+    return await this.catchDuplicates<Model>(async () => await this.client.get<Model>(url, headers), url)
   }
 
   /**
@@ -80,7 +79,7 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
       if (typeof nextPage !== 'undefined') {
         const nextList = nextPage.obj
         if (!!nextList && nextList.length > 0) {
-          nextList.map(function (i: any) {
+          nextList.map(function (i: Model) {
             return res.push(i)
           })
         }
@@ -124,6 +123,11 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
    * @returns ApiResponse
    */
   protected async handleDjangoGet (apiResponse: ApiResponse<Model | Model[]>, paginated: boolean): Promise<ApiResponse<Model | Model[]>> {
+    // handle duplicate response
+    if (apiResponse instanceof ApiResponseDuplicate) {
+      return apiResponse
+    }
+
     // helper function to clean up get and retrieve methods
     if (!paginated) {
       try {
@@ -138,7 +142,7 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
       return apiResponse
     } else {
       try {
-        this.count = apiResponse.response.data.count
+        this.count = (apiResponse.response.data as { count: number }).count
         this.list = (apiResponse.obj as Model[]) ?? []
         this.calculatePageTotal() // this should only be called during the initial call NOT during any next/prev calls
       } catch (e) {
@@ -161,9 +165,10 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
    */
   protected async handlePaginatedResponse (apiResponse: ApiResponse<Model[]>, combineLists: boolean = false): Promise<ApiResponse<Model[]>> {
     try {
-      this.count = apiResponse.response.data.count
-      this.next = apiResponse.response.data.next
-      this.prev = apiResponse.response.data.previous
+      const responseData = apiResponse.response.data as { count: number, next: string, previous: string }
+      this.count = responseData.count
+      this.next = responseData.next
+      this.prev = responseData.previous
 
       if (!combineLists) {
         this.list = apiResponse.obj ?? []
@@ -192,9 +197,15 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
     this.loading = true
     if (typeof this.next !== 'undefined') {
       const apiResponse = await this.httpGet(this.next, extraHeaders)
-      const response = await this.handlePaginatedResponse(apiResponse, combineLists)
-      this.loading = false
-      return response
+      if (apiResponse.obj instanceof Array) {
+        // If the response is a list, return it as-is
+        const response = await this.handlePaginatedResponse(apiResponse as ApiResponse<Model[]>, combineLists)
+        this.loading = false
+        return response
+      } else {
+        this.loading = false
+        throw new Error('getNext - Response is not a list')
+      }
     }
     this.loading = false
   }
@@ -210,9 +221,15 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
     this.loading = true
     if (typeof this.prev !== 'undefined') {
       const apiResponse = await this.httpGet(this.prev, extraHeaders)
-      const response = await this.handlePaginatedResponse(apiResponse, combineLists)
-      this.loading = false
-      return response
+      if (apiResponse.obj instanceof Array) {
+        // If the response is a list, return it as-is
+        const response = await this.handlePaginatedResponse(apiResponse as ApiResponse<Model[]>, combineLists)
+        this.loading = false
+        return response
+      } else {
+        this.loading = false
+        throw new Error('getPrev - Response is not a list')
+      }
     }
     this.loading = false
   }
@@ -224,13 +241,25 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
    * @param {Record<string, unknown>=} extraHeaders - Extra headers to add to request
    * @return {ApiResponse} Api response object
    */
+
   public async getPage (page: number, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model[]>> {
     this.loading = true
     const pageUrl = `${this.urlApi()}?page=${page}`
     const apiResponse = await this.httpGet(pageUrl, extraHeaders)
-    const response = await this.handlePaginatedResponse(apiResponse)
-    this.loading = false
-    return response
+
+    if (apiResponse.obj instanceof Array) {
+      // If the response is a list, return it as-is
+      this.loading = false
+      return apiResponse as ApiResponse<Model[]>
+    } else {
+      // If the response is not a list, wrap the result in an array
+      const response: ApiResponse<Model[]> = {
+        ...apiResponse,
+        obj: [apiResponse.obj as Model]
+      }
+      this.loading = false
+      return response
+    }
   }
 
   /**

@@ -29,10 +29,10 @@ export default abstract class DjangoApi<TypeFilters extends object | null = null
     urlBase: string,
     urlEndpoint: string,
     token?: string,
-    minimumDelay: number = 5000,
+    minimumDelay: number = 1000,
     timeout: number = 10000
   ) {
-    super(name, urlBase, timeout, minimumDelay)
+    super(name, urlBase, minimumDelay, timeout)
     if (!token) {
       token = ''
     }
@@ -61,7 +61,7 @@ export default abstract class DjangoApi<TypeFilters extends object | null = null
    * @param {Record<string, unknown>=} extraHeaders - Extra headers to include
    * @return {AxiosRequestHeaders} Header object/map
    **/
-  protected getHeaders (extraHeaders?: Record<string, unknown>): any {
+  protected getHeaders (extraHeaders?: Record<string, unknown>): Record<string, unknown> {
     if (typeof this.token !== 'undefined' && this.token !== '') {
       return {
         headers: {
