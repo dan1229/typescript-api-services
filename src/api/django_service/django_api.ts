@@ -20,7 +20,7 @@ export type TypeFilters = object | null
  * @param {string} urlEndpoint - Endpoint of this URL. Should NOT include / or urlBase (i.e., "/api/").
  * @param {string=} token - Auth token to use.
  */
-export default abstract class DjangoApi<Model, TypeFilters extends object | null = null> extends BaseApi {
+export default abstract class DjangoApi<TypeFilters extends object | null = null> extends BaseApi {
   urlEndpoint: string
   token: string
 
@@ -61,7 +61,7 @@ export default abstract class DjangoApi<Model, TypeFilters extends object | null
    * @param {Record<string, unknown>=} extraHeaders - Extra headers to include
    * @return {AxiosRequestHeaders} Header object/map
    **/
-  protected getHeaders (extraHeaders?: Record<string, unknown>): any {
+  protected getHeaders (extraHeaders?: Record<string, unknown>): Record<string, unknown> {
     if (typeof this.token !== 'undefined' && this.token !== '') {
       return {
         headers: {

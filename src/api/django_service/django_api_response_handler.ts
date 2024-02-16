@@ -12,10 +12,11 @@ import { type AxiosResponse } from 'axios'
  */
 export class DjangoApiResponseHandler<Model> {
   api: DjangoApi<object | null>
-  request: Promise<AxiosResponse<unknown, any>>
-  response?: AxiosResponse<unknown>
+  request: Promise<AxiosResponse<unknown, unknown>>
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  response: AxiosResponse<unknown> = {} as AxiosResponse<unknown>
 
-  constructor (api: DjangoApi<object | null>, request: Promise<AxiosResponse<unknown, any>>) {
+  constructor (api: DjangoApi<object | null>, request: Promise<AxiosResponse<unknown, unknown>>) {
     this.api = api
     this.request = request
   }
@@ -90,6 +91,7 @@ export class DjangoApiResponseHandler<Model> {
    * @param {any | string} exception - Exception to log/handle
    * @return {ApiResponseError<Model>} Api response ERROR object
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handleError (exception: any | string): ApiResponseError<Model> {
     if (typeof exception === 'string') {
       return new ApiResponseError<Model>(this.response, exception, new Map<string, string>())

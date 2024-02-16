@@ -1,8 +1,8 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { BaseApiResponseHandler } from './base_api_response_handler';
-import { ApiResponseDuplicate, ApiResponse } from '../types';
-import { DjangoApiResponseHandler } from './django_service/django_api_response_handler';
-import DjangoApi from './django_service/django_api';
+import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from 'axios'
+import { BaseApiResponseHandler } from './base_api_response_handler'
+import { ApiResponseDuplicate, type ApiResponse } from '../types'
+import { DjangoApiResponseHandler } from './django_service/django_api_response_handler'
+import DjangoApi from './django_service/django_api'
 
 /**
  * BASE API
@@ -17,31 +17,31 @@ import DjangoApi from './django_service/django_api';
  * @param {number=} minimumDelay - Minimum delay between requests to avoid duplicates.
  */
 export abstract class BaseApi {
-  name: string;
-  urlBase: string;
-  timeout: number;
-  minimumDelay: number;
-  loading: boolean;
-  
+  name: string
+  urlBase: string
+  timeout: number
+  minimumDelay: number
+  loading: boolean
+
   // Maintain a dictionary to store the timestamps of recent requests
   static lastRequestTimestamps: Record<string, number> = {}
 
   /**
    * CONSTRUCTOR
    */
-  protected constructor(name: string, urlBase: string, minimumDelay: number = 3000, timeout: number = 10000) {
-    this.name = name;
-    this.urlBase = urlBase;
-    this.timeout = timeout;
-    this.minimumDelay = minimumDelay;
-    this.loading = false;
+  protected constructor (name: string, urlBase: string, minimumDelay: number = 3000, timeout: number = 10000) {
+    this.name = name
+    this.urlBase = urlBase
+    this.timeout = timeout
+    this.minimumDelay = minimumDelay
+    this.loading = false
     this._axiosInstance = axios.create({
       baseURL: this.urlBase
-    });
+    })
   }
 
-  cleanUrlParamString(word: string): string {
-    return word.replace(/\s/g, '%20').replace(/and/gi, '%26');
+  cleanUrlParamString (word: string): string {
+    return word.replace(/\s/g, '%20').replace(/and/gi, '%26')
   }
 
   /**
@@ -52,7 +52,7 @@ export abstract class BaseApi {
   protected get client (): AxiosInstance {
     return this._axiosInstance
   }
-  
+
   /**
    * HTTP METHODS
    *
@@ -62,32 +62,32 @@ export abstract class BaseApi {
    * Supported methods
    * - GET, POST, PATCH, DELETE
    */
-  protected async httpGet(url: string, headers: AxiosRequestConfig['headers'] = {}): Promise<ApiResponse<unknown>> {
-    this.loading = true;
-    const response = await this.retryIfNecessary(async () => await this.client.get(url, { headers }), url);
-    this.loading = false;
-    return response;
+  protected async httpGet (url: string, headers: AxiosRequestConfig['headers'] = {}): Promise<ApiResponse<unknown>> {
+    this.loading = true
+    const response = await this.retryIfNecessary(async () => await this.client.get(url, { headers }), url)
+    this.loading = false
+    return response
   }
 
-  protected async httpPost(url: string, body: object, headers: AxiosRequestConfig['headers'] = {}): Promise<ApiResponse<unknown>> {
-    this.loading = true;
-    const response = await this.retryIfNecessary(async () => await this.client.post(url, body, { headers }), url);
-    this.loading = false;
-    return response;
+  protected async httpPost (url: string, body: object, headers: AxiosRequestConfig['headers'] = {}): Promise<ApiResponse<unknown>> {
+    this.loading = true
+    const response = await this.retryIfNecessary(async () => await this.client.post(url, body, { headers }), url)
+    this.loading = false
+    return response
   }
 
-  protected async httpPatch(url: string, body: object, headers: AxiosRequestConfig['headers'] = {}): Promise<ApiResponse<unknown>> {
-    this.loading = true;
-    const response = await this.retryIfNecessary(async () => await this.client.patch(url, body, { headers }), url);
-    this.loading = false;
-    return response;
+  protected async httpPatch (url: string, body: object, headers: AxiosRequestConfig['headers'] = {}): Promise<ApiResponse<unknown>> {
+    this.loading = true
+    const response = await this.retryIfNecessary(async () => await this.client.patch(url, body, { headers }), url)
+    this.loading = false
+    return response
   }
 
-  protected async httpDelete(url: string, headers: AxiosRequestConfig['headers'] = {}): Promise<ApiResponse<unknown>> {
-    this.loading = true;
-    const response = await this.retryIfNecessary(async () => await this.client.delete(url, { headers }), url);
-    this.loading = false;
-    return response;
+  protected async httpDelete (url: string, headers: AxiosRequestConfig['headers'] = {}): Promise<ApiResponse<unknown>> {
+    this.loading = true
+    const response = await this.retryIfNecessary(async () => await this.client.delete(url, { headers }), url)
+    this.loading = false
+    return response
   }
 
   /**
@@ -96,13 +96,13 @@ export abstract class BaseApi {
    * Avoids duplicate requests within a certain time window.
    */
   async retryIfNecessary<T = null>(requestFunction: () => Promise<AxiosResponse>, url: string): Promise<ApiResponse<T>> {
-    const now = Date.now();
+    const now = Date.now()
     const lastRequestTime = BaseApi.lastRequestTimestamps[url] || 0
     const timeElapsed = now - lastRequestTime
 
     if (timeElapsed < this.minimumDelay) {
-      console.warn('Duplicate call dropped:', url);
-      return new ApiResponseDuplicate(undefined); // Pass undefined as the response for a duplicate call
+      console.warn('Duplicate call dropped:', url)
+      return new ApiResponseDuplicate(undefined) // Pass undefined as the response for a duplicate call
     }
 
     BaseApi.lastRequestTimestamps[url] = Date.now()
@@ -110,8 +110,8 @@ export abstract class BaseApi {
     const responseHandler =
       this instanceof DjangoApi
         ? new DjangoApiResponseHandler<T>(this, requestFunction())
-        : new BaseApiResponseHandler<T>(this, requestFunction());
-        
-    return await responseHandler.handleResponse();
+        : new BaseApiResponseHandler<T>(this, requestFunction())
+
+    return await responseHandler.handleResponse()
   }
 }

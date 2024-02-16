@@ -6,14 +6,14 @@ import { ApiResponseDuplicate, type ApiResponse } from '../../../types'
  *
  * Django Delete - API methods for DELETE requests for a Django API
  */
-export default class DjangoDelete<Model> extends DjangoApi<Model> {
+export default class DjangoDelete<Model> extends DjangoApi {
   /**
    * HTTP call
    *
    * @param {string} url - URL to call
    * @param {Record<string, unknown>} extraHeaders - Extra headers to add to request
    */
-  protected async httpDelete (url: string, extraHeaders?: Record<string, unknown>): Promise<any> {
+  protected async httpDelete (url: string, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model>> {
     const headers = this.getHeaders(extraHeaders)
     return await this.retryIfNecessary<Model>(async () => await this.client.delete(url, headers), url)
   }
@@ -32,7 +32,7 @@ export default class DjangoDelete<Model> extends DjangoApi<Model> {
     const url = this.urlApi(id)
     const apiResponse = await this.httpDelete(url, extraHeaders)
     if (apiResponse instanceof ApiResponseDuplicate) {
-      return apiResponse;
+      return apiResponse
     }
     this.loading = false
     return apiResponse

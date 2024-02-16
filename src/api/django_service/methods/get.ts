@@ -16,7 +16,7 @@ import { ApiResponseDuplicate, type ApiResponse } from '../../../types'
  * - getPrev()
  * - getPage(num)
  */
-export default class DjangoGet<Model, TypeFilters extends object | null = null> extends DjangoApi<Model, TypeFilters> {
+export default class DjangoGet<Model, TypeFilters extends object | null = null> extends DjangoApi<TypeFilters> {
   list: Model[] = []
   result?: Model
   count?: number
@@ -55,7 +55,7 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
     const url = this.urlApi(undefined, filters)
     const apiResponse = await this.httpGet(url, extraHeaders)
     if (apiResponse instanceof ApiResponseDuplicate) {
-      return apiResponse;
+      return apiResponse
     }
     const response = (await this.handleDjangoGet(apiResponse, paginated)) as ApiResponse<Model[]>
     this.loading = false
@@ -82,7 +82,7 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
       if (typeof nextPage !== 'undefined') {
         const nextList = nextPage.obj
         if (!!nextList && nextList.length > 0) {
-          nextList.map(function (i: any) {
+          nextList.map(function (i: Model) {
             return res.push(i)
           })
         }
@@ -114,7 +114,7 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
     const url = this.urlApi(id, filters)
     const apiResponse = await this.httpGet(url, extraHeaders)
     if (apiResponse instanceof ApiResponseDuplicate) {
-      return apiResponse;
+      return apiResponse
     }
     const response = await this.handleDjangoGet(apiResponse, paginated)
     this.loading = false
@@ -143,7 +143,7 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
       return apiResponse
     } else {
       try {
-        this.count = apiResponse.response.data.count
+        this.count = (apiResponse.response.data as { count: number }).count
         this.list = (apiResponse.obj as Model[]) ?? []
         this.calculatePageTotal() // this should only be called during the initial call NOT during any next/prev calls
       } catch (e) {
@@ -166,9 +166,10 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
    */
   protected async handlePaginatedResponse (apiResponse: ApiResponse<Model[]>, combineLists: boolean = false): Promise<ApiResponse<Model[]>> {
     try {
-      this.count = apiResponse.response.data.count
-      this.next = apiResponse.response.data.next
-      this.prev = apiResponse.response.data.previous
+      const responseData = apiResponse.response.data as { count: number, next: string, previous: string }
+      this.count = responseData.count
+      this.next = responseData.next
+      this.prev = responseData.previous
 
       if (!combineLists) {
         this.list = apiResponse.obj ?? []
@@ -201,7 +202,7 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
         // If the response is a list, return it as-is
         const response = await this.handlePaginatedResponse(apiResponse as ApiResponse<Model[]>, combineLists)
         this.loading = false
-        return response;
+        return response
       } else {
         this.loading = false
         throw new Error('getNext - Response is not a list')
@@ -225,7 +226,7 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
         // If the response is a list, return it as-is
         const response = await this.handlePaginatedResponse(apiResponse as ApiResponse<Model[]>, combineLists)
         this.loading = false
-        return response;
+        return response
       } else {
         this.loading = false
         throw new Error('getPrev - Response is not a list')
@@ -242,26 +243,25 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
    * @return {ApiResponse} Api response object
    */
 
-  public async getPage(page: number, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model[]>> {
-    this.loading = true;
-    const pageUrl = `${this.urlApi()}?page=${page}`;
-    const apiResponse = await this.httpGet(pageUrl, extraHeaders);
-    
+  public async getPage (page: number, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model[]>> {
+    this.loading = true
+    const pageUrl = `${this.urlApi()}?page=${page}`
+    const apiResponse = await this.httpGet(pageUrl, extraHeaders)
+
     if (apiResponse.obj instanceof Array) {
       // If the response is a list, return it as-is
       this.loading = false
-      return apiResponse as ApiResponse<Model[]>;
+      return apiResponse as ApiResponse<Model[]>
     } else {
       // If the response is not a list, wrap the result in an array
       const response: ApiResponse<Model[]> = {
         ...apiResponse,
         obj: [apiResponse.obj as Model]
-      };
+      }
       this.loading = false
-      return response;
+      return response
     }
   }
-  
 
   /**
    * PAGINATION HELPERS

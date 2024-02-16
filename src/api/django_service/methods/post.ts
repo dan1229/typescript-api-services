@@ -12,7 +12,7 @@ import { ApiResponseDuplicate, type ApiResponse } from '../../../types'
  * - httpPostGeneric(id, body)
  *  - Generic version of httpPost that allows you to specify the body type and doesn't handle the response
  */
-export default class DjangoPost<Model, IBody extends object> extends DjangoApi<Model, IBody> {
+export default class DjangoPost<Model, IBody extends object> extends DjangoApi {
   result?: Model
 
   /**
@@ -46,7 +46,7 @@ export default class DjangoPost<Model, IBody extends object> extends DjangoApi<M
     this.loading = true
     const apiResponse = await this.httpPost(this.urlApi(), body, extraHeaders)
     if (apiResponse instanceof ApiResponseDuplicate) {
-      return apiResponse;
+      return apiResponse
     }
     try {
       this.result = apiResponse.obj
