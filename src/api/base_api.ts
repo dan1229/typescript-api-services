@@ -97,8 +97,12 @@ export abstract class BaseApi {
    */
   async catchDuplicates<T = null>(requestFunction: () => Promise<AxiosResponse>, url: string): Promise<ApiResponse<T>> {
     const now = Date.now()
-    const uniqueId = `${window.location}-${url}`
-    const lastRequestTime = BaseApi.lastRequestTimestamps[uniqueId] || 0
+    // this accounts for both the page the URL is called on and the URL itself
+    // that way if a user is changing pages, the following ID is different and
+    // the request will go through
+    console.log("WINODW", window?.location.href, "URL", url)
+    const pageUrlId = `${window?.location.href}-${url}`
+    const lastRequestTime = BaseApi.lastRequestTimestamps[pageUrlId] || 0
     const timeElapsed = now - lastRequestTime
 
     if (timeElapsed < this.minimumDelay) {
@@ -106,7 +110,7 @@ export abstract class BaseApi {
       return new ApiResponseDuplicate({} as AxiosResponse) // Pass undefined as the response for a duplicate call
     }
 
-    BaseApi.lastRequestTimestamps[uniqueId] = Date.now()
+    BaseApi.lastRequestTimestamps[pageUrlId] = Date.now()
 
     const responseHandler =
       this instanceof DjangoApi
