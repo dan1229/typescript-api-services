@@ -33,7 +33,7 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
    */
   protected async httpGet (url: string, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model | Model[]>> {
     const headers = this.getHeaders(extraHeaders)
-    return await this.catchDuplicates<Model>(async () => await this.client.get<Model>(url, headers), url, this.currentUrl)
+    return await this.catchDuplicates<Model>(async () => await this.client.get<Model>(url, headers), url)
   }
 
   /**
