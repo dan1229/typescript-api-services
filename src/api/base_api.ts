@@ -30,7 +30,7 @@ export abstract class BaseApi {
   /**
    * CONSTRUCTOR
    */
-  protected constructor (name: string, urlBase: string, minimumDelay: number = 3000, timeout: number = 10000, currentUrl: string = '') {
+  protected constructor (name: string, urlBase: string, minimumDelay: number = 3000, timeout: number = 10000, currentUrl: string = window.location.href) {
     this.name = name
     this.urlBase = urlBase
     this.timeout = timeout
