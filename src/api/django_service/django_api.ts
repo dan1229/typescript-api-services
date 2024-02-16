@@ -32,7 +32,7 @@ export default abstract class DjangoApi<TypeFilters extends object | null = null
     minimumDelay: number = 1000,
     timeout: number = 10000
   ) {
-    super(name, urlBase, timeout, minimumDelay)
+    super(name, urlBase, minimumDelay, timeout)
     if (!token) {
       token = ''
     }
