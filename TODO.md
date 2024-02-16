@@ -18,7 +18,7 @@
   - some way we can key for `catchDuplicates` better to account for users moving between pages quickly
 
 
-  
+
 #### move error fields to 'message' when no 'message'?
 - if no 'message' field, move some field to 'message'?
 - or if default message?
@@ -26,6 +26,8 @@
     - maybe "None" instead of default message...?
 
 
+#### timeout
+- is it working lol?
 
     
 #### ApiResponse error list
