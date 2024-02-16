@@ -29,7 +29,7 @@ export abstract class BaseApi {
   /**
    * CONSTRUCTOR
    */
-  protected constructor (name: string, urlBase: string, minimumDelay: number = 1000, timeout: number = 10000) {
+  protected constructor (name: string, urlBase: string, minimumDelay: number = 1000, timeout: number = 1000) {
     this.name = name
     this.urlBase = urlBase
     this.timeout = timeout
@@ -104,6 +104,7 @@ export abstract class BaseApi {
     const lastRequestTime = BaseApi.lastRequestTimestamps[pageUrlId] || 0
     const timeElapsed = now - lastRequestTime
 
+    console.log('timeElapsed', timeElapsed, 'minimumDelay', this.minimumDelay)
     if (timeElapsed < this.minimumDelay) {
       console.warn('Duplicate call dropped:', urlToCall)
       return new ApiResponseDuplicate({} as AxiosResponse) // Pass undefined as the response for a duplicate call
