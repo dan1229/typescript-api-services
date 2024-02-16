@@ -1,4 +1,4 @@
-import { ApiResponse } from '../../../types'
+import { type ApiResponse } from '../../../types'
 import DjangoApi from '../django_api'
 
 /**

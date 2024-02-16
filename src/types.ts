@@ -63,7 +63,8 @@ export class ApiResponseSuccess<Model> extends ApiResponse<Model> {
  * @param {AxiosResponse} response - HTTP response object
  */
 export class ApiResponseDuplicate<Model = unknown> extends ApiResponse<Model> {
-  constructor (response: AxiosResponse<unknown, unknown>) {
-    super(response, 'Duplicate request.', true, undefined, undefined)
+  constructor (response?: AxiosResponse<unknown, unknown>) {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    super(response ?? {} as AxiosResponse, 'Duplicate request.', true, undefined, undefined)
   }
 }
