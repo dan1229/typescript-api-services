@@ -9,7 +9,16 @@
 
 
 
+#### improve duplicate catching
+- add option to shut off
+  - `catchDuplicates` bool
+- BIG
+  - find a way to include pageUrl
+    - middleware or something?
+  - some way we can key for `catchDuplicates` better to account for users moving between pages quickly
 
+
+  
 #### move error fields to 'message' when no 'message'?
 - if no 'message' field, move some field to 'message'?
 - or if default message?
@@ -42,12 +51,6 @@
 ### 1.0.1
 
 
-how to handle api duplicates?
-- if a user moves through the app too quickly, then they might send the same request twice LEGITIMATELY
-- however, the new updates would drop those calls and it results in weird behavior
-- because the timestamp list is static it is shared between all isntances of api objects
-  - so, if a user has two api objects, they will share the same timestamp list
-- how can we 
 
 
 ### [1.0.1] - 2024-02-DD
