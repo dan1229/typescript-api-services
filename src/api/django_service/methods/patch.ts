@@ -24,7 +24,7 @@ export default class DjangoPatch<Model, IBody extends object> extends DjangoApi 
    */
   protected async httpPatch (url: string, body: IBody | FormData, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model>> {
     const headers = this.getHeaders(extraHeaders)
-    return await this.catchDuplicates<Model>(async () => await this.client.patch(url, body, headers), url)
+    return await this.catchDuplicates<Model>(async () => await this.client.patch(url, body, headers), url, this.currentUrl)
   }
 
   // Generic version of httpPatch that allows you to specify the body type and doesn't handle the response
@@ -34,7 +34,7 @@ export default class DjangoPatch<Model, IBody extends object> extends DjangoApi 
     extraHeaders?: Record<string, unknown>
   ): Promise<ApiResponse<Model>> {
     const headers = this.getHeaders(extraHeaders)
-    return await this.catchDuplicates(async () => await this.client.patch(url, body, headers), url)
+    return await this.catchDuplicates(async () => await this.client.patch(url, body, headers), url, this.currentUrl)
   }
 
   /**

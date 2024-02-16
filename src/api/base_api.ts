@@ -22,6 +22,7 @@ export abstract class BaseApi {
   timeout: number
   minimumDelay: number
   loading: boolean
+  currentUrl: string
 
   // Maintain a dictionary to store the timestamps of recent requests
   static lastRequestTimestamps: Record<string, number> = {}
@@ -29,11 +30,12 @@ export abstract class BaseApi {
   /**
    * CONSTRUCTOR
    */
-  protected constructor (name: string, urlBase: string, minimumDelay: number = 3000, timeout: number = 10000) {
+  protected constructor (name: string, urlBase: string, minimumDelay: number = 3000, timeout: number = 10000, currentUrl: string = '') {
     this.name = name
     this.urlBase = urlBase
     this.timeout = timeout
     this.minimumDelay = minimumDelay
+    this.currentUrl = currentUrl
     this.loading = false
     this._axiosInstance = axios.create({
       baseURL: this.urlBase
@@ -64,28 +66,28 @@ export abstract class BaseApi {
    */
   protected async httpGet (url: string, headers: AxiosRequestConfig['headers'] = {}): Promise<ApiResponse<unknown>> {
     this.loading = true
-    const response = await this.catchDuplicates(async () => await this.client.get(url, { headers }), url)
+    const response = await this.catchDuplicates(async () => await this.client.get(url, { headers }), url, this.currentUrl)
     this.loading = false
     return response
   }
 
   protected async httpPost (url: string, body: object, headers: AxiosRequestConfig['headers'] = {}): Promise<ApiResponse<unknown>> {
     this.loading = true
-    const response = await this.catchDuplicates(async () => await this.client.post(url, body, { headers }), url)
+    const response = await this.catchDuplicates(async () => await this.client.post(url, body, { headers }), url, this.currentUrl)
     this.loading = false
     return response
   }
 
   protected async httpPatch (url: string, body: object, headers: AxiosRequestConfig['headers'] = {}): Promise<ApiResponse<unknown>> {
     this.loading = true
-    const response = await this.catchDuplicates(async () => await this.client.patch(url, body, { headers }), url)
+    const response = await this.catchDuplicates(async () => await this.client.patch(url, body, { headers }), url, this.currentUrl)
     this.loading = false
     return response
   }
 
   protected async httpDelete (url: string, headers: AxiosRequestConfig['headers'] = {}): Promise<ApiResponse<unknown>> {
     this.loading = true
-    const response = await this.catchDuplicates(async () => await this.client.delete(url, { headers }), url)
+    const response = await this.catchDuplicates(async () => await this.client.delete(url, { headers }), url, this.currentUrl)
     this.loading = false
     return response
   }
@@ -95,18 +97,17 @@ export abstract class BaseApi {
    * A helper/wrapper function to handle retrying requests if necessary.
    * Avoids duplicate requests within a certain time window.
    */
-  async catchDuplicates<T = null>(requestFunction: () => Promise<AxiosResponse>, url: string): Promise<ApiResponse<T>> {
+  async catchDuplicates<T = null>(requestFunction: () => Promise<AxiosResponse>, urlToCall: string, urlCurrent: string): Promise<ApiResponse<T>> {
     const now = Date.now()
     // this accounts for both the page the URL is called on and the URL itself
     // that way if a user is changing pages, the following ID is different and
     // the request will go through
-    console.log("WINODW", window?.location.href, "URL", url)
-    const pageUrlId = `${window?.location.href}-${url}`
+    const pageUrlId = `${urlCurrent}-${urlToCall}`
     const lastRequestTime = BaseApi.lastRequestTimestamps[pageUrlId] || 0
     const timeElapsed = now - lastRequestTime
 
     if (timeElapsed < this.minimumDelay) {
-      console.warn('Duplicate call dropped:', url)
+      console.warn('Duplicate call dropped:', urlToCall)
       return new ApiResponseDuplicate({} as AxiosResponse) // Pass undefined as the response for a duplicate call
     }
 
