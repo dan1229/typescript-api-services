@@ -40,7 +40,7 @@ export class BaseApiResponseHandler<T> {
       }
     } catch (e) {
       this.handleLogError(e)
-      return new ApiResponseError<T>(this.response, e?.toString())
+      return new ApiResponseError<T>(this.response ?? {} as AxiosResponse, e?.toString())
     }
 
     // detect if error or not
