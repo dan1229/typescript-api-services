@@ -64,48 +64,49 @@ export abstract class BaseApi {
    */
   protected async httpGet (url: string, headers: AxiosRequestConfig['headers'] = {}): Promise<ApiResponse<unknown>> {
     this.loading = true
-    const response = await this.retryIfNecessary(async () => await this.client.get(url, { headers }), url)
+    const response = await this.catchDuplicates(async () => await this.client.get(url, { headers }), url)
     this.loading = false
     return response
   }
 
   protected async httpPost (url: string, body: object, headers: AxiosRequestConfig['headers'] = {}): Promise<ApiResponse<unknown>> {
     this.loading = true
-    const response = await this.retryIfNecessary(async () => await this.client.post(url, body, { headers }), url)
+    const response = await this.catchDuplicates(async () => await this.client.post(url, body, { headers }), url)
     this.loading = false
     return response
   }
 
   protected async httpPatch (url: string, body: object, headers: AxiosRequestConfig['headers'] = {}): Promise<ApiResponse<unknown>> {
     this.loading = true
-    const response = await this.retryIfNecessary(async () => await this.client.patch(url, body, { headers }), url)
+    const response = await this.catchDuplicates(async () => await this.client.patch(url, body, { headers }), url)
     this.loading = false
     return response
   }
 
   protected async httpDelete (url: string, headers: AxiosRequestConfig['headers'] = {}): Promise<ApiResponse<unknown>> {
     this.loading = true
-    const response = await this.retryIfNecessary(async () => await this.client.delete(url, { headers }), url)
+    const response = await this.catchDuplicates(async () => await this.client.delete(url, { headers }), url)
     this.loading = false
     return response
   }
 
   /**
-   * retryIfNecessary
+   * catchDuplicates
    * A helper/wrapper function to handle retrying requests if necessary.
    * Avoids duplicate requests within a certain time window.
    */
-  async retryIfNecessary<T = null>(requestFunction: () => Promise<AxiosResponse>, url: string): Promise<ApiResponse<T>> {
+  async catchDuplicates<T = null>(requestFunction: () => Promise<AxiosResponse>, url: string): Promise<ApiResponse<T>> {
     const now = Date.now()
-    const lastRequestTime = BaseApi.lastRequestTimestamps[url] || 0
+    const uniqueId = `${window.location}-${url}`
+    const lastRequestTime = BaseApi.lastRequestTimestamps[uniqueId] || 0
     const timeElapsed = now - lastRequestTime
 
     if (timeElapsed < this.minimumDelay) {
       console.warn('Duplicate call dropped:', url)
-      return new ApiResponseDuplicate(undefined) // Pass undefined as the response for a duplicate call
+      return new ApiResponseDuplicate({} as AxiosResponse) // Pass undefined as the response for a duplicate call
     }
 
-    BaseApi.lastRequestTimestamps[url] = Date.now()
+    BaseApi.lastRequestTimestamps[uniqueId] = Date.now()
 
     const responseHandler =
       this instanceof DjangoApi

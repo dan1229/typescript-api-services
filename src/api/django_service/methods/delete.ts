@@ -15,7 +15,7 @@ export default class DjangoDelete<Model> extends DjangoApi {
    */
   protected async httpDelete (url: string, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model>> {
     const headers = this.getHeaders(extraHeaders)
-    return await this.retryIfNecessary<Model>(async () => await this.client.delete(url, headers), url)
+    return await this.catchDuplicates<Model>(async () => await this.client.delete(url, headers), url)
   }
 
   /**

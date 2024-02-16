@@ -52,6 +52,7 @@ how to handle api duplicates?
 
 ### [1.0.1] - 2024-02-DD
 - Improved `retry` logic
+  - `retryIfNecessary` -> `catchDuplicates`
 - Fixed some bugs in `DjangoGet` methods
 - Improved typing in handler classes and `DjangoApi` methods
 - Improved lint - no more (unexpected) `any` types
