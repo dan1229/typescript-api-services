@@ -104,9 +104,7 @@ export abstract class BaseApi {
     const lastRequestTime = BaseApi.lastRequestTimestamps[pageUrlId] || 0
     const timeElapsed = now - lastRequestTime
 
-    console.log('timeElapsed', timeElapsed, 'minimumDelay', this.minimumDelay)
     if (timeElapsed < this.minimumDelay) {
-      console.warn('Duplicate call dropped:', urlToCall)
       return new ApiResponseDuplicate()
     }
 

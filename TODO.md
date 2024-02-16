@@ -16,6 +16,10 @@
   - find a way to include pageUrl
     - middleware or something?
   - some way we can key for `catchDuplicates` better to account for users moving between pages quickly
+    - this is really more important than the amount of time, which is now a bit of a hack at only one second
+  -
+  - could also have it retry if the same pageUrl is hit again?
+    - how to prevent just a flurry of calls spaced out by X seconds?
 
 
 
@@ -56,11 +60,13 @@
 
 
 ### [1.0.1] - 2024-02-DD
-- Improved `retry` logic
+- Improved `retry/duplicate` logic
   - `retryIfNecessary` -> `catchDuplicates`
+  - Improved issues with calling APIs too fast
 - Fixed some bugs in `DjangoGet` methods
 - Improved typing in handler classes and `DjangoApi` methods
 - Improved lint - no more (unexpected) `any` types
+- `console.log` lint rule added
 
 -------------------------------------------------------
 

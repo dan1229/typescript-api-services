@@ -14,6 +14,7 @@ module.exports = {
   rules: {
     "@typescript-eslint/strict-boolean-expressions": "off",
     "no-prototype-builtins": "off",
+    "no-console": ["error", { "allow": ["warn", "error"] }],
     "@typescript-eslint/brace-style": "off",
     "@typescript-eslint/no-explicit-any": "error",
     // TODO would like to add this one back
