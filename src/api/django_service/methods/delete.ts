@@ -1,5 +1,5 @@
 import DjangoApi from '../django_api'
-import { ApiResponseDuplicate, type ApiResponse } from '../../../types'
+import { type ApiResponse } from '../../../types'
 
 /**
  * DJANGO DELETE
@@ -31,9 +31,6 @@ export default class DjangoDelete<Model> extends DjangoApi {
     this.loading = true
     const url = this.urlApi(id)
     const apiResponse = await this.httpDelete(url, extraHeaders)
-    if (apiResponse instanceof ApiResponseDuplicate) {
-      return apiResponse
-    }
     this.loading = false
     return apiResponse
   }

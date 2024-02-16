@@ -54,9 +54,6 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
     this.loading = true
     const url = this.urlApi(undefined, filters)
     const apiResponse = await this.httpGet(url, extraHeaders)
-    if (apiResponse instanceof ApiResponseDuplicate) {
-      return apiResponse
-    }
     const response = (await this.handleDjangoGet(apiResponse, paginated)) as ApiResponse<Model[]>
     this.loading = false
     return response
@@ -113,9 +110,6 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
     this.loading = true
     const url = this.urlApi(id, filters)
     const apiResponse = await this.httpGet(url, extraHeaders)
-    if (apiResponse instanceof ApiResponseDuplicate) {
-      return apiResponse
-    }
     const response = await this.handleDjangoGet(apiResponse, paginated)
     this.loading = false
     return response
@@ -129,6 +123,11 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
    * @returns ApiResponse
    */
   protected async handleDjangoGet (apiResponse: ApiResponse<Model | Model[]>, paginated: boolean): Promise<ApiResponse<Model | Model[]>> {
+    // handle duplicate response
+    if (apiResponse instanceof ApiResponseDuplicate) {
+      return apiResponse
+    }
+
     // helper function to clean up get and retrieve methods
     if (!paginated) {
       try {
