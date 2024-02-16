@@ -107,7 +107,7 @@ export abstract class BaseApi {
     console.log('timeElapsed', timeElapsed, 'minimumDelay', this.minimumDelay)
     if (timeElapsed < this.minimumDelay) {
       console.warn('Duplicate call dropped:', urlToCall)
-      return new ApiResponseDuplicate({} as AxiosResponse) // Pass undefined as the response for a duplicate call
+      return new ApiResponseDuplicate({} as AxiosResponse)
     }
 
     BaseApi.lastRequestTimestamps[pageUrlId] = Date.now()
