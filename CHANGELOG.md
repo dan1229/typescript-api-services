@@ -14,6 +14,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Released]
 
+### [1.0.1] - 2024-02-15
+- Improved `retry/duplicate` logic
+  - `retryIfNecessary` -> `catchDuplicates`
+  - Improved issues with calling APIs too fast
+- Fixed some bugs in `DjangoGet` methods
+- Improved typing in handler classes and `DjangoApi` methods
+- Improved lint - no more (unexpected) `any` types
+- `console.log` lint rule added
+
+
 ### [1.0.0] - 2024-02-14
 - Added automatic call limiting/retrying to `BaseApi` and `DjangoApi`
   - Ability to choose amount of time

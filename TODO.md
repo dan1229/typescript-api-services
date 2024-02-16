@@ -53,21 +53,6 @@
 ### [1.1.0] - 2024-MM-DD
 #### TODO
 
-----
-### 1.0.1
-
-
-
-
-### [1.0.1] - 2024-02-DD
-- Improved `retry/duplicate` logic
-  - `retryIfNecessary` -> `catchDuplicates`
-  - Improved issues with calling APIs too fast
-- Fixed some bugs in `DjangoGet` methods
-- Improved typing in handler classes and `DjangoApi` methods
-- Improved lint - no more (unexpected) `any` types
-- `console.log` lint rule added
-
 -------------------------------------------------------
 
 ##### [https://danielnazarian.com](https://danielnazarian.com)
