@@ -9,6 +9,11 @@
 
 
 
+#### mixed permissions for django?
+- i.e., if the `get` doesnt need a token but `post` does
+
+
+
 #### improve duplicate catching
 - add option to shut off
   - `catchDuplicates` bool
