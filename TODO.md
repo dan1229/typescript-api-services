@@ -59,14 +59,6 @@
 #### TODO
 
 
----
-
-
-
-### [1.0.2] - 2024-03-17
-- Fix for `DjangoGet` APIs related to paginated APIs
-  - Wasn't handling `next` and `previous` links correctly
-
 -------------------------------------------------------
 
 ##### [https://danielnazarian.com](https://danielnazarian.com)
