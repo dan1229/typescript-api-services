@@ -148,7 +148,7 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
       } catch (e) {
         console.error(e)
       }
-      return this.handlePaginatedResponse(apiResponse as ApiResponse<Model[]>, false)
+      return await this.handlePaginatedResponse(apiResponse as ApiResponse<Model[]>, false)
     }
   }
 
