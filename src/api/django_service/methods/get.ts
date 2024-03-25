@@ -166,9 +166,11 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
   protected async handlePaginatedResponse (apiResponse: ApiResponse<Model[]>, combineLists: boolean = false): Promise<ApiResponse<Model[]>> {
     try {
       const responseData = apiResponse.response.data as { count: number, next: string, previous: string }
-      this.count = responseData.count
-      this.next = responseData.next
-      this.prev = responseData.previous
+      if (!!responseData) {
+        this.count = responseData.count
+        this.next = responseData.next
+        this.prev = responseData.previous
+      }
 
       if (!combineLists) {
         this.list = apiResponse.obj ?? []
