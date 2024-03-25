@@ -128,7 +128,6 @@ export class DjangoApiResponseHandler<Model> {
       return new ApiResponseError<Model>(this.response, undefined, errorFields)
     }
 
-    console.error(`Unknown error type: ${exception}`)
     return new ApiResponseError<Model>(this.response)
   }
 }

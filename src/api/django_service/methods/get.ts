@@ -137,7 +137,7 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
           this.result = apiResponse.obj as Model
         }
       } catch (e) {
-        console.error(e)
+        console.warn(e)
       }
       return apiResponse
     } else {
@@ -146,7 +146,7 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
         this.list = (apiResponse.obj as Model[]) ?? []
         this.calculatePageTotal() // this should only be called during the initial call NOT during any next/prev calls
       } catch (e) {
-        console.error(e)
+        console.warn(e)
       }
       return await this.handlePaginatedResponse(apiResponse as ApiResponse<Model[]>, false)
     }
