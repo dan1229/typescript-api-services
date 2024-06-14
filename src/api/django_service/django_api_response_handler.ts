@@ -93,27 +93,21 @@ export class DjangoApiResponseHandler<Model> {
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handleError (exception: any | string): ApiResponseError<Model> {
+    // this is a string error - most likely a 500 error or something similarly unhandled
     if (typeof exception === 'string') {
       return new ApiResponseError<Model>(this.response, exception, new Map<string, string>())
     }
 
-    if ('response' in exception && exception.response && exception.response.data) {
+    // axios error - most should be caught in this
+    if ('response' in exception && !!exception.response && !!exception.response.data) {
       const responseData = exception.response.data
 
       if (responseData.non_field_errors?.length) {
         return new ApiResponseError<Model>(this.response, responseData.non_field_errors[0])
       }
 
-      if (responseData.detail) {
-        return new ApiResponseError<Model>(this.response, responseData.detail)
-      }
-
-      if (responseData.message) {
-        return new ApiResponseError<Model>(this.response, responseData.message)
-      }
-
+      // get error fields
       const errorFields = new Map<string, string>()
-
       if (responseData.error_fields) {
         Object.keys(responseData.error_fields).forEach((key) => {
           const errorValue = responseData.error_fields[key]
@@ -123,6 +117,14 @@ export class DjangoApiResponseHandler<Model> {
             errorFields.set(key, errorValue.toString())
           }
         })
+      }
+
+      if (responseData.detail) {
+        return new ApiResponseError<Model>(this.response, responseData.detail, errorFields)
+      }
+
+      if (responseData.message) {
+        return new ApiResponseError<Model>(this.response, responseData.message, errorFields)
       }
 
       return new ApiResponseError<Model>(this.response, undefined, errorFields)
