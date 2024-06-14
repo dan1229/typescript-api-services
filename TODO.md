@@ -55,9 +55,22 @@
 
 
 
+
 ### [1.1.0] - 2024-MM-DD
 #### TODO
 
+---
+### 1.0.5
+
+
+#### duplicate api response issue
+- if throwing ApiResponseDuplicate or whatever, try to include info from original response
+- lots of duplicates are destroying front end api calls
+
+
+### [1.0.5] - 2024-MM-DD
+- Fixed `errorFields` not being set properly for all responses
+#### TODO
 
 -------------------------------------------------------
 
