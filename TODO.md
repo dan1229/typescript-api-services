@@ -59,7 +59,8 @@
 
 
 ### [1.0.6] - 2024-06-DD
-- TODO
+- Duplciate API catching improvements
+  - TODO
 
 -------------------------------------------------------
 
