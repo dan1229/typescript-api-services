@@ -38,15 +38,6 @@
 #### timeout
 - is it working lol?
 
-    
-#### ApiResponse error list
-- instead of individual error message, include a list of any
-- find some way to organize:
-  - message - main message
-  - messageList - full list
-  - some way to identify fields or something?
-    - maybe just mimic any fields django sends back?
-
 
 #### ci
 - add build step somehow
@@ -58,6 +49,18 @@
 ### [1.1.0] - 2024-MM-DD
 #### TODO
 
+---
+### 1.0.5
+
+
+#### duplicate api response issue
+- if throwing ApiResponseDuplicate or whatever, try to include info from original response
+- lots of duplicates are destroying front end api calls
+
+
+### [1.0.5] - 2024-MM-DD
+- Fixed `errorFields` not being set properly for all responses
+#### TODO
 
 -------------------------------------------------------
 
