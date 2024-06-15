@@ -60,6 +60,9 @@
 
 ### [1.0.6] - 2024-06-DD
 - Duplciate API catching improvements
+  - Previously successful API calls were being caught as duplicates
+  - Duplicate responses now include the last successful response data in case that's what the client accidently uses
+  - Remove `ApiResponseDuplicate` and replace with `duplicate` field
   - TODO
 
 -------------------------------------------------------

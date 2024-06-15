@@ -99,38 +99,37 @@ export abstract class BaseApi {
    * A helper/wrapper function to handle retrying requests if necessary.
    * Avoids duplicate requests within a certain time window.
    */
-  async catchDuplicates<T>(requestFunction: () => Promise<AxiosResponse>, urlToCall: string): Promise<ApiResponse<T>> {
+  async catchDuplicates<T = null>(requestFunction: () => Promise<AxiosResponse>, urlToCall: string): Promise<ApiResponse<T>> {
     const now = Date.now()
     // this accounts for both the page the URL is called on and the URL itself
     // that way if a user is changing pages, the following ID is different and
     // the request will go through
     const pageUrlId = `${urlToCall}`
-    const lastRequestTime = BaseApi.lastRequestTimestamps[pageUrlId] || 0
 
     // see if the request is a duplicate
-    const timeElapsed = now - lastRequestTime
-    const duplicateCall = timeElapsed < this.minimumDelay
+    // const lastRequestTime = BaseApi.lastRequestTimestamps[pageUrlId] || 0
+    // const timeElapsed = now - lastRequestTime
+    // const duplicateCall = timeElapsed < this.minimumDelay
+    // const lastSuccessfulResponse = BaseApi.lastSuccessfulResponses[pageUrlId]
+    // if (duplicateCall && lastSuccessfulResponse) {
+    //   lastSuccessfulResponse.duplicate = true
+    //   return lastSuccessfulResponse
+    // }
 
-    // Handle the response
-    let response: ApiResponse<T>
-    if (!duplicateCall) {
-      // Get the response handler
-      const responseHandler =
-        this instanceof DjangoApi
-          ? new DjangoApiResponseHandler<T>(this, requestFunction())
-          : new BaseApiResponseHandler<T>(this, requestFunction())
+    // Update the last request timestamp
+    BaseApi.lastRequestTimestamps[pageUrlId] = now
 
-      // Update the last request timestamp
-      BaseApi.lastRequestTimestamps[pageUrlId] = now
+    // Get the response handler
+    const responseHandler =
+      this instanceof DjangoApi
+        ? new DjangoApiResponseHandler<T>(this, requestFunction())
+        : new BaseApiResponseHandler<T>(this, requestFunction())
 
-      // Handle the request
-      response = await responseHandler.handleResponse()
+    // Handle the request
+    const response = await responseHandler.handleResponse()
 
-      // Store the response
-      BaseApi.lastSuccessfulResponses[pageUrlId] = response
-    } else {
-      response = BaseApi.lastSuccessfulResponses[pageUrlId]
-    }
+    // Store the response
+    BaseApi.lastSuccessfulResponses[pageUrlId] = response
 
     return response
   }

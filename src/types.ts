@@ -15,6 +15,7 @@ export abstract class ApiResponse<Model> {
   error: boolean
   errorFields?: Map<string, string>
   obj?: Model
+  duplicate: boolean = false
 
   protected constructor (response: AxiosResponse<unknown, unknown>, message: string = 'API response.', error = true, errorFields?: Map<string, string>, obj?: Model) {
     this.response = response
@@ -54,17 +55,5 @@ export class ApiResponseError<Model> extends ApiResponse<Model> {
 export class ApiResponseSuccess<Model> extends ApiResponse<Model> {
   constructor (response: AxiosResponse<unknown, unknown>, message: string = 'Successful request.', obj?: Model) {
     super(response, message, false, undefined, obj)
-  }
-}
-
-/**
- * API RESPONSE DUPLICATE
- *
- * @param {AxiosResponse} response - HTTP response object
- */
-export class ApiResponseDuplicate<Model = unknown> extends ApiResponse<Model> {
-  constructor (response?: AxiosResponse<unknown, unknown>) {
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    super(response ?? {} as AxiosResponse, 'Duplicate request.', true, undefined, undefined)
   }
 }
