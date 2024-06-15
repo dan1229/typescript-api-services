@@ -104,7 +104,7 @@ export abstract class BaseApi {
     // that way if a user is changing pages, the following ID is different and
     // the request will go through
     const pageUrlId = `${urlToCall}`;
-    const lastRequestTime = BaseApi.lastRequestTtimestamps[pageUrlId] || 0;
+    const lastRequestTime = BaseApi.lastRequestTimestamps[pageUrlId] || 0;
     const timeElapsed = now - lastRequestTime;
 
     // Check if this request is a duplicate
