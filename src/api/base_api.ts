@@ -26,6 +26,9 @@ export abstract class BaseApi {
   // Maintain a dictionary to store the timestamps of recent requests
   static lastRequestTimestamps: Record<string, number> = {}
 
+  // Maintain a dictionary to store the last successful responses
+  static lastSuccessfulResponses: Record<string, AxiosResponse> = {}
+
   /**
    * CONSTRUCTOR
    */
@@ -96,25 +99,40 @@ export abstract class BaseApi {
    * Avoids duplicate requests within a certain time window.
    */
   async catchDuplicates<T = null>(requestFunction: () => Promise<AxiosResponse>, urlToCall: string): Promise<ApiResponse<T>> {
-    const now = Date.now()
+    const now = Date.now();
     // this accounts for both the page the URL is called on and the URL itself
     // that way if a user is changing pages, the following ID is different and
     // the request will go through
-    const pageUrlId = `${urlToCall}`
-    const lastRequestTime = BaseApi.lastRequestTimestamps[pageUrlId] || 0
-    const timeElapsed = now - lastRequestTime
+    const pageUrlId = `${urlToCall}`;
+    const lastRequestTime = BaseApi.lastRequestTtimestamps[pageUrlId] || 0;
+    const timeElapsed = now - lastRequestTime;
 
+    // Check if this request is a duplicate
     if (timeElapsed < this.minimumDelay) {
-      return new ApiResponseDuplicate()
+      // Return the last successful response if available
+      if (BaseApi.lastSuccessfulResponses[pageUrlId]) {
+        return new ApiResponseDuplicate<T>(
+          BaseApi.lastSuccessfulResponses[pageUrlId].data,
+        );
+      }
+      // If no last successful response is available, return an ApiResponseDuplicate
+      return new ApiResponseDuplicate();
     }
 
-    BaseApi.lastRequestTimestamps[pageUrlId] = Date.now()
+    // Update the last request timestamp
+    BaseApi.lastRequestTimestamps[pageUrlId] = now;
 
+    // Execute the request function and handle the response
+    const response = await requestFunction();
+
+    // Store the last successful response
+    BaseApi.lastSuccessfulResponses[pageUrlId] = response;
+
+    // Return the response
     const responseHandler =
       this instanceof DjangoApi
-        ? new DjangoApiResponseHandler<T>(this, requestFunction())
-        : new BaseApiResponseHandler<T>(this, requestFunction())
-
-    return await responseHandler.handleResponse()
+        ? new DjangoApiResponseHandler<T>(this, Promise.resolve(response))
+        : new BaseApiResponseHandler<T>(this, Promise.resolve(response));
+    return await responseHandler.handleResponse();
   }
 }
