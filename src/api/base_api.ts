@@ -110,6 +110,8 @@ export abstract class BaseApi {
     // Check if this request is a duplicate
     if (timeElapsed < this.minimumDelay) {
       // Return the last successful response if available
+      console.log('duplicate request')
+      console.log('last successful response', BaseApi.lastSuccessfulResponses[pageUrlId])
       if (BaseApi.lastSuccessfulResponses[pageUrlId]) {
         return new ApiResponseDuplicate<T>(
           BaseApi.lastSuccessfulResponses[pageUrlId].data,
@@ -119,6 +121,7 @@ export abstract class BaseApi {
       return new ApiResponseDuplicate();
     }
 
+    console.log('setting last request timestamp')
     // Update the last request timestamp
     BaseApi.lastRequestTimestamps[pageUrlId] = now;
 
@@ -126,6 +129,7 @@ export abstract class BaseApi {
     const response = await requestFunction();
 
     // Store the last successful response
+    console.log('storing last successful response')
     BaseApi.lastSuccessfulResponses[pageUrlId] = response;
 
     // Return the response
