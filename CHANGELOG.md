@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Released]
 
+### [1.0.5] - 2024-06-15
+- Fixed `errorFields` not being set properly for all responses
+
+
 ### [1.0.4] - 2024-03-24
 - Django `get` API response handling bug
 

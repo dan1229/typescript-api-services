@@ -50,7 +50,7 @@
 #### TODO
 
 ---
-### 1.0.5
+### 1.0.6
 
 
 #### duplicate api response issue
@@ -58,9 +58,8 @@
 - lots of duplicates are destroying front end api calls
 
 
-### [1.0.5] - 2024-MM-DD
-- Fixed `errorFields` not being set properly for all responses
-#### TODO
+### [1.0.6] - 2024-06-DD
+- TODO
 
 -------------------------------------------------------
 
