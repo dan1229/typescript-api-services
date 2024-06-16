@@ -1,8 +1,8 @@
-import axios, { Axios, type AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from 'axios'
-import { BaseApiResponseHandler } from './base_api_response_handler'
-import { ApiResponse, ApiResponseSuccess } from '../types'
-import { DjangoApiResponseHandler } from './django_service/django_api_response_handler'
-import DjangoApi from './django_service/django_api'
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import { BaseApiResponseHandler } from './base_api_response_handler';
+import { ApiResponse, ApiResponseError, ApiResponseSuccess } from '../types';
+import { DjangoApiResponseHandler } from './django_service/django_api_response_handler';
+import DjangoApi from './django_service/django_api';
 
 /**
  * BASE API
@@ -57,6 +57,7 @@ export abstract class BaseApi {
     return this._axiosInstance
   }
 
+
   /**
    * HTTP METHODS
    *
@@ -93,43 +94,48 @@ export abstract class BaseApi {
     this.loading = false
     return response
   }
-
   /**
    * catchDuplicates
    * A helper/wrapper function to handle retrying requests if necessary.
    * Avoids duplicate requests within a certain time window.
    */
   async catchDuplicates<T = null>(requestFunction: () => Promise<AxiosResponse>, urlToCall: string): Promise<ApiResponse<T>> {
-    const now = Date.now()
+    const now = Date.now();
     // this accounts for both the page the URL is called on and the URL itself
     // that way if a user is changing pages, the following ID is different and
     // the request will go through
-    const pageUrlId = `${urlToCall}`
+    const pageUrlId = `${urlToCall}`;
 
-    // see if the request is a duplicate
-    const lastRequestTime = BaseApi.lastRequestTimestamps[pageUrlId] || 0
-    const timeElapsed = now - lastRequestTime
-    const duplicateCall = timeElapsed < this.minimumDelay
-    const lastSuccessfulResponse = BaseApi.lastSuccessfulResponses[pageUrlId]
+    // Check if the request is a duplicate
+    const lastRequestTime = BaseApi.lastRequestTimestamps[pageUrlId] || 0;
+    const timeElapsed = now - lastRequestTime;
+    const duplicateCall = timeElapsed < this.minimumDelay;
+    const lastSuccessfulResponse = BaseApi.lastSuccessfulResponses[pageUrlId];
+
     if (duplicateCall && lastSuccessfulResponse) {
-      lastSuccessfulResponse.duplicate = true
-      return lastSuccessfulResponse
+      lastSuccessfulResponse.duplicate = true;
+      return lastSuccessfulResponse;
     }
-    
+
     // Update the last request timestamp
-    BaseApi.lastRequestTimestamps[pageUrlId] = now
+    BaseApi.lastRequestTimestamps[pageUrlId] = now;
 
     // Get the response handler
     const responseHandler =
       this instanceof DjangoApi
         ? new DjangoApiResponseHandler<T>(this, requestFunction())
-        : new BaseApiResponseHandler<T>(this, requestFunction())
+        : new BaseApiResponseHandler<T>(this, requestFunction());
 
-    // Make the request
-    const response = await responseHandler.handleResponse()
+    try {
+      // Make the request
+      const response = await responseHandler.handleResponse();
 
-    // Store and return the response
-    BaseApi.lastSuccessfulResponses[pageUrlId] = response
-    return response
+      // Store the response
+      BaseApi.lastSuccessfulResponses[pageUrlId] = response;
+      return response;
+    } catch (error) {
+      console.error(`Error in ${this.name} for URL ${urlToCall}:`, error);
+      return new ApiResponseError<T>({} as AxiosResponse);
+    }
   }
 }
