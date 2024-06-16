@@ -111,11 +111,9 @@ export abstract class BaseApi {
     const timeElapsed = now - lastRequestTime
     const duplicateCall = timeElapsed < this.minimumDelay
     const lastSuccessfulResponse = BaseApi.lastSuccessfulResponses[pageUrlId]
-    if (duplicateCall) {
-      const res = !!lastSuccessfulResponse ? lastSuccessfulResponse : new ApiResponseSuccess<T>({} as AxiosResponse,)
-      res.duplicate = true
-      console.log("returning duplicate response")
-      return res
+    if (duplicateCall && lastSuccessfulResponse) {
+      lastSuccessfulResponse.duplicate = true
+      return lastSuccessfulResponse
     }
     
     // Update the last request timestamp
@@ -132,7 +130,6 @@ export abstract class BaseApi {
 
     // Store and return the response
     BaseApi.lastSuccessfulResponses[pageUrlId] = response
-    console.log("returning response")
     return response
   }
 }
