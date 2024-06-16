@@ -1,6 +1,6 @@
-import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from 'axios'
+import axios, { Axios, type AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from 'axios'
 import { BaseApiResponseHandler } from './base_api_response_handler'
-import { type ApiResponse } from '../types'
+import { ApiResponse, ApiResponseSuccess } from '../types'
 import { DjangoApiResponseHandler } from './django_service/django_api_response_handler'
 import DjangoApi from './django_service/django_api'
 
@@ -107,30 +107,32 @@ export abstract class BaseApi {
     const pageUrlId = `${urlToCall}`
 
     // see if the request is a duplicate
-    // const lastRequestTime = BaseApi.lastRequestTimestamps[pageUrlId] || 0
-    // const timeElapsed = now - lastRequestTime
-    // const duplicateCall = timeElapsed < this.minimumDelay
-    // const lastSuccessfulResponse = BaseApi.lastSuccessfulResponses[pageUrlId]
-    // if (duplicateCall && lastSuccessfulResponse) {
-    //   lastSuccessfulResponse.duplicate = true
-    //   return lastSuccessfulResponse
-    // }
-
+    const lastRequestTime = BaseApi.lastRequestTimestamps[pageUrlId] || 0
+    const timeElapsed = now - lastRequestTime
+    const duplicateCall = timeElapsed < this.minimumDelay
+    const lastSuccessfulResponse = BaseApi.lastSuccessfulResponses[pageUrlId]
+    if (duplicateCall) {
+      const res = !!lastSuccessfulResponse ? lastSuccessfulResponse : new ApiResponseSuccess<T>({} as AxiosResponse,)
+      res.duplicate = true
+      console.log("returning duplicate response")
+      return res
+    }
+    
     // Update the last request timestamp
     BaseApi.lastRequestTimestamps[pageUrlId] = now
 
-    // // Get the response handler
+    // Get the response handler
     const responseHandler =
       this instanceof DjangoApi
         ? new DjangoApiResponseHandler<T>(this, requestFunction())
         : new BaseApiResponseHandler<T>(this, requestFunction())
 
-    // Handle the request
+    // Make the request
     const response = await responseHandler.handleResponse()
 
-    // Store the response
+    // Store and return the response
     BaseApi.lastSuccessfulResponses[pageUrlId] = response
-
+    console.log("returning response")
     return response
   }
 }
