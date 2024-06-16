@@ -119,7 +119,7 @@ export abstract class BaseApi {
     // Update the last request timestamp
     BaseApi.lastRequestTimestamps[pageUrlId] = now
 
-    // Get the response handler
+    // // Get the response handler
     const responseHandler =
       this instanceof DjangoApi
         ? new DjangoApiResponseHandler<T>(this, requestFunction())
