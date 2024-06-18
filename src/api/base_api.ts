@@ -33,7 +33,7 @@ export abstract class BaseApi {
   /**
    * CONSTRUCTOR
    */
-  protected constructor(name: string, urlBase: string, minimumDelay: number = 1000, timeout: number = 10000) {
+  protected constructor (name: string, urlBase: string, minimumDelay: number = 1000, timeout: number = 10000) {
     this.name = name
     this.urlBase = urlBase
     this.timeout = timeout
@@ -45,7 +45,7 @@ export abstract class BaseApi {
     })
   }
 
-  cleanUrlParamString(word: string): string {
+  cleanUrlParamString (word: string): string {
     return word.replace(/\s/g, '%20').replace(/and/gi, '%26')
   }
 
@@ -54,7 +54,7 @@ export abstract class BaseApi {
    */
   _axiosInstance: AxiosInstance
 
-  protected get client(): AxiosInstance {
+  protected get client (): AxiosInstance {
     return this._axiosInstance
   }
 
@@ -67,28 +67,28 @@ export abstract class BaseApi {
    * Supported methods
    * - GET, POST, PATCH, DELETE
    */
-  protected async httpGet(url: string, headers: AxiosRequestConfig['headers'] = {}): Promise<ApiResponse<unknown>> {
+  protected async httpGet (url: string, headers: AxiosRequestConfig['headers'] = {}): Promise<ApiResponse<unknown>> {
     this.loading = true
     const response = await this.catchDuplicates(async () => await this.client.get(url, { headers }), url)
     this.loading = false
     return response
   }
 
-  protected async httpPost(url: string, body: object, headers: AxiosRequestConfig['headers'] = {}): Promise<ApiResponse<unknown>> {
+  protected async httpPost (url: string, body: object, headers: AxiosRequestConfig['headers'] = {}): Promise<ApiResponse<unknown>> {
     this.loading = true
     const response = await this.catchDuplicates(async () => await this.client.post(url, body, { headers }), url)
     this.loading = false
     return response
   }
 
-  protected async httpPatch(url: string, body: object, headers: AxiosRequestConfig['headers'] = {}): Promise<ApiResponse<unknown>> {
+  protected async httpPatch (url: string, body: object, headers: AxiosRequestConfig['headers'] = {}): Promise<ApiResponse<unknown>> {
     this.loading = true
     const response = await this.catchDuplicates(async () => await this.client.patch(url, body, { headers }), url)
     this.loading = false
     return response
   }
 
-  protected async httpDelete(url: string, headers: AxiosRequestConfig['headers'] = {}): Promise<ApiResponse<unknown>> {
+  protected async httpDelete (url: string, headers: AxiosRequestConfig['headers'] = {}): Promise<ApiResponse<unknown>> {
     this.loading = true
     const response = await this.catchDuplicates(async () => await this.client.delete(url, { headers }), url)
     this.loading = false
@@ -135,7 +135,7 @@ export abstract class BaseApi {
       return response
     } catch (error) {
       console.error(`Error in ${this.name} for URL ${urlToCall}:`, error)
-      return new ApiResponseError<T>({} as AxiosResponse)
+      return new ApiResponseError<T>({} as const as AxiosResponse<T>)
     }
   }
 }
