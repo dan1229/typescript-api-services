@@ -44,6 +44,9 @@
   - add nextjs project? idk dont want to limit this to a specific framework
 
 
+#### still issues with dupes?
+- try waiting a few seconds if duplicate is found
+  - i believe theres currently a race condition where req 1 isnt returned yet but req 2 is being marked a dupe with no response to send back yet
 
 
 ### [1.1.0] - 2024-MM-DD
