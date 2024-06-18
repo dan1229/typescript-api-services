@@ -44,6 +44,9 @@
   - add nextjs project? idk dont want to limit this to a specific framework
 
 
+#### still issues with dupes?
+- try waiting a few seconds if duplicate is found
+  - i believe theres currently a race condition where req 1 isnt returned yet but req 2 is being marked a dupe with no response to send back yet
 
 
 ### [1.1.0] - 2024-MM-DD
@@ -53,13 +56,12 @@
 ### 1.0.6
 
 
-#### duplicate api response issue
-- if throwing ApiResponseDuplicate or whatever, try to include info from original response
-- lots of duplicates are destroying front end api calls
-
 
 ### [1.0.6] - 2024-06-DD
-- TODO
+- Duplciate API catching improvements
+  - Previously successful API calls were being caught as duplicates
+  - Duplicate responses now include the last successful response data in case that's what the client accidentally uses
+  - Remove `ApiResponseDuplicate` and replace with `duplicate` field
 
 -------------------------------------------------------
 

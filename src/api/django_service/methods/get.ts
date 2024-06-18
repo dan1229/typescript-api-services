@@ -1,5 +1,5 @@
 import DjangoApi from '../django_api'
-import { ApiResponseDuplicate, type ApiResponse } from '../../../types'
+import { type ApiResponse } from '../../../types'
 
 /**
  *
@@ -124,7 +124,7 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
    */
   protected async handleDjangoGet (apiResponse: ApiResponse<Model | Model[]>, paginated: boolean): Promise<ApiResponse<Model | Model[]>> {
     // handle duplicate response
-    if (apiResponse instanceof ApiResponseDuplicate) {
+    if (apiResponse.duplicate) {
       return apiResponse
     }
 
