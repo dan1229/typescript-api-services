@@ -52,17 +52,6 @@
 ### [1.1.0] - 2024-MM-DD
 #### TODO
 
----
-### 1.0.6
-
-
-
-### [1.0.6] - 2024-06-DD
-- Duplciate API catching improvements
-  - Previously successful API calls were being caught as duplicates
-  - Duplicate responses now include the last successful response data in case that's what the client accidentally uses
-  - Remove `ApiResponseDuplicate` and replace with `duplicate` field
-
 -------------------------------------------------------
 
 ##### [https://danielnazarian.com](https://danielnazarian.com)

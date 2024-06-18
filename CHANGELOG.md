@@ -14,6 +14,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Released]
 
+### [1.0.6] - 2024-06-17
+- Duplciate API catching improvements
+  - Previously successful API calls were being caught as duplicates
+  - Duplicate responses now include the last successful response data in case that's what the client accidentally uses
+  - Remove `ApiResponseDuplicate` and replace with `duplicate` field
+
+  
 ### [1.0.5] - 2024-06-15
 - Fixed `errorFields` not being set properly for all responses
 - CD branch creation clean up / fix
