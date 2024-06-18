@@ -110,14 +110,11 @@ export abstract class BaseApi {
     const duplicateCall = timeElapsed < this.minimumDelay
     const lastSuccessfulResponse = BaseApi.lastSuccessfulResponses[pageUrlId]
 
-    if (duplicateCall) {
-      if (!lastSuccessfulResponse) {
-        return new ApiResponseError<T>({} as AxiosResponse, 'Duplicate request.', undefined, undefined)
-      } else {
-        lastSuccessfulResponse.error = true
-        lastSuccessfulResponse.duplicate = true
-        return lastSuccessfulResponse
-      }
+    // handle duplicate response
+    if (duplicateCall && lastSuccessfulResponse) {
+      console.warn(`Duplicate request detected for ${this.name} - ${urlToCall}`)
+      lastSuccessfulResponse.duplicate = true
+      return lastSuccessfulResponse
     }
 
     // Update the last request timestamp
