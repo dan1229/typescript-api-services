@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Released]
 
+### [1.0.7] - 2024-10-11
+- fixed `pageCurrent` not being set properly for all responses
+
+
 ### [1.0.6] - 2024-06-17
 - Duplciate API catching improvements
   - Previously successful API calls were being caught as duplicates

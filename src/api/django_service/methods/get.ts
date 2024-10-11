@@ -41,10 +41,10 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
    *
    * GET Django list from this API
    *
-   * @param {Boolean=} paginated - Treat this API result like a paginated one (i.e., it contains 'next', 'prev', etc.)
+   * @param {boolean=} paginated - Treat this API result like a paginated one (i.e., it contains 'next', 'prev', etc.)
    * @param {TypeFilters=} filters - Filters to send with request
    * @param {Record<string, unknown>=} extraHeaders - Extra headers to add to request
-   * @return {ApiResponse} Api response object
+   * @return {ApiResponse<Model[]>} Api response object
    */
   public async getList (
     paginated: boolean = true,
@@ -60,16 +60,16 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
   }
 
   /**
-   * getList
+   * getListAll
    *
    * GET Django list from this API for ALL pages if paginated
    *
    * @param {Record<string, unknown>=} extraHeaders - Extra headers to add to request
-   * @returns {Array} List of all objects paginated out
+   * @returns {Model[]} List of all objects paginated out
    */
   public async getListAll (extraHeaders?: Record<string, unknown>): Promise<Model[]> {
     this.loading = true
-    let res = []
+    let res: Model[] = []
     const first = await this.getList(true, undefined, extraHeaders)
     res = first.obj ?? []
     let pages = 1
@@ -78,10 +78,8 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
       const nextPage = await this.getNext()
       if (typeof nextPage !== 'undefined') {
         const nextList = nextPage.obj
-        if (!!nextList && nextList.length > 0) {
-          nextList.map(function (i: Model) {
-            return res.push(i)
-          })
+        if (nextList && nextList.length > 0) {
+          nextList.map((i: Model) => res.push(i))
         }
       }
     }
@@ -95,11 +93,11 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
    *
    * Django GET item and details
    *
-   * @param {string=} id - ID of object to retrieve
-   * @param {Boolean=} paginated - Treat this API result like a paginated one (i.e., it contains 'next', 'prev', etc.)
+   * @param {string} id - ID of object to retrieve
+   * @param {boolean=} paginated - Treat this API result like a paginated one (i.e., it contains 'next', 'prev', etc.)
    * @param {Record<string, unknown>=} extraHeaders - Extra headers to add to request
    * @param {TypeFilters=} filters - Filters to send with request
-   * @return {ApiResponse} Api response object
+   * @return {ApiResponse<Model | Model[]>} Api response object
    */
   public async getRetrieve (
     id: string,
@@ -118,18 +116,23 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
   /**
    * handleDjangoGet
    *
-   * @param ApiResponse
-   * @param paginated
-   * @returns ApiResponse
+   * Helper function to handle the response from a GET request.
+   *
+   * @param {ApiResponse<Model | Model[]>} apiResponse - API response object
+   * @param {boolean} paginated - Whether the response is paginated
+   * @returns {Promise<ApiResponse<Model | Model[]>>} Api response object
    */
-  protected async handleDjangoGet (apiResponse: ApiResponse<Model | Model[]>, paginated: boolean): Promise<ApiResponse<Model | Model[]>> {
-    // handle duplicate response
+  protected async handleDjangoGet (
+    apiResponse: ApiResponse<Model | Model[]>,
+    paginated: boolean
+  ): Promise<ApiResponse<Model | Model[]>> {
+    // Handle duplicate response
     if (apiResponse.duplicate) {
       return apiResponse
     }
 
-    // helper function to clean up get and retrieve methods
     if (!paginated) {
+      // Non-paginated response
       try {
         if (apiResponse.obj instanceof Array) {
           this.list = apiResponse.obj
@@ -141,10 +144,11 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
       }
       return apiResponse
     } else {
+      // Paginated response
       try {
         this.count = (apiResponse.response.data as { count: number }).count
         this.list = (apiResponse.obj as Model[]) ?? []
-        this.calculatePageTotal() // this should only be called during the initial call NOT during any next/prev calls
+        this.calculatePageTotal() // This should only be called during the initial call NOT during any next/prev calls
       } catch (e) {
         console.warn(e)
       }
@@ -160,10 +164,13 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
    * this API data
    *
    * @param {ApiResponse<Model[]>} apiResponse - Api response object
-   * @param {Boolean=} combineLists - Whether to add next page to the current list or replace it
-   * @return {ApiResponse} Api response object
+   * @param {boolean=} combineLists - Whether to add next page to the current list or replace it
+   * @return {ApiResponse<Model[]>} Api response object
    */
-  protected async handlePaginatedResponse (apiResponse: ApiResponse<Model[]>, combineLists: boolean = false): Promise<ApiResponse<Model[]>> {
+  protected async handlePaginatedResponse (
+    apiResponse: ApiResponse<Model[]>,
+    combineLists: boolean = false
+  ): Promise<ApiResponse<Model[]>> {
     try {
       const responseData = apiResponse.response.data as { count: number, next: string, previous: string }
       if (responseData) {
@@ -175,13 +182,13 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
       if (!combineLists) {
         this.list = apiResponse.obj ?? []
       } else {
-        if (!!this.list && this.list.length > 0) {
+        if (this.list && this.list.length > 0) {
           this.list = [...this.list, ...(apiResponse.obj ?? [])]
         } else {
           this.list = apiResponse.obj ?? []
         }
       }
-      this.calculatePageCurrent()
+      this.calculatePageCurrent() // Update current page number based on 'next' and 'prev'
     } catch (e) {
       console.error(e)
     }
@@ -191,17 +198,27 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
   /**
    * getNext
    *
-   * @param {Boolean=} combineLists - Whether to add next page to the current list or replace it
+   * Get the next page of results.
+   *
+   * @param {boolean=} combineLists - Whether to add next page to the current list or replace it
    * @param {Record<string, unknown>=} extraHeaders - Extra headers to add to request
-   * @return {ApiResponse} Api response object
+   * @return {ApiResponse<Model[]> | undefined} Api response object
    */
-  public async getNext (combineLists: boolean = false, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model[]> | undefined> {
+  public async getNext (
+    combineLists: boolean = false,
+    extraHeaders?: Record<string, unknown>
+  ): Promise<ApiResponse<Model[]> | undefined> {
     this.loading = true
-    if (typeof this.next !== 'undefined') {
+    if (typeof this.next !== 'undefined' && this.next !== null) {
       const apiResponse = await this.httpGet(this.next, extraHeaders)
+      if (apiResponse.duplicate) {
+        this.loading = false
+        return apiResponse as ApiResponse<Model[]>
+      }
+
       if (apiResponse.obj instanceof Array) {
-        // If the response is a list, return it as-is
         const response = await this.handlePaginatedResponse(apiResponse as ApiResponse<Model[]>, combineLists)
+        this.pageCurrent += 1 // Increment current page
         this.loading = false
         return response
       } else {
@@ -215,17 +232,27 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
   /**
    * getPrev
    *
-   * @param {Boolean=} combineLists - Whether to add next page to the current list or replace it
+   * Get the previous page of results.
+   *
+   * @param {boolean=} combineLists - Whether to add previous page to the current list or replace it
    * @param {Record<string, unknown>=} extraHeaders - Extra headers to add to request
-   * @return {ApiResponse} Api response object
+   * @return {ApiResponse<Model[]> | undefined} Api response object
    */
-  public async getPrev (combineLists: boolean = false, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model[]> | undefined> {
+  public async getPrev (
+    combineLists: boolean = false,
+    extraHeaders?: Record<string, unknown>
+  ): Promise<ApiResponse<Model[]> | undefined> {
     this.loading = true
-    if (typeof this.prev !== 'undefined') {
+    if (typeof this.prev !== 'undefined' && this.prev !== null) {
       const apiResponse = await this.httpGet(this.prev, extraHeaders)
+      if (apiResponse.duplicate) {
+        this.loading = false
+        return apiResponse as ApiResponse<Model[]>
+      }
+
       if (apiResponse.obj instanceof Array) {
-        // If the response is a list, return it as-is
         const response = await this.handlePaginatedResponse(apiResponse as ApiResponse<Model[]>, combineLists)
+        this.pageCurrent -= 1 // Decrement current page
         this.loading = false
         return response
       } else {
@@ -239,26 +266,34 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
   /**
    * getPage
    *
-   * @param {Number} page - Specific page number to retrieve
+   * Get a specific page of results.
+   *
+   * @param {number} page - Specific page number to retrieve
    * @param {Record<string, unknown>=} extraHeaders - Extra headers to add to request
-   * @return {ApiResponse} Api response object
+   * @return {ApiResponse<Model[]>} Api response object
    */
-
   public async getPage (page: number, extraHeaders?: Record<string, unknown>): Promise<ApiResponse<Model[]>> {
     this.loading = true
     const pageUrl = `${this.urlApi()}?page=${page}`
     const apiResponse = await this.httpGet(pageUrl, extraHeaders)
 
-    if (apiResponse.obj instanceof Array) {
-      // If the response is a list, return it as-is
+    if (apiResponse.duplicate) {
       this.loading = false
       return apiResponse as ApiResponse<Model[]>
+    }
+
+    if (apiResponse.obj instanceof Array) {
+      const response = await this.handlePaginatedResponse(apiResponse as ApiResponse<Model[]>)
+      this.pageCurrent = page // Set the current page here
+      this.loading = false
+      return response
     } else {
       // If the response is not a list, wrap the result in an array
       const response: ApiResponse<Model[]> = {
         ...apiResponse,
         obj: [apiResponse.obj as Model]
       }
+      this.pageCurrent = page // Set the current page here
       this.loading = false
       return response
     }
@@ -267,25 +302,57 @@ export default class DjangoGet<Model, TypeFilters extends object | null = null> 
   /**
    * PAGINATION HELPERS
    */
+
+  /**
+   * calculatePageCurrent
+   *
+   * Calculate the current page number based on 'next' and 'prev' URLs.
+   */
   protected calculatePageCurrent (): void {
-    if (typeof this.next !== 'undefined' && this.next != null) {
-      const num = Number(this.getQueryString('page', this.next)) || 2
-      this.pageCurrent = num - 1
-    } else if (typeof this.prev !== 'undefined' && this.prev != null) {
-      const num = Number(this.getQueryString('page', this.prev)) || 0
-      this.pageCurrent = num + 1
+    if (this.next) {
+      const num = Number(this.getQueryStringValue('page', this.next))
+      if (!isNaN(num)) {
+        this.pageCurrent = num - 1
+      }
+    } else if (this.prev) {
+      const num = Number(this.getQueryStringValue('page', this.prev))
+      if (!isNaN(num)) {
+        this.pageCurrent = num + 1
+      }
+    } else {
+      // If both next and prev are null, we're on the first or last page
+      if (this.pageCurrent === undefined || this.pageCurrent === null) {
+        this.pageCurrent = 1 // Default to page 1
+      }
     }
   }
 
+  /**
+   * getQueryStringValue
+   *
+   * Extracts the value of a query parameter from a URL.
+   *
+   * @param {string} field - The name of the query parameter to extract.
+   * @param {string} url - The URL to parse.
+   * @return {string | null} The value of the query parameter, or null if not found.
+   */
+  protected getQueryStringValue (field: string, url: string): number {
+    // Parse the URL to extract the query parameter
+    const reg = new RegExp(`[?&]${field}=([^&#]*)`, 'i')
+    const string = reg.exec(url)
+    return string ? Number(string[1]) : NaN
+  }
+
+  /**
+   * calculatePageTotal
+   *
+   * Calculate the total number of pages.
+   */
   protected calculatePageTotal (): void {
-    if (typeof this.list !== 'undefined') {
-      if (this.list?.length > 0 && typeof this.count !== 'undefined') {
-        let pageTotal = Math.floor(this.count / this.list?.length)
-        const remainder = this.count % this.list?.length
-        if (remainder !== 0) {
-          pageTotal++
-        }
-        this.pageTotal = pageTotal
+    if (this.list && this.count !== undefined) {
+      const itemsPerPage = this.list.length
+      if (itemsPerPage > 0) {
+        this.pageTotal = Math.ceil(this.count / itemsPerPage)
       }
     }
   }
