@@ -52,11 +52,6 @@
 ### [1.1.0] - 2024-MM-DD
 #### TODO
 
----
-
-### [1.0.7] - 2024-10-11
-- fixed `pageCurrent` not being set properly for all responses
-
 -------------------------------------------------------
 
 ##### [https://danielnazarian.com](https://danielnazarian.com)
