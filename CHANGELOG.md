@@ -14,6 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Released]
 
+### [1.0.8] - 2026-02-10
+- Fixed `catchDuplicates` caching error responses in `lastSuccessfulResponses`
+  - Error responses are no longer stored, preventing stale error data from being returned on retry
+
+
 ### [1.0.7] - 2024-10-11
 - Fixed `pageCurrent` not being set properly for all responses
 - General `get` API response handling bug fixes

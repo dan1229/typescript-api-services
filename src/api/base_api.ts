@@ -1,8 +1,12 @@
-import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from 'axios'
-import { BaseApiResponseHandler } from './base_api_response_handler'
-import { type ApiResponse, ApiResponseError } from '../types'
-import { DjangoApiResponseHandler } from './django_service/django_api_response_handler'
-import DjangoApi from './django_service/django_api'
+import axios, {
+  type AxiosInstance,
+  type AxiosRequestConfig,
+  type AxiosResponse
+} from 'axios';
+import { type ApiResponse, ApiResponseError } from '../types';
+import { BaseApiResponseHandler } from './base_api_response_handler';
+import DjangoApi from './django_service/django_api';
+import { DjangoApiResponseHandler } from './django_service/django_api_response_handler';
 
 /**
  * BASE API
@@ -17,45 +21,50 @@ import DjangoApi from './django_service/django_api'
  * @param {number=} minimumDelay - Minimum delay between requests to avoid duplicates.
  */
 export abstract class BaseApi {
-  name: string
-  urlBase: string
-  timeout: number
-  minimumDelay: number
-  loading: boolean
+  name: string;
+  urlBase: string;
+  timeout: number;
+  minimumDelay: number;
+  loading: boolean;
 
   // Maintain a dictionary to store the timestamps of recent requests
-  static lastRequestTimestamps: Record<string, number> = {}
+  static lastRequestTimestamps: Record<string, number> = {};
 
   // Maintain a dictionary to store the last successful responses
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static lastSuccessfulResponses: Record<string, ApiResponse<any>> = {}
+  static lastSuccessfulResponses: Record<string, ApiResponse<any>> = {};
 
   /**
    * CONSTRUCTOR
    */
-  protected constructor (name: string, urlBase: string, minimumDelay: number = 1000, timeout: number = 10000) {
-    this.name = name
-    this.urlBase = urlBase
-    this.timeout = timeout
-    this.minimumDelay = minimumDelay
-    this.loading = false
+  protected constructor(
+    name: string,
+    urlBase: string,
+    minimumDelay: number = 1000,
+    timeout: number = 10000
+  ) {
+    this.name = name;
+    this.urlBase = urlBase;
+    this.timeout = timeout;
+    this.minimumDelay = minimumDelay;
+    this.loading = false;
     this._axiosInstance = axios.create({
       baseURL: this.urlBase,
       timeout: this.timeout
-    })
+    });
   }
 
-  cleanUrlParamString (word: string): string {
-    return word.replace(/\s/g, '%20').replace(/and/gi, '%26')
+  cleanUrlParamString(word: string): string {
+    return word.replace(/\s/g, '%20').replace(/and/gi, '%26');
   }
 
   /**
    * CLIENT
    */
-  _axiosInstance: AxiosInstance
+  _axiosInstance: AxiosInstance;
 
-  protected get client (): AxiosInstance {
-    return this._axiosInstance
+  protected get client(): AxiosInstance {
+    return this._axiosInstance;
   }
 
   /**
@@ -67,32 +76,58 @@ export abstract class BaseApi {
    * Supported methods
    * - GET, POST, PATCH, DELETE
    */
-  protected async httpGet (url: string, headers: AxiosRequestConfig['headers'] = {}): Promise<ApiResponse<unknown>> {
-    this.loading = true
-    const response = await this.catchDuplicates(async () => await this.client.get(url, { headers }), url)
-    this.loading = false
-    return response
+  protected async httpGet(
+    url: string,
+    headers: AxiosRequestConfig['headers'] = {}
+  ): Promise<ApiResponse<unknown>> {
+    this.loading = true;
+    const response = await this.catchDuplicates(
+      async () => await this.client.get(url, { headers }),
+      url
+    );
+    this.loading = false;
+    return response;
   }
 
-  protected async httpPost (url: string, body: object, headers: AxiosRequestConfig['headers'] = {}): Promise<ApiResponse<unknown>> {
-    this.loading = true
-    const response = await this.catchDuplicates(async () => await this.client.post(url, body, { headers }), url)
-    this.loading = false
-    return response
+  protected async httpPost(
+    url: string,
+    body: object,
+    headers: AxiosRequestConfig['headers'] = {}
+  ): Promise<ApiResponse<unknown>> {
+    this.loading = true;
+    const response = await this.catchDuplicates(
+      async () => await this.client.post(url, body, { headers }),
+      url
+    );
+    this.loading = false;
+    return response;
   }
 
-  protected async httpPatch (url: string, body: object, headers: AxiosRequestConfig['headers'] = {}): Promise<ApiResponse<unknown>> {
-    this.loading = true
-    const response = await this.catchDuplicates(async () => await this.client.patch(url, body, { headers }), url)
-    this.loading = false
-    return response
+  protected async httpPatch(
+    url: string,
+    body: object,
+    headers: AxiosRequestConfig['headers'] = {}
+  ): Promise<ApiResponse<unknown>> {
+    this.loading = true;
+    const response = await this.catchDuplicates(
+      async () => await this.client.patch(url, body, { headers }),
+      url
+    );
+    this.loading = false;
+    return response;
   }
 
-  protected async httpDelete (url: string, headers: AxiosRequestConfig['headers'] = {}): Promise<ApiResponse<unknown>> {
-    this.loading = true
-    const response = await this.catchDuplicates(async () => await this.client.delete(url, { headers }), url)
-    this.loading = false
-    return response
+  protected async httpDelete(
+    url: string,
+    headers: AxiosRequestConfig['headers'] = {}
+  ): Promise<ApiResponse<unknown>> {
+    this.loading = true;
+    const response = await this.catchDuplicates(
+      async () => await this.client.delete(url, { headers }),
+      url
+    );
+    this.loading = false;
+    return response;
   }
 
   /**
@@ -100,42 +135,49 @@ export abstract class BaseApi {
    * A helper/wrapper function to handle retrying requests if necessary.
    * Avoids duplicate requests within a certain time window.
    */
-  async catchDuplicates<T = null>(requestFunction: () => Promise<AxiosResponse>, urlToCall: string): Promise<ApiResponse<T>> {
-    const now = Date.now()
-    const pageUrlId = `${urlToCall}`
+  async catchDuplicates<T = null>(
+    requestFunction: () => Promise<AxiosResponse>,
+    urlToCall: string
+  ): Promise<ApiResponse<T>> {
+    const now = Date.now();
+    const pageUrlId = `${urlToCall}`;
 
     // Check if the request is a duplicate
-    const lastRequestTime = BaseApi.lastRequestTimestamps[pageUrlId] || 0
-    const timeElapsed = now - lastRequestTime
-    const duplicateCall = timeElapsed < this.minimumDelay
-    const lastSuccessfulResponse = BaseApi.lastSuccessfulResponses[pageUrlId]
+    const lastRequestTime = BaseApi.lastRequestTimestamps[pageUrlId] || 0;
+    const timeElapsed = now - lastRequestTime;
+    const duplicateCall = timeElapsed < this.minimumDelay;
+    const lastSuccessfulResponse = BaseApi.lastSuccessfulResponses[pageUrlId];
 
     // handle duplicate response
     if (duplicateCall && lastSuccessfulResponse) {
-      console.warn(`Duplicate request detected for ${this.name} - ${urlToCall}`)
-      lastSuccessfulResponse.duplicate = true
-      return lastSuccessfulResponse
+      console.warn(
+        `Duplicate request detected for ${this.name} - ${urlToCall}`
+      );
+      lastSuccessfulResponse.duplicate = true;
+      return lastSuccessfulResponse;
     }
 
     // Update the last request timestamp
-    BaseApi.lastRequestTimestamps[pageUrlId] = now
+    BaseApi.lastRequestTimestamps[pageUrlId] = now;
 
     // Get the response handler
     const responseHandler =
       this instanceof DjangoApi
         ? new DjangoApiResponseHandler<T>(this, requestFunction())
-        : new BaseApiResponseHandler<T>(this, requestFunction())
+        : new BaseApiResponseHandler<T>(this, requestFunction());
 
     try {
       // Make the request
-      const response = await responseHandler.handleResponse()
+      const response = await responseHandler.handleResponse();
 
-      // Store the response
-      BaseApi.lastSuccessfulResponses[pageUrlId] = response
-      return response
+      // Only cache successful responses (not errors)
+      if (!response.error) {
+        BaseApi.lastSuccessfulResponses[pageUrlId] = response;
+      }
+      return response;
     } catch (error) {
-      console.error(`Error in ${this.name} for URL ${urlToCall}:`, error)
-      return new ApiResponseError<T>({} as const as AxiosResponse<T>)
+      console.error(`Error in ${this.name} for URL ${urlToCall}:`, error);
+      return new ApiResponseError<T>({} as const as AxiosResponse<T>);
     }
   }
 }
